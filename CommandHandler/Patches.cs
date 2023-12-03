@@ -1,6 +1,6 @@
 ﻿using CG;
 using CG.Profile;
-using CommandHandler.Chat.Commands;
+using CommandHandler.Chat.Router;
 using HarmonyLib;
 
 namespace CommandHandler

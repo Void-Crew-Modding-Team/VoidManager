@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CommandHandler.Chat.Commands
+namespace CommandHandler.Chat.Router
 {
     internal class Handler
     {
@@ -22,9 +22,9 @@ namespace CommandHandler.Chat.Commands
             {
                 if (chatCommands.ContainsKey(alias)) chatCommands[alias].Execute(arguments);
             }
-            catch
+            catch (Exception ex)
             {
-                Plugin.Log.LogError($"[{MyPluginInfo.PLUGIN_NAME}] /{alias} {arguments} failed!");
+                Plugin.Log.LogError($"[{MyPluginInfo.PLUGIN_NAME}] '/{alias} {arguments}' failed! \nCommand Exception: {ex.Message}!\n{ex.StackTrace}");
             }
         }
 

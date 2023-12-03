@@ -1,5 +1,5 @@
 ﻿
-namespace CommandHandler.Chat.Commands
+namespace CommandHandler.Chat.Router
 {
     /// <summary>
     /// Handles a command instance for use via in-game chat.

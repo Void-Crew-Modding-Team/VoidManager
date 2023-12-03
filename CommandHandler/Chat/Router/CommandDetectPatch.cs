@@ -3,7 +3,7 @@ using HarmonyLib;
 using UI.Chat;
 using VivoxUnity;
 
-namespace CommandHandler.Chat.Commands
+namespace CommandHandler.Chat.Router
 {
     [HarmonyPatch(typeof(TextChatVE), "GetMessage")]
     internal class ChatCommandDetectPatch
