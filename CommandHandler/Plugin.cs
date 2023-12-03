@@ -13,7 +13,7 @@ namespace CommandHandler
         private void Awake()
         {
             Harmony.PatchAll();
-            Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is patched and loaded!");
+            Logger.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
             Log = Logger;
         }
     }
@@ -22,7 +22,6 @@ namespace CommandHandler
  * Workout how to identify players
  *  (Custom dictionary containing players as they join?)
  * Utility methods
-  *  - Access Tools
  *  - Mod Messaging?
 */
 

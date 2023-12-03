@@ -1,6 +1,7 @@
 ﻿using CG;
 using CG.Profile;
 using CommandHandler.Chat.Router;
+using CommandHandler.Utilities;
 using HarmonyLib;
 
 namespace CommandHandler
@@ -11,9 +12,9 @@ namespace CommandHandler
         [HarmonyPostfix]
         public static void DiscoverCommandMods()
         {
-            Debug.Log($"[{MyPluginInfo.PLUGIN_NAME}] Discovering mods w/Commands . . .");
+            Logger.Info($"[{MyPluginInfo.PLUGIN_NAME}] Discovering mods w/Commands . . .", Logger.LogType.GameLog);
             Handler.DiscoverPlugins();
-            Debug.Log($"[{MyPluginInfo.PLUGIN_NAME}] Discovered {Handler.chatCommandCount} chat commands");
+            Logger.Info($"[{MyPluginInfo.PLUGIN_NAME}] Discovered {Handler.chatCommandCount} chat commands", Logger.LogType.GameLog);
         }
     }
 }
