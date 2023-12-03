@@ -1,6 +1,4 @@
-﻿using HarmonyLib;
-using System.Text;
-
+﻿
 namespace CommandHandler.Chat.Commands
 {
     /// <summary>
@@ -28,6 +26,7 @@ namespace CommandHandler.Chat.Commands
         /// <param name="arguments">A string containing all of the text entered after the command</param>
         public abstract void Execute(string arguments);
     }
+
     /// <summary>
     /// Handles a command instance for use via in-game chat.
     /// </summary>

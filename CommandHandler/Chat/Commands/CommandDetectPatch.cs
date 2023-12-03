@@ -18,6 +18,7 @@ namespace CommandHandler.Chat.Commands
             __result = "";
         }
     }
+
     [HarmonyPatch(typeof(TextChat), "IncomingMessage")]
     internal class PublicCommandDetectPatch
     { // Other player chat command

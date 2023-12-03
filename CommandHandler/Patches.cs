@@ -1,8 +1,7 @@
 ﻿using CG;
 using CG.Profile;
-using Gameplay.Chat;
+using CommandHandler.Chat.Commands;
 using HarmonyLib;
-using UI.Chat;
 
 namespace CommandHandler
 {

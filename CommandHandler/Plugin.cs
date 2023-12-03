@@ -18,6 +18,14 @@ namespace CommandHandler
         }
     }
 }
+/* Public Mod Implementation
+ * Workout how to identify players
+ *  (Custom dictionary containing players as they join?)
+ * Utility methods
+ *  - Easy logger
+ *  - Access Tools
+ *  - Mod Messaging?
+*/
 
 
 

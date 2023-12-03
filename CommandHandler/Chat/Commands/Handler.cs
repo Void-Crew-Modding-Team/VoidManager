@@ -1,10 +1,9 @@
 ﻿using BepInEx;
-using CommandHandler.Chat.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CommandHandler
+namespace CommandHandler.Chat.Commands
 {
     internal class Handler
     {
@@ -59,7 +58,7 @@ namespace CommandHandler
                     }
                 }
             }
-            Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Added {Handler.chatCommandCount} chat commands");
+            Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Added {chatCommandCount} chat commands");
         }
 
         internal static void ExecutePublicCommandFromAlias(string alias, string v)
