@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using CommandHandler.Chat.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace CommandHandler
         /// </summary>
         /// <param name="alias">Potential chat command alias</param>
         /// <param name="arguments">Arguments to use with command</param>
-        public static void ExecuteCommandFromAlias(string alias, string arguments)
+        internal static void ExecuteCommandFromAlias(string alias, string arguments)
         {
             alias = alias.ToLower();
             try
@@ -59,6 +60,11 @@ namespace CommandHandler
                 }
             }
             Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Added {Handler.chatCommandCount} chat commands");
+        }
+
+        internal static void ExecutePublicCommandFromAlias(string alias, string v)
+        {
+            return;
         }
     }
 }
