@@ -8,16 +8,22 @@ namespace CommandHandler
     [BepInProcess("Void Crew.exe")]
     public class Plugin : BaseUnityPlugin
     {
-        private static readonly Harmony Harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
-        public static ManualLogSource Log = new ManualLogSource(MyPluginInfo.PLUGIN_NAME);
+        internal static readonly Harmony Harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
+        internal static ManualLogSource Log = new ManualLogSource(MyPluginInfo.PLUGIN_NAME);
         private void Awake()
         {
             Harmony.PatchAll();
-            Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is patched and loaded!");
+            Logger.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
             Log = Logger;
         }
     }
 }
+/* Public Mod Implementation
+ * Workout how to identify players
+ *  (Custom dictionary containing players as they join?)
+ * Utility methods
+ *  - Mod Messaging?
+*/
 
 
 
