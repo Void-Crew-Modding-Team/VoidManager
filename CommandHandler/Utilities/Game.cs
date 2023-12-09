@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CommandHandler.Utilities
 {
-    internal class Game
+    public class Game
     {
         /// <summary>
         /// Reference to the clients current game.
