@@ -6,19 +6,20 @@ using System.Reflection;
 
 namespace CommandHandler.Utilities
 {
-    /// <summary>
-    /// Different Log Methods
-    /// </summary>
-    public enum LogType
-    {
-        GameLog,
-        InfoLog,
-        MessageLog,
-        WarningLog,
-        FatalLog
-    }
     public class Logger
     {
+        /// <summary>
+        /// Different Log Methods
+        /// </summary>
+        public enum LogType
+        {
+            GameLog,
+            InfoLog,
+            MessageLog,
+            WarningLog,
+            FatalLog
+        }
+
         /// <summary>
         /// Creates a log based on the supplied LogType
         /// </summary>
@@ -28,7 +29,7 @@ namespace CommandHandler.Utilities
         {
             Assembly assembly = Assembly.GetCallingAssembly();
             string result = $"{FormatLog(assembly, message)}";
-            switch (logType )
+            switch (logType)
             {
                 case LogType.GameLog: Debug.Log(result); break;
                 case LogType.InfoLog: Plugin.Log.LogInfo(result); break;

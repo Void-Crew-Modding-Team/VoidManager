@@ -3,6 +3,7 @@ using CG.Profile;
 using CommandHandler.Chat.Router;
 using CommandHandler.Utilities;
 using HarmonyLib;
+using static CommandHandler.Utilities.Logger;
 
 namespace CommandHandler
 {

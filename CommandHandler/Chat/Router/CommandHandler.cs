@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CommandHandler.Utilities;
+using static CommandHandler.Utilities.Logger;
 
 namespace CommandHandler.Chat.Router
 {
@@ -17,12 +18,12 @@ namespace CommandHandler.Chat.Router
         /// </summary>
         /// <param name="alias">Potential chat command alias</param>
         /// <param name="arguments">Arguments to use with command</param>
-        internal static void ExecuteCommandFromAlias(string alias, string arguments, bool publicCommand = false, int senderID = -1)
+        internal static void ExecuteCommandFromAlias(string alias, string arguments, bool publicCommand = false, int playerId = -1)
         {
             alias = alias.ToLower();
             try
             {
-                if (publicCommand) { if (publicCommands.ContainsKey(alias)) publicCommands[alias].Execute(arguments, senderID); }
+                if (publicCommand) { if (publicCommands.ContainsKey(alias)) publicCommands[alias].Execute(arguments, playerId); }
                 else if (chatCommands.ContainsKey(alias)) chatCommands[alias].Execute(arguments);
                 else Logger.Info($"'{(publicCommand ? "!" : "/")}{alias} {arguments}' cound not be found!");
             }

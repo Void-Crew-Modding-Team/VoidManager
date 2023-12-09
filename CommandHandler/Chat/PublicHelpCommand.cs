@@ -24,7 +24,7 @@ namespace CommandHandler.Chat
         /*public override string[][] Arguments()
             => new string[][] { new string[] { "%command", "%page_number" } };*/
 
-        public override void Execute(string arguments, int SenderID)
+        public override void Execute(string arguments, int senderId)
         {
             return;
             /*if (PhotonNetwork.IsMasterClient)
@@ -36,7 +36,6 @@ namespace CommandHandler.Chat
                     return;
                 }
 
-                PLPlayer sender = PLServer.Instance.GetPlayerFromPlayerID(SenderID);
                 int page = 1;
                 if (!string.IsNullOrWhiteSpace(arguments))
                 {
@@ -47,46 +46,50 @@ namespace CommandHandler.Chat
                             arguments = arguments.Substring(1);
                         }
                         PublicCommand cmd = Router.CommandHandler.GetPublicCommand(arguments);
+                        StringBuilder stringBuilder = new StringBuilder();
                         if (cmd != null)
                         {
-                            Messaging.Echo(sender, $"[&%~[C3 !{cmd.CommandAliases()[0]} ]&%~] - {cmd.Description()}");// <color=#ff6600ff>[{name}]</color>");
-                            Messaging.Echo(sender, $"Aliases: !{string.Join($", !", cmd.CommandAliases())}");
-                            Messaging.Echo(sender, $"Usage: {cmd.UsageExamples()[0]}");
+                            stringBuilder.AppendLine($"<color=green>!{cmd.CommandAliases()[0]}</color> - {cmd.Description()}");// <color=#ff6600ff>[{name}]</color>");
+                            stringBuilder.AppendLine($"Aliases: !{string.Join($", !", cmd.CommandAliases())}");
+                            stringBuilder.AppendLine($"Usage: {cmd.UsageExamples()[0]}");
                             for (int i = 1; i < cmd.UsageExamples().Length; i++)
                             {
-                                Messaging.Echo(sender, $"       {cmd.UsageExamples()[i]}");
+                                stringBuilder.AppendLine($"       {cmd.UsageExamples()[i]}");
                             }
                         }
                         else
                         {
-                            Messaging.Echo(sender, $"Command !{arguments} not found");
+                            stringBuilder.AppendLine($"Command !{arguments} not found");
                         }
+                        Messaging.Echo(stringBuilder.ToString(), senderId);
                         return;
                     }
                 }
 
                 int commandsPerPage = 13 /*(PLXMLOptionsIO.Instance.CurrentOptions.GetStringValueAsInt("ChatNumLines") * 5 + 10) - 2*/; //Minimum value
-                /*int pages = Mathf.CeilToInt(publicCommands.Count() / (float)commandsPerPage);
+            /*int pages = Mathf.CeilToInt(publicCommands.Count() / (float)commandsPerPage);
 
-                page--; //Pages start from 1
-                if (page < 0)
-                {
-                    page = 0;
-                }
+            page--; //Pages start from 1
+            if (page < 0)
+            {
+                page = 0;
+            }
 
-                string header = pages == 1 && page == 0 ? $"[&%~[C3 Available Commands: ]&%~]" : $"[&%~[C3 Available Commands: ]&%~] Page {page + 1} : {pages}";
-                Messaging.Echo(sender, header);
-                for (int i = 0; i < commandsPerPage; i++)
-                {
-                    int index = i + page * commandsPerPage;
-                    if (i + page * commandsPerPage >= publicCommands.Count())
-                        break;
-                    PublicCommand command = publicCommands.ElementAt(index).Item1;
-                    Messaging.Echo(sender, $"!{command.CommandAliases()[0]} - {command.Description()}");
+            StringBuilder stringBuilder1 = new StringBuilder();
+            string header = pages == 1 && page == 0 ? $"<color=green>Available Commands:</color>" : $"<color=green>Available Commands:</color> Page {page + 1} : {pages}";
+            stringBuilder1.AppendLine(header);
+            for (int i = 0; i < commandsPerPage; i++)
+            {
+                int index = i + page * commandsPerPage;
+                if (i + page * commandsPerPage >= publicCommands.Count())
+                    break;
+                PublicCommand command = publicCommands.ElementAt(index);
+                stringBuilder1.AppendLine($"!{command.CommandAliases()[0]} - {command.Description()}");
 
-                }
-                Messaging.Echo(sender, "Use [&%~[C2 !help <command> ]&%~] for details about a specific command");
-            }*/
+            }
+            stringBuilder1.AppendLine("Use <color=green>!help <command></color> for details about a specific command");
+            Messaging.Echo(stringBuilder1.ToString(), senderId);
+        }*/
         }
     }
 }

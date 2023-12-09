@@ -3,6 +3,7 @@ using CommandHandler.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace CommandHandler.Chat
 {
@@ -34,20 +35,22 @@ namespace CommandHandler.Chat
                         arguments = arguments.Substring(1);
                     }
                     ChatCommand cmd = Router.CommandHandler.GetCommand(arguments.Split(' ')[0]);
+                    StringBuilder stringBuilder = new StringBuilder();
                     if (cmd != null)
                     {
-                        Messaging.Echo($"[&%~[C0 /{cmd.CommandAliases()[0]} ]&%~] - {cmd.Description()}");// <color=#ff6600ff>[{name}]</color>");
-                        Messaging.Echo($"Aliases: /{string.Join($", /", cmd.CommandAliases())}");
-                        Messaging.Echo($"Usage: {cmd.UsageExamples()[0]}");
+                        stringBuilder.AppendLine($"<color=green>/{cmd.CommandAliases()[0]}</color> - {cmd.Description()}");// <color=#ff6600ff>[{name}]</color>");
+                        stringBuilder.AppendLine($"Aliases: /{string.Join($", /", cmd.CommandAliases())}");
+                        stringBuilder.AppendLine($"Usage: {cmd.UsageExamples()[0]}");
                         for (int i = 1; i < cmd.UsageExamples().Length; i++)
                         {
-                            Messaging.Echo($"       {cmd.UsageExamples()[i]}");
+                            stringBuilder.AppendLine($"       {cmd.UsageExamples()[i]}");
                         }
                     }
                     else
                     {
-                        Messaging.Echo($"Command /{arguments} not found");
+                        stringBuilder.AppendLine($"Command /{arguments} not found");
                     }
+                    Messaging.Echo(stringBuilder.ToString());
                     return;
                 }
             }
@@ -61,17 +64,19 @@ namespace CommandHandler.Chat
                 page = 0;
             }
 
-            Messaging.Echo(pages == 1 && page == 0 ? "[&%~[C0 Command List: ]&%~] :" : $"[&%~[C0 Command List: ]&%~] Page {page + 1} : {pages}");
+            StringBuilder stringBuilder2 = new StringBuilder();
+            stringBuilder2.AppendLine(pages == 1 && page == 0 ? "<color=green>Command List:</color> :" : $"<color=green>Command List:</color> Page {page + 1} : {pages}");
             for (int i = 0; i < commandsPerPage; i++)
             {
                 int index = i + page * commandsPerPage;
                 if (i + page * commandsPerPage >= commands.Count())
                     break;
                 ChatCommand command = commands.ElementAt(index);
-                Messaging.Echo($"/{command.CommandAliases()[0]} - {command.Description()}");
+                stringBuilder2.AppendLine($"/{command.CommandAliases()[0]} - {command.Description()}");
 
             }
-            Messaging.Echo("Use [&%~[C2 /help <command> ]&%~] for details about a specific command");
+            stringBuilder2.AppendLine("Use <color=green>/help <command></color> for details about a specific command");
+            Messaging.Echo(stringBuilder2.ToString());
         }
     }
 }

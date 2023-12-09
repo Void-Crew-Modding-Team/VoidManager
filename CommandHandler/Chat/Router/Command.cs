@@ -51,6 +51,6 @@ namespace CommandHandler.Chat.Router
         /// </summary>
         /// <param name="arguments">A string containing all of the text entered after the command</param>
         /// <param name="SenderID">Handler identifier for player</param>
-        public abstract void Execute(string arguments, int SenderID);
+        public abstract void Execute(string arguments, int Sender);
     }
 }

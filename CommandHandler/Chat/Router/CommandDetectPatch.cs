@@ -1,6 +1,7 @@
 ﻿using CommandHandler.Utilities;
 using Gameplay.Chat;
 using HarmonyLib;
+using System.Linq;
 using UI.Chat;
 using VivoxUnity;
 
@@ -15,7 +16,8 @@ namespace CommandHandler.Chat.Router
             if (!__result.StartsWith("/")) return;
             __result = __result.Substring(1);
             string alias = __result.Split(' ')[0];
-            CommandHandler.ExecuteCommandFromAlias(alias, __result.Substring(alias.Length));
+            string arguments = __result.Substring(alias.Length + (__result.Split(' ').Count() == 1 ? 0 : 1));
+            CommandHandler.ExecuteCommandFromAlias(alias, arguments);
             __result = "";
         }
     }
@@ -30,8 +32,10 @@ namespace CommandHandler.Chat.Router
             if (!result.StartsWith("!")) return;
             result = result.Substring(1);
             string alias = result.Split(' ')[0];
-            Logger.Info($"'!{alias} {result.Substring(alias.Length)}' attempted by {displayName} AKA {channelTextMessage.Sender.ToString()}");
-            //CommandHandler.ExecuteCommandFromAlias(alias, result.Substring(alias.Length), true, -1);
+            CG.Game.Player.Player Player = Game.GetPlayerByName(channelTextMessage.Sender.DisplayName);
+            string arguments = result.Substring(alias.Length + (result.Split(' ').Count() == 1 ? 0 : 1));
+            Logger.Info($"'!{alias} {arguments}' attempted by {displayName}");
+            CommandHandler.ExecuteCommandFromAlias(alias, arguments, true, Game.GetIDFromPlayer(Player));
         }
     }
 }
