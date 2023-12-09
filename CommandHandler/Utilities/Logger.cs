@@ -6,20 +6,19 @@ using System.Reflection;
 
 namespace CommandHandler.Utilities
 {
+    /// <summary>
+    /// Different Log Methods
+    /// </summary>
+    public enum LogType
+    {
+        GameLog,
+        InfoLog,
+        MessageLog,
+        WarningLog,
+        FatalLog
+    }
     public class Logger
     {
-        /// <summary>
-        /// Different Log Methods
-        /// </summary>
-        public enum LogType
-        {
-            GameLog,
-            InfoLog,
-            MessageLog,
-            WarningLog,
-            FatalLog
-        }
-
         /// <summary>
         /// Creates a log based on the supplied LogType
         /// </summary>
