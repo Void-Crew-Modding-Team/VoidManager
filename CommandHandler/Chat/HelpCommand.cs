@@ -1,11 +1,11 @@
-﻿using CommandHandler.Chat.Router;
-using CommandHandler.Utilities;
+﻿using VoidManager.Chat.Router;
+using VoidManager.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CommandHandler.Chat
+namespace VoidManager.Chat
 {
     class HelpCommand : ChatCommand
     {

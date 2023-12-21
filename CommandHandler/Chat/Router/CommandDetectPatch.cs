@@ -1,11 +1,11 @@
-﻿using CommandHandler.Utilities;
-using Gameplay.Chat;
+﻿using Gameplay.Chat;
 using HarmonyLib;
 using System.Linq;
 using UI.Chat;
 using VivoxUnity;
+using VoidManager.Utilities;
 
-namespace CommandHandler.Chat.Router
+namespace VoidManager.Chat.Router
 {
     [HarmonyPatch(typeof(TextChatVE), "GetMessage")]
     internal class ChatCommandDetectPatch

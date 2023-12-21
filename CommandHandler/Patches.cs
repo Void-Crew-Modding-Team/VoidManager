@@ -1,11 +1,9 @@
-﻿using CG;
-using CG.Profile;
-using CommandHandler.Chat.Router;
-using CommandHandler.Utilities;
+﻿using CG.Profile;
 using HarmonyLib;
-using static CommandHandler.Utilities.Logger;
+using VoidManager.Utilities;
+using static VoidManager.Utilities.Logger;
 
-namespace CommandHandler
+namespace VoidManager
 {
     [HarmonyPatch(typeof(PlayerProfileLoader), "Awake")]
     internal class PluginDetectPatch

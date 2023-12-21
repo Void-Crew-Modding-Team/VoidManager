@@ -1,14 +1,8 @@
-﻿using CommandHandler.Chat.Router;
-using CommandHandler.Utilities;
-using Photon.Pun;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+using VoidManager.Chat.Router;
 
-namespace CommandHandler.Chat
+namespace VoidManager.Chat
 {
     class PublicHelpCommand : PublicCommand
     {

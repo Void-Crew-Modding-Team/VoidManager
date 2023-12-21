@@ -1,10 +1,10 @@
-﻿using CommandHandler.Chat.Router;
-using CommandHandler.Utilities;
-using Photon.Pun;
+﻿using Photon.Pun;
 using Photon.Realtime;
 using System.Text;
+using VoidManager.Chat.Router;
+using VoidManager.Utilities;
 
-namespace CommandHandler.Chat
+namespace VoidManager.Chat
 {
     class ListPlayers : ChatCommand
     {

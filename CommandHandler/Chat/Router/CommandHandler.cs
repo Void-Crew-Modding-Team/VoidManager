@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CommandHandler.Utilities;
-using static CommandHandler.Utilities.Logger;
+using VoidManager.Utilities;
+using static VoidManager.Utilities.Logger;
 
-namespace CommandHandler.Chat.Router
+namespace VoidManager.Chat.Router
 {
     internal class CommandHandler
     {

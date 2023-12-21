@@ -1,7 +1,7 @@
-﻿using CommandHandler.Chat.Router;
-using CommandHandler.Utilities;
+﻿using VoidManager.Chat.Router;
+using VoidManager.Utilities;
 
-namespace CommandHandler.Chat
+namespace VoidManager.Chat
 {
     internal class EchoCommand : ChatCommand
     {

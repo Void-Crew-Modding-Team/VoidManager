@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CommandHandler.Utilities
+namespace VoidManager.Utilities
 {
     public class Game
     {

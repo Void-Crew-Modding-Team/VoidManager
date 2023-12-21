@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CommandHandler.Utilities
+namespace VoidManager.Utilities
 {
     /// <summary>
     /// Provides helper functions for Harmony Transpilers.
