@@ -1,10 +1,11 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using VoidManager.Mod;
 
 namespace VoidManager
 {
-    [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+    [ManagerPlugin("Mest", "VoidManager", MyPluginInfo.PLUGIN_VERSION)]
     [BepInProcess("Void Crew.exe")]
     public class Plugin : BaseUnityPlugin
     {

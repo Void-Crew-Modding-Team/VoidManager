@@ -11,9 +11,9 @@ namespace VoidManager
         [HarmonyPostfix]
         public static void DiscoverCommandMods()
         {
-            Logger.Info($"[{MyPluginInfo.PLUGIN_NAME}] Discovering mods w/Commands . . .", LogType.GameLog);
-            Chat.Router.CommandHandler.DiscoverPlugins();
-            Logger.Info($"[{MyPluginInfo.PLUGIN_NAME}] Discovered {Chat.Router.CommandHandler.chatCommandCount} chat commands", LogType.GameLog);
+            Logger.Info($"[{MyPluginInfo.PLUGIN_NAME}] Discovering mods . . .", LogType.GameLog);
+            Mod.PluginHandler.DiscoverPlugins();
+            Logger.Info($"[{MyPluginInfo.PLUGIN_NAME}] . . . Discovery finished", LogType.GameLog);
         }
     }
 }

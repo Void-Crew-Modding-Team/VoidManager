@@ -76,34 +76,30 @@ namespace VoidManager.Chat.Router
         /// <summary>
         /// Iterates through the current Plugin files and searches for commands.
         /// </summary>
-        public static void DiscoverPlugins()
+        public static void DiscoverCommands(System.Reflection.Assembly assembly, string ModName = "")
         {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (var assembly in assemblies)
-            {
-                var types = assembly.GetTypes();
+            var types = assembly.GetTypes();
 
-                // Finds ChatCommand implementations from all the Assemblies in the same file location.
-                var chatCommandInstances = types.Where(t => typeof(ChatCommand).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+            // Finds ChatCommand implementations from all the Assemblies in the same file location.
+            var chatCommandInstances = types.Where(t => typeof(ChatCommand).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
 
-                foreach (var modType in chatCommandInstances)
-                { // Iterates through each discovered ChatCommand
-                    ChatCommand modInstance = (ChatCommand)Activator.CreateInstance(modType);
-                    foreach (string commandAlias in Array.ConvertAll(modInstance.CommandAliases(), d => d.ToLower()))
+            foreach (var modType in chatCommandInstances)
+            { // Iterates through each discovered ChatCommand
+                ChatCommand modInstance = (ChatCommand)Activator.CreateInstance(modType);
+                foreach (string commandAlias in Array.ConvertAll(modInstance.CommandAliases(), d => d.ToLower()))
+                {
+                    if (chatCommands.ContainsKey(commandAlias))
                     {
-                        if (chatCommands.ContainsKey(commandAlias))
-                        {
-                            Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Found duplicate command alias {commandAlias}");
-                            continue;
-                        }
-                        else
-                        {
-                            chatCommands.Add(commandAlias, modInstance);
-                        }
+                        Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Found duplicate command alias {commandAlias}");
+                        continue;
+                    }
+                    else
+                    {
+                        chatCommands.Add(commandAlias, modInstance);
                     }
                 }
+                Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Added {chatCommandCount} chat commands");
             }
-            Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Added {chatCommandCount} chat commands");
         }
     }
 }
