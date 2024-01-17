@@ -45,16 +45,7 @@ namespace VoidManager.Utilities
         /// <returns>Formatted message [time] [modname] [message] </returns>
         private static string FormatLog(Assembly assembly, string message)
         {
-            /*Type pluginType = assembly.GetType("MyPluginInfo");
-            List<FieldInfo> field = pluginType.GetFields().ToList();
-            */
             string result = $"[{DateTime.Now.ToString("HH:mm:ss")}]";
-            /*if (field != null && field.IsLiteral && !field.IsInitOnly)
-            {
-                object obj = field.GetValue(null);
-                result += $" {obj}";
-            }
-            */
             result += $" [{assembly.FullName.Split(',')[0]}]";
             return $"{result} {message}";
         }

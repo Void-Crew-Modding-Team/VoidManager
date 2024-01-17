@@ -10,12 +10,13 @@ namespace VoidManager
     public class Plugin : BaseUnityPlugin
     {
         internal static readonly Harmony Harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
-        internal static ManualLogSource Log = new ManualLogSource(MyPluginInfo.PLUGIN_NAME);
+        internal static ManualLogSource Log;
         private void Awake()
         {
             Harmony.PatchAll();
-            Logger.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
             Log = Logger;
+            Log.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
+            
         }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using VoidManager.Utilities;
-using static VoidManager.Utilities.Logger;
 
 namespace VoidManager.Chat.Router
 {
@@ -25,11 +23,11 @@ namespace VoidManager.Chat.Router
             {
                 if (publicCommand) { if (publicCommands.ContainsKey(alias)) publicCommands[alias].Execute(arguments, playerId); }
                 else if (chatCommands.ContainsKey(alias)) chatCommands[alias].Execute(arguments);
-                else Logger.Info($"'{(publicCommand ? "!" : "/")}{alias} {arguments}' cound not be found!");
+                else Plugin.Log.LogInfo($"'{(publicCommand ? "!" : "/")}{alias} {arguments}' cound not be found!");
             }
             catch (Exception ex)
             {
-                Logger.Info($"'{(publicCommand ? "!" : "/")}{alias} {arguments}' failed! \nCommand Exception: {ex.Message}!\n{ex.StackTrace}", LogType.WarningLog);
+                Plugin.Log.LogInfo($"'{(publicCommand ? "!" : "/")}{alias} {arguments}' failed! \nCommand Exception: {ex.Message}!\n{ex.StackTrace}", LogType.WarningLog);
             }
         }
 
