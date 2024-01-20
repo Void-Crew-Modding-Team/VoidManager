@@ -21,9 +21,10 @@ namespace VoidManager.Utilities
         /// Inserts a line to text chat.
         /// </summary>
         /// <param name="message"></param>
-        public static void Echo(string message)
+        public static void Echo(string message, bool local = true)
         {
-            TextChat.Instance.AddLog(new Log($"", message));
+            if (local) TextChat.Instance.AddLog(new Log($"", message));
+            else VivoxVoiceManager.Instance.SendTextMessage($" [Mod Manager]\n{message}", VivoxVoiceManager.Instance.TextChannel, null, null);
         }
     }
 }
