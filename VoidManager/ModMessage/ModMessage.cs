@@ -1,11 +1,9 @@
-﻿using ExitGames.Client.Photon;
+﻿using BepInEx.Logging;
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Logger = VoidManager.Utilities.Logger;
 
 namespace VoidManager.ModMessage
 {
@@ -77,7 +75,7 @@ namespace VoidManager.ModMessage
         /// Recieve data from other players
         /// </summary>
         /// <param name="arguments"></param>
-        /// <param name="sender"></param>
+        /// <param name="senderId"></param>
         public abstract void Handle(object[] arguments, int senderId);
     }
     public class RecieveModMessage : MonoBehaviourPun, IOnEventCallback
@@ -95,10 +93,17 @@ namespace VoidManager.ModMessage
             if (eventCode == photonEvent.Code)
             {
                 object[] args = (object[])photonEvent.CustomData;
-                if (ModMessageHandler.modMessageHandlers.TryGetValue($"{args[0]}#{args[1]}", out ModMessage modMessage))
+                if (args == null || args.Length < 3)
                 {
-                    modMessage.Handle(args.Skip(3).ToArray(), (int)args[3]);
+                    Logger.Info("Recieved Invalid ModMessage");
+                    return;
                 }
+                if (ModMessageHandler.modMessageHandlers.TryGetValue($"{args[0]}#{args[1]}", out ModMessage modMessage)
+                    && int.TryParse((string)args[3], out int senderId))
+                {
+                    modMessage.Handle((args.Length > 3 ? args.Skip(3).ToArray() : null), senderId);
+                }
+                Logger.Info($"Recieved Unrecognised ModMessage ({args[0] ?? "N/A"}#{args[1] ?? "N/A"}) from {args[3] ?? "N/A"}");
             }
         }
     }
