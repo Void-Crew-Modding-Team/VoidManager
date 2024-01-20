@@ -99,11 +99,11 @@ namespace VoidManager.ModMessage
                     return;
                 }
                 if (ModMessageHandler.modMessageHandlers.TryGetValue($"{args[0]}#{args[1]}", out ModMessage modMessage)
-                    && int.TryParse((string)args[3], out int senderId))
+                    && int.TryParse((string)args[2], out int senderId))
                 {
                     modMessage.Handle((args.Length > 3 ? args.Skip(3).ToArray() : null), senderId);
                 }
-                Logger.Info($"Recieved Unrecognised ModMessage ({args[0] ?? "N/A"}#{args[1] ?? "N/A"}) from {args[3] ?? "N/A"}");
+                Logger.Info($"Recieved Unrecognised ModMessage ({args[0] ?? "N/A"}#{args[1] ?? "N/A"}) from {args[2] ?? "N/A"}");
             }
         }
     }
