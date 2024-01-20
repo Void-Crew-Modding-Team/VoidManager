@@ -1,5 +1,6 @@
 ﻿using CG.Profile;
 using HarmonyLib;
+using Photon.Pun;
 using VoidManager.Utilities;
 using static VoidManager.Utilities.Logger;
 
@@ -14,6 +15,7 @@ namespace VoidManager
             Logger.Info($"[{MyPluginInfo.PLUGIN_NAME}] Discovering mods w/Commands . . .", LogType.GameLog);
             Chat.Router.CommandHandler.DiscoverPlugins();
             Logger.Info($"[{MyPluginInfo.PLUGIN_NAME}] Discovered {Chat.Router.CommandHandler.chatCommandCount} chat commands", LogType.GameLog);
+            new ModMessage.RecieveModMessage();
         }
     }
 }
