@@ -6,10 +6,10 @@ namespace VoidManager.Mod
 {
     public class ManagerPlugin : BepInPlugin
     {
-        public bool AllClientsRequireMod;
-        public ManagerPlugin(string Author, string ModName, string Version, bool allClientsRequireMod = false) : base($"{Author}.{ModName}", ModName, Version)
+        public MultiplayerType MPType;
+        public ManagerPlugin(string Author, string ModName, string Version, MultiplayerType MultiPlayerType = MultiplayerType.Client) : base($"{Author}.{ModName}", ModName, Version)
         {
-            AllClientsRequireMod = allClientsRequireMod;
+            MPType = MultiPlayerType;
         }
         internal static ManagerPlugin FromCecilType(TypeDefinition td)
         {

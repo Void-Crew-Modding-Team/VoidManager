@@ -28,7 +28,7 @@ namespace VoidManager.Mod
                 {
                     ManagerPlugin managerPlugin = (ManagerPlugin)Activator.CreateInstance(managerPluginInstances.First());
                     ActiveMods.Add(managerPlugin.GUID, managerPlugin);
-                    if (managerPlugin.AllClientsRequireMod) HostAndClientMods.Add(managerPlugin.GUID, managerPlugin);
+                    if (managerPlugin.MPType == MultiplayerType.All) HostAndClientMods.Add(managerPlugin.GUID, managerPlugin);
                     Chat.Router.CommandHandler.DiscoverCommands(assembly, managerPlugin.Name);
                 }
                 else
