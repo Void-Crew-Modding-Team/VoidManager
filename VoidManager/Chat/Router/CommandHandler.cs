@@ -27,7 +27,7 @@ namespace VoidManager.Chat.Router
             }
             catch (Exception ex)
             {
-                Plugin.Log.LogInfo($"'{(publicCommand ? "!" : "/")}{alias} {arguments}' failed! \nCommand Exception: {ex.Message}!\n{ex.StackTrace}", LogType.WarningLog);
+                Plugin.Log.LogError($"'{(publicCommand ? "!" : "/")}{alias} {arguments}' failed! \nCommand Exception: {ex.Message}!\n{ex.StackTrace}");
             }
         }
 

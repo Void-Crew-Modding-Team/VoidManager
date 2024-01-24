@@ -18,7 +18,7 @@ namespace VoidManager.Mod
             {
                 return null;
             }
-            return new ManagerPlugin((string)customAttribute.ConstructorArguments[0].Value, (string)customAttribute.ConstructorArguments[1].Value, (string)customAttribute.ConstructorArguments[2].Value, (customAttribute.ConstructorArguments.Count > 3 ? (bool)customAttribute.ConstructorArguments[3].Value : false ) );
+            return new ManagerPlugin((string)customAttribute.ConstructorArguments[0].Value, (string)customAttribute.ConstructorArguments[1].Value, (string)customAttribute.ConstructorArguments[2].Value, (customAttribute.ConstructorArguments.Count > 3 ? (MultiplayerType)customAttribute.ConstructorArguments[3].Value : MultiplayerType.Client ) );
         }
     }
 }
