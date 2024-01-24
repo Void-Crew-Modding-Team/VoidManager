@@ -5,7 +5,8 @@ using VoidManager.Mod;
 
 namespace VoidManager
 {
-    [ManagerPlugin("Mest", "VoidManager", MyPluginInfo.PLUGIN_VERSION)]
+    [BepInPlugin("Mest.VoidManager", "VoidManager", "0.0.1")]
+    [ManagerRestrict(MultiplayerType.Hidden)]
     [BepInProcess("Void Crew.exe")]
     public class Plugin : BaseUnityPlugin
     {

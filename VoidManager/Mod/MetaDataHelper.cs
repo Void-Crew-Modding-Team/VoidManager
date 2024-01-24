@@ -21,35 +21,23 @@ namespace VoidManager.Mod
             return list;
         }
 
-        /*public static ManagerPlugin GetMetadata(Type pluginType)
+        /// <summary>
+        /// Retrieves the Custom Attribute Details for a given plugin.
+        /// </summary>
+        /// <typeparam name="T">Attribute metadata to look for</typeparam>
+        /// <param name="pPlugin">Object to look for the metadata with</param>
+        /// <param name="pAttributeDetails">Metadata for the objects detailed Attribute</param>
+        /// <returns>True/False on if it was successful</returns>
+        internal static bool TryGetMetaData<T>(object pPlugin, out T pAttributeDetails) where T : Attribute
         {
-            object[] customAttributes = pluginType.GetCustomAttributes(typeof(ManagerPlugin), inherit: false);
+            object[] customAttributes = pPlugin.GetType().GetCustomAttributes(typeof(T), inherit: false);
+            pAttributeDetails = null;
             if (customAttributes.Length == 0)
             {
-                return null;
+                return false;
             }
-
-            return (ManagerPlugin)customAttributes[0];
-        }*/
-
-        /*public static ManagerPlugin GetMetadata(object plugin)
-        {
-            return GetMetadata(plugin.GetType());
-        }*/
-
-        public static T[] GetAttributes<T>(Type pluginType) where T : Attribute
-        {
-            return (T[])pluginType.GetCustomAttributes(typeof(T), inherit: true);
+            pAttributeDetails = (T)customAttributes[0];
+            return true;
         }
-
-        /*public static IEnumerable<T> GetAttributes<T>(object plugin) where T : Attribute
-        {
-            return GetAttributes<T>(plugin.GetType());
-        }
-
-        public static IEnumerable<BepInDependency> GetDependencies(Type plugin)
-        {
-            return plugin.GetCustomAttributes(typeof(BepInDependency), inherit: true).Cast<BepInDependency>();
-        }*/
     }
 }
