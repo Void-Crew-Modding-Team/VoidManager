@@ -26,7 +26,7 @@ namespace VoidManager.Chat.Router
     internal class PublicCommandDetectPatch
     { // Other player chat command
         [HarmonyPostfix]
-        public static void DiscoverPublicCommand(string displayName, IChannelTextMessage channelTextMessage)
+        public static void DiscoverPublicCommand(Photon.Realtime.Player p, IChannelTextMessage channelTextMessage)
         {
             string result = channelTextMessage.Message;
             if (!result.StartsWith("!")) return;
@@ -34,7 +34,7 @@ namespace VoidManager.Chat.Router
             string alias = result.Split(' ')[0];
             CG.Game.Player.Player Player = Game.GetPlayerByName(channelTextMessage.Sender.DisplayName);
             string arguments = result.Substring(alias.Length + (result.Split(' ').Count() == 1 ? 0 : 1));
-            Logger.Info($"'!{alias} {arguments}' attempted by {displayName}");
+            Plugin.Log.LogInfo($"'!{alias} {arguments}' attempted by {p.NickName}");
             CommandHandler.ExecuteCommandFromAlias(alias, arguments, true, Game.GetIDFromPlayer(Player));
         }
     }
