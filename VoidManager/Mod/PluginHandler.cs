@@ -10,14 +10,14 @@ namespace VoidManager.Mod
     internal class PluginHandler
     {
         public static Dictionary<string, PluginInfo> ActiveMods { get => Chainloader.PluginInfos; }
-        public static Dictionary<string, PluginInfo> HostAndClientMods { get; set; }
+        public static Dictionary<string, VoidPlugin> ActivePlugins { get; private set; }
 
         /// <summary>
         /// Iterates through the current Plugin files and searches for commands.
         /// </summary>
         public static void DiscoverPlugins()
         {
-            HostAndClientMods = new Dictionary<string, PluginInfo>();
+            ActivePlugins = new Dictionary<string, VoidPlugin>();
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (PluginInfo plugin in Chainloader.PluginInfos.Values)
             {
@@ -28,11 +28,11 @@ namespace VoidManager.Mod
                 {
                     VoidPlugin voidPlugin = (VoidPlugin)Activator.CreateInstance(voidPluginInstances.First());
                     Chat.Router.CommandHandler.DiscoverCommands(assembly, voidPlugin.Name);
-                    if (voidPlugin.MPType == MultiplayerType.All) HostAndClientMods.Add(plugin.Metadata.GUID, plugin);
+                    ActivePlugins.Add(plugin.Metadata.GUID, voidPlugin);
                 }
             }
             Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Discovered {ActiveMods.Count} Mods");
-            Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Discovered {HostAndClientMods.Count} Host and Client Mods");
+            Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Discovered {ActivePlugins.Count} VoidManager Plugins");
         }
     }
 }

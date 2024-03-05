@@ -117,9 +117,9 @@ namespace VoidManager.MPModChecks
             {
                 PluginInfo currentMod = UnprocessedMods[i].Value;
                 string GUID = currentMod.Metadata.GUID;
-                if (Mod.MetadataHelper.TryGetMetaData(currentMod, out ManagerRestrict MngerRestAtt)) //Check for metadata for MPType. If metadata doesn't exist, default to MPType.all
+                if (PluginHandler.ActivePlugins.TryGetValue(GUID, out VoidPlugin voidPlugin)) //Check for metadata for MPType. If metadata doesn't exist, default to MPType.all
                 {
-                    ProcessedMods[i] = new MPModDataBlock(GUID, currentMod.Metadata.Name, currentMod.Metadata.Version.ToString(), MngerRestAtt.MPType, string.Empty, GetFileHash(currentMod.Location)); //fixme
+                    ProcessedMods[i] = new MPModDataBlock(GUID, currentMod.Metadata.Name, currentMod.Metadata.Version.ToString(), voidPlugin.MPType, string.Empty, GetFileHash(currentMod.Location)); //fixme
                 }
                 else
                 {
