@@ -13,23 +13,7 @@ namespace VoidManager.Mod
     /// </summary>
     public abstract class VoidPlugin
     {
-        protected Harmony harmony;
         internal FileVersionInfo VersionInfo;
-        public VoidPlugin()
-        {
-            Assembly asm = GetType().Assembly;
-            var bepInPluginInstances = asm.GetTypes().Where(t => typeof(BepInPlugin).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
-            if (bepInPluginInstances.Any())
-            {
-                BepInPlugin managerPlugin = (BepInPlugin)Activator.CreateInstance(bepInPluginInstances.First());
-                harmony = new Harmony(managerPlugin.GUID);
-                harmony.PatchAll(asm);
-            }
-            else
-            {
-                Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Failed to patch Harmony for {Name}");
-            }
-        }
 
         /// <summary>
         /// Version of mod.
