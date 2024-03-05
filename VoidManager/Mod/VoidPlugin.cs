@@ -1,10 +1,5 @@
-﻿using HarmonyLib;
-using System;
-using System.Reflection;
+﻿using BepInEx;
 using System.Diagnostics;
-using BepInEx;
-using UnityEngine;
-using System.Linq;
 
 namespace VoidManager.Mod
 {
@@ -14,6 +9,16 @@ namespace VoidManager.Mod
     public abstract class VoidPlugin
     {
         internal FileVersionInfo VersionInfo;
+
+        /// <summary>
+        /// Automatically assigned by VoidManager
+        /// </summary>
+        public readonly PluginInfo MyBepinPlugin;
+
+        public VoidPlugin(PluginInfo BepinPluginInfo)
+        {
+            MyBepinPlugin = BepinPluginInfo;
+        }
 
         /// <summary>
         /// Version of mod.
@@ -38,24 +43,13 @@ namespace VoidManager.Mod
         }
 
         /// <summary>
-        /// Short (one line) description of mod.
+        /// description of mod. Ideal for in-game readme or patch notes.
         /// </summary>
-        public virtual string ShortDescription
+        public virtual string Description
         {
             get
             {
                 return VersionInfo?.FileDescription;
-            }
-        }
-
-        /// <summary>
-        /// Long (mutli-line) description of mod.  Ideal for in-game readme or patch notes.
-        /// </summary>
-        public virtual string LongDescription
-        {
-            get
-            {
-                return String.Empty;
             }
         }
 
@@ -66,10 +60,16 @@ namespace VoidManager.Mod
         {
             get
             {
-                return VersionInfo?.ProductName;
+                return MyBepinPlugin.Metadata.Name;
             }
         }
 
+        /// <summary>
+        /// Mod's multiplayer requirements. Use Mod.MultiplayerType.<br/>
+        /// Client: No requirement<br/>
+        /// All: All players must have the mod installed
+        /// Hidden: Hidden from mod lists<br/>
+        /// </summary>
         public virtual MultiplayerType MPType
         {
             get

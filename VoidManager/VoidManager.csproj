@@ -20,6 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Mod\MetaDataHelper.cs" />
     <Compile Remove="Utilities\Logger.cs" />
   </ItemGroup>
 
