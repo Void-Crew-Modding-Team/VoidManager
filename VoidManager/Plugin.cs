@@ -1,7 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using VoidManager.Mod;
 
 namespace VoidManager
 {

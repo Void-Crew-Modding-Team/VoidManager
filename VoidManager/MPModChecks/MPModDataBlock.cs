@@ -1,6 +1,4 @@
-﻿using VoidManager.Mod;
-
-namespace VoidManager.MPModChecks
+﻿namespace VoidManager.MPModChecks
 {
     /// <summary>
     /// Holds data about Mods for MPModChecks

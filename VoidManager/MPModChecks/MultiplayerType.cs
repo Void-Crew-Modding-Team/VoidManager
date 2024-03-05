@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VoidManager.Mod
+namespace VoidManager.MPModChecks
 {
     //MultiplayerType
     public enum MultiplayerType

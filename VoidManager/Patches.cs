@@ -11,7 +11,7 @@ namespace VoidManager
         public static void PostAwakeInit()
         {
             Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Discovering mods . . .");
-            Mod.PluginHandler.DiscoverPlugins();
+            PluginHandler.DiscoverPlugins();
             Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] . . . Discovery finished");
 
             new MPModCheckManager();

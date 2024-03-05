@@ -1,7 +1,8 @@
 ﻿using BepInEx;
 using System.Diagnostics;
+using VoidManager.MPModChecks;
 
-namespace VoidManager.Mod
+namespace VoidManager
 {
     /// <summary>
     /// Used by V-Man to signify a mod. Must have a unique harmonyID
@@ -65,7 +66,7 @@ namespace VoidManager.Mod
         }
 
         /// <summary>
-        /// Mod's multiplayer requirements. Use Mod.MultiplayerType.<br/>
+        /// Mod's multiplayer requirements. Use MPModChecks.MultiplayerType.<br/>
         /// Client: No requirement<br/>
         /// All: All players must have the mod installed
         /// Hidden: Hidden from mod lists<br/>

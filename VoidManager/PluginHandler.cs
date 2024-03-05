@@ -6,9 +6,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
-namespace VoidManager.Mod
+namespace VoidManager
 {
-    internal class PluginHandler
+    static class PluginHandler
     {
         public static Dictionary<string, PluginInfo> ActiveBepinPlugins { get => Chainloader.PluginInfos; }
         public static Dictionary<string, VoidPlugin> ActiveVoidPlugins { get; private set; }
@@ -26,7 +26,7 @@ namespace VoidManager.Mod
                 var voidPluginInstances = assembly.GetTypes().Where(t => typeof(VoidPlugin).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
                 if (voidPluginInstances.Any())
                 {
-                    VoidPlugin voidPlugin = (VoidPlugin)Activator.CreateInstance(voidPluginInstances.First(), new object[] { plugin } );
+                    VoidPlugin voidPlugin = (VoidPlugin)Activator.CreateInstance(voidPluginInstances.First(), new object[] { plugin });
                     Chat.Router.CommandHandler.DiscoverCommands(assembly, voidPlugin.Name);
                     ActiveVoidPlugins.Add(plugin.Metadata.GUID, voidPlugin);
                     voidPlugin.VersionInfo = FileVersionInfo.GetVersionInfo(plugin.Location);
