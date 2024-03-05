@@ -34,6 +34,9 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>Files\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Void Crew\Void Crew_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>false</Private>

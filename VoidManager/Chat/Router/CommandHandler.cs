@@ -88,7 +88,7 @@ namespace VoidManager.Chat.Router
                 {
                     if (chatCommands.ContainsKey(commandAlias))
                     {
-                        Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Found duplicate command alias {commandAlias}");
+                        Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] [{ModName}] Found duplicate command alias {commandAlias}");
                         continue;
                     }
                     else
@@ -96,7 +96,7 @@ namespace VoidManager.Chat.Router
                         chatCommands.Add(commandAlias, modInstance);
                     }
                 }
-                Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Added {chatCommandCount} chat commands");
+                Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] [{ModName}] Added {chatCommandCount} chat commands");
             }
         }
     }

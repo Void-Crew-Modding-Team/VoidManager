@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Bootstrap;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,30 +9,26 @@ namespace VoidManager.Mod
 {
     internal class PluginHandler
     {
-        public static Dictionary<string, BepInPlugin> ActiveMods { get; set; }
-        public static Dictionary<string, BepInPlugin> HostAndClientMods { get; set; }
+        public static Dictionary<string, PluginInfo> ActiveMods { get => Chainloader.PluginInfos; }
+        public static Dictionary<string, PluginInfo> HostAndClientMods { get; set; }
 
         /// <summary>
         /// Iterates through the current Plugin files and searches for commands.
         /// </summary>
         public static void DiscoverPlugins()
         {
-            ActiveMods = new Dictionary<string, BepInPlugin>();
-            HostAndClientMods = new Dictionary<string, BepInPlugin>();
+            HostAndClientMods = new Dictionary<string, PluginInfo>();
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (var assembly in assemblies)
+            foreach (PluginInfo plugin in Chainloader.PluginInfos.Values)
             {
-                var types = assembly.GetTypes();
-
-                // Finds ManagerPlugin implementations from all the Assemblies in the same file location.
-                var bepInPluginInstances = types.Where(t => typeof(BepInPlugin).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
-                if (bepInPluginInstances.Any())
+                Assembly assembly = plugin.Instance.GetType().Assembly;
+                // Finds VoidPlugin class.
+                var voidPluginInstances = assembly.GetTypes().Where(t => typeof(VoidPlugin).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+                if (voidPluginInstances.Any())
                 {
-                    BepInPlugin managerPlugin = (BepInPlugin)Activator.CreateInstance(bepInPluginInstances.First());
-                    ActiveMods.Add(managerPlugin.GUID, managerPlugin);
-                    if (MetadataHelper.TryGetMetaData(managerPlugin, out ManagerRestrict MngerRestAtt) && MngerRestAtt.MPType == MultiplayerType.All)
-                        HostAndClientMods.Add(managerPlugin.GUID, managerPlugin);
-                    Chat.Router.CommandHandler.DiscoverCommands(assembly, managerPlugin.Name);
+                    VoidPlugin voidPlugin = (VoidPlugin)Activator.CreateInstance(voidPluginInstances.First());
+                    Chat.Router.CommandHandler.DiscoverCommands(assembly, voidPlugin.Name);
+                    if (voidPlugin.MPType == MultiplayerType.All) HostAndClientMods.Add(plugin.Metadata.GUID, plugin);
                 }
             }
             Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Discovered {ActiveMods.Count} Mods");
