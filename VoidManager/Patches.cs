@@ -1,6 +1,6 @@
-﻿using BepInEx.Logging;
-using CG.Profile;
+﻿using CG.Profile;
 using HarmonyLib;
+using VoidManager.MPModChecks;
 
 namespace VoidManager
 {
@@ -8,11 +8,13 @@ namespace VoidManager
     internal class PluginDetectPatch
     {
         [HarmonyPostfix]
-        public static void DiscoverCommandMods()
+        public static void PostAwakeInit()
         {
             Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Discovering mods . . .");
             Mod.PluginHandler.DiscoverPlugins();
             Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] . . . Discovery finished");
+
+            new MPModCheckManager();
         }
     }
 }
