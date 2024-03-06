@@ -14,11 +14,14 @@ namespace VoidManager
         /// <summary>
         /// Automatically assigned by VoidManager
         /// </summary>
-        public readonly PluginInfo MyBepinPlugin;
+        internal PluginInfo BepinPlugin;
 
-        public VoidPlugin(PluginInfo BepinPluginInfo)
+        /// <summary>
+        /// Automatically assigned by VoidManager
+        /// </summary>
+        public PluginInfo MyBepinPlugin
         {
-            MyBepinPlugin = BepinPluginInfo;
+            get => BepinPlugin;
         }
 
         /// <summary>

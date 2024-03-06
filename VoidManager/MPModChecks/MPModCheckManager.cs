@@ -118,7 +118,10 @@ namespace VoidManager.MPModChecks
                 string GUID = currentMod.Metadata.GUID;
                 if (PluginHandler.ActiveVoidPlugins.TryGetValue(GUID, out VoidPlugin voidPlugin)) //Check for metadata for MPType. If metadata doesn't exist, default to MPType.all
                 {
-                    ProcessedMods[i] = new MPModDataBlock(GUID, currentMod.Metadata.Name, currentMod.Metadata.Version.ToString(), voidPlugin.MPType, string.Empty, GetFileHash(currentMod.Location));
+                    if (voidPlugin.MPType != MultiplayerType.Hidden) //Do nothing if marked as hidden.
+                    {
+                        ProcessedMods[i] = new MPModDataBlock(GUID, currentMod.Metadata.Name, currentMod.Metadata.Version.ToString(), voidPlugin.MPType, string.Empty, GetFileHash(currentMod.Location));
+                    }
                 }
                 else
                 {

@@ -19,17 +19,18 @@ namespace VoidManager
         public static void DiscoverPlugins()
         {
             ActiveVoidPlugins = new Dictionary<string, VoidPlugin>();
-            foreach (PluginInfo plugin in Chainloader.PluginInfos.Values)
+            foreach (PluginInfo BepinPlugin in Chainloader.PluginInfos.Values)
             {
-                Assembly assembly = plugin.Instance.GetType().Assembly;
+                Assembly assembly = BepinPlugin.Instance.GetType().Assembly;
                 // Finds VoidPlugin class.
                 var voidPluginInstances = assembly.GetTypes().Where(t => typeof(VoidPlugin).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
                 if (voidPluginInstances.Any())
                 {
-                    VoidPlugin voidPlugin = (VoidPlugin)Activator.CreateInstance(voidPluginInstances.First(), new object[] { plugin });
+                    VoidPlugin voidPlugin = (VoidPlugin)Activator.CreateInstance(voidPluginInstances.First());
                     Chat.Router.CommandHandler.DiscoverCommands(assembly, voidPlugin.Name);
-                    ActiveVoidPlugins.Add(plugin.Metadata.GUID, voidPlugin);
-                    voidPlugin.VersionInfo = FileVersionInfo.GetVersionInfo(plugin.Location);
+                    ActiveVoidPlugins.Add(BepinPlugin.Metadata.GUID, voidPlugin);
+                    voidPlugin.VersionInfo = FileVersionInfo.GetVersionInfo(BepinPlugin.Location);
+                    voidPlugin.BepinPlugin = BepinPlugin;
                 }
             }
             Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Discovered {ActiveBepinPlugins.Count} Mods");
