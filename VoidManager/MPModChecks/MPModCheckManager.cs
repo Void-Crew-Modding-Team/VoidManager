@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
+using System.Text;
 using UnityEngine;
 using VoidManager.MPModChecks.Callbacks;
 using VoidManager.Utilities;
@@ -51,8 +51,6 @@ namespace VoidManager.MPModChecks
             }
         }
 
-        
-
         public byte[] GetRoomProperties()
         {
             return RoomProperties;
@@ -84,14 +82,6 @@ namespace VoidManager.MPModChecks
             PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { RoomModsPropertyKey, RoomProperties } });
         }
 
-        static byte[] GetFileHash(string fileLocation)
-        {
-            using (SHA256 Hasher = SHA256.Create())
-            {
-                return Hasher.ComputeHash(File.ReadAllBytes(fileLocation));
-            }
-        }
-
         private void UpdateHighestLevelOfMPMods(MultiplayerType MT)
         {
             //Tier: All > Client > Hidden
@@ -99,7 +89,7 @@ namespace VoidManager.MPModChecks
             {
                 HighestLevelOfMPMods = MT;
             }
-            else if(HighestLevelOfMPMods == MultiplayerType.Client && MT == MultiplayerType.All)
+            else if (HighestLevelOfMPMods == MultiplayerType.Client && MT == MultiplayerType.All)
             {
                 HighestLevelOfMPMods = MultiplayerType.All;
             }
@@ -116,22 +106,30 @@ namespace VoidManager.MPModChecks
             {
                 PluginInfo currentMod = UnprocessedMods[i].Value;
                 string GUID = currentMod.Metadata.GUID;
-                if (PluginHandler.ActiveVoidPlugins.TryGetValue(GUID, out VoidPlugin voidPlugin)) //Check for metadata for MPType. If metadata doesn't exist, default to MPType.all
+                if (GUID == MyPluginInfo.PLUGIN_GUID)
+                {
+                    continue;
+                }
+                else if (PluginHandler.ActiveVoidPlugins.TryGetValue(GUID, out VoidPlugin voidPlugin)) //Check for metadata for MPType. If metadata doesn't exist, default to MPType.all
                 {
                     if (voidPlugin.MPType != MultiplayerType.Hidden) //Do nothing if marked as hidden.
                     {
-                        ProcessedMods[i] = new MPModDataBlock(GUID, currentMod.Metadata.Name, currentMod.Metadata.Version.ToString(), voidPlugin.MPType, string.Empty, GetFileHash(currentMod.Location));
+                        ProcessedMods[i] = new MPModDataBlock(GUID, currentMod.Metadata.Name, currentMod.Metadata.Version.ToString(), voidPlugin.MPType, string.Empty, voidPlugin.ModHash);
+                        UpdateHighestLevelOfMPMods(voidPlugin.MPType);
                     }
                 }
                 else
                 {
-                    ProcessedMods[i] = new MPModDataBlock(GUID, currentMod.Metadata.Name, currentMod.Metadata.Version.ToString(), MultiplayerType.All, string.Empty, GetFileHash(currentMod.Location));
+                    ProcessedMods[i] = new MPModDataBlock(GUID, currentMod.Metadata.Name, currentMod.Metadata.Version.ToString(), MultiplayerType.All, string.Empty, PluginHandler.GetFileHash(currentMod.Location));
+                    UpdateHighestLevelOfMPMods(MultiplayerType.All);
                 }
             }
+            ProcessedMods = ProcessedMods.Where(mod => mod != null).ToArray();
             MyModList = ProcessedMods;
             MyMPModList = ProcessedMods.Where(Mod => Mod.MPType == MultiplayerType.All).ToArray();
             stopwatch.Stop();
             Plugin.Log.LogInfo("Finished Building MyModList, time elapsted: " + stopwatch.ElapsedMilliseconds.ToString());
+            Plugin.Log.LogInfo($"MyModList:\n{GetModListAsString(MyModList)}\n");
         }
 
         /// <summary>
@@ -275,7 +273,7 @@ namespace VoidManager.MPModChecks
             string ModList = string.Empty;
             foreach (MPModDataBlock DataBlock in ModDatas)
             {
-                ModList += $"\n{DataBlock.ModName}";
+                ModList += $"\n - {DataBlock.ModName} {DataBlock.Version}";
             }
             return ModList;
         }
@@ -367,7 +365,7 @@ namespace VoidManager.MPModChecks
         /// <param name="modList"></param>
         public void AddNetworkedPeerMods(Player Player, MPUserDataBlock modList)
         {
-            Plugin.Log.LogMessage($"recieved modlist from user with the following info:\nVMVersion: {modList.VMVersion}\n\nModlist:{MPModCheckManager.GetModListAsString(modList.ModData)}");
+            Plugin.Log.LogMessage($"recieved modlist from user '{Player.NickName}' with the following info:\nPMLVersion: {modList.VMVersion}\nModList:\n{MPModCheckManager.GetModListAsString(modList.ModData)}\n");
             if (NetworkedPeersModLists.ContainsKey(Player))
             {
                 NetworkedPeersModLists[Player] = modList;
@@ -422,16 +420,25 @@ namespace VoidManager.MPModChecks
 
         internal void SendModlistToClient(Player Player)
         {
+            if (Player.IsLocal)
+            {
+                return;
+            }
             PhotonNetwork.RaiseEvent(MPModCheckManager.PlayerMPUserDataEventCode, new object[] { false, SerializeHashlessMPUserData() }, new RaiseEventOptions { TargetActors = new int[1] { Player.ActorNumber } }, SendOptions.SendReliable);
         }
 
         internal void SendModlistToHost()
         {
-            PhotonNetwork.RaiseEvent(MPModCheckManager.PlayerMPUserDataEventCode, new object[] { true, SerializeHashfullMPUserData() }, new RaiseEventOptions { TargetActors = new int[1] { PhotonNetwork.MasterClient.ActorNumber } }, SendOptions.SendReliable);
+            if (PhotonNetwork.IsMasterClient)
+            {
+                return;
+            }
+            PhotonNetwork.RaiseEvent(MPModCheckManager.PlayerMPUserDataEventCode, new object[] { true, SerializeHashfullMPUserData() }, new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient }, SendOptions.SendReliable);
         }
 
         internal void SendModListToOthers()
         {
+            Plugin.Log.LogMessage("sending others");
             PhotonNetwork.RaiseEvent(MPModCheckManager.PlayerMPUserDataEventCode, new object[] { false, SerializeHashlessMPUserData() }, null, SendOptions.SendReliable);
         }
 
@@ -457,6 +464,8 @@ namespace VoidManager.MPModChecks
 
         internal bool ModChecksClientside(Hashtable RoomProperties)
         {
+            Plugin.Log.LogMessage($"Starting Clientside mod checks for room: {RoomProperties["R_Na"]}");
+
             if (!RoomProperties.ContainsKey(RoomModsPropertyKey))//Host doesn't have mods
             {
                 if (HighestLevelOfMPMods == MultiplayerType.All)
@@ -474,6 +483,8 @@ namespace VoidManager.MPModChecks
             //Selects only mods which have MPType set to all for comparison.
             MPUserDataBlock HostModData = DeserializeHashlessMPUserData((byte[])RoomProperties[RoomModsPropertyKey]);
             MPModDataBlock[] HostMods = HostModData.ModData.Where(Mod => Mod.MPType == MultiplayerType.All).ToArray();
+
+            Plugin.Log.LogMessage($"Void Manager versions - Host: {HostModData.VMVersion} Client: {MyPluginInfo.PLUGIN_VERSION}");
 
             List<string> MismatchedVersions = new List<string>();
             List<string> ClientMissing = new List<string>();
@@ -581,7 +592,6 @@ namespace VoidManager.MPModChecks
             MPModDataBlock[] JoiningClientMPMods = JoiningPlayerMPData.ModData.Where(Mod => Mod.MPType == MultiplayerType.All).ToArray();
 
             List<string> MismatchedVersions = new List<string>();
-            List<string> MismatchedHash = new List<string>();
             List<string> JoiningClientMissing = new List<string>();
             List<string> LocalClientMissing = new List<string>();
 
@@ -605,11 +615,11 @@ namespace VoidManager.MPModChecks
                             MismatchedVersions.Add($"Client:{CurrentLocalMod.ModName}-{CurrentLocalMod.Version}, Host:{CurrentJoiningClientMod.Version}");
                             Plugin.Log.LogMessage($"Mismatched mod version - {MismatchedVersions.Last()}. {((CurrentLocalMod.DownloadID != string.Empty) ? $"Download Link: {CurrentLocalMod.DownloadID}" : "")}");
                         }
-                        else if (CurrentLocalMod.Hash != CurrentJoiningClientMod.Hash)
+                        else if (Encoding.ASCII.GetString(CurrentLocalMod.Hash) != Encoding.ASCII.GetString(CurrentJoiningClientMod.Hash))
                         {
                             //Mod Hash Mismatch. Log hash, but tell joining client it's a version mismatch.
                             MismatchedVersions.Add($"Client:{ CurrentLocalMod.ModName}-{ CurrentLocalMod.Version}, Host: { CurrentJoiningClientMod.Version}");
-                            Plugin.Log.LogMessage($"Mismatched mod hash - {MismatchedHash.Last()}. {((CurrentLocalMod.DownloadID != string.Empty) ? $"Download Link: {CurrentLocalMod.DownloadID}" : "")}");
+                            Plugin.Log.LogMessage($"Mismatched mod hash - {MismatchedVersions.Last()} - LocalHash: {Encoding.ASCII.GetString(CurrentLocalMod.Hash)} IncomingHash: {Encoding.ASCII.GetString(CurrentJoiningClientMod.Hash)}. {((CurrentLocalMod.DownloadID != string.Empty) ? $"Download Link: {CurrentLocalMod.DownloadID}" : "")}");
                         }
                         break;
                     }
@@ -679,8 +689,10 @@ namespace VoidManager.MPModChecks
                 PhotonNetwork.CloseConnection(joiningPlayer);
                 Plugin.Log.LogMessage($"Kicked player {joiningPlayer.NickName} from session for incompatable mods.\n{errorMessage}");
             }
-
-            Plugin.Log.LogMessage("Hostside mod check passed for player " + joiningPlayer.NickName);
+            else
+            {
+                Plugin.Log.LogMessage("Hostside mod check passed for player " + joiningPlayer.NickName);
+            }
         }
     }
 }

@@ -10,6 +10,7 @@ namespace VoidManager
     public abstract class VoidPlugin
     {
         internal FileVersionInfo VersionInfo;
+        internal byte[] ModHash;
 
         /// <summary>
         /// Automatically assigned by VoidManager
@@ -22,17 +23,6 @@ namespace VoidManager
         public PluginInfo MyBepinPlugin
         {
             get => BepinPlugin;
-        }
-
-        /// <summary>
-        /// Version of mod.
-        /// </summary>
-        public virtual string Version
-        {
-            get
-            {
-                return VersionInfo?.FileVersion;
-            }
         }
 
         /// <summary>
@@ -54,17 +44,6 @@ namespace VoidManager
             get
             {
                 return VersionInfo?.FileDescription;
-            }
-        }
-
-        /// <summary>
-        /// Name of mod.
-        /// </summary>
-        public virtual string Name
-        {
-            get
-            {
-                return MyBepinPlugin.Metadata.Name;
             }
         }
 

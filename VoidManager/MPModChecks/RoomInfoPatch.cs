@@ -40,12 +40,15 @@ namespace VoidManager.MPModChecks
             {
                 if (InstructionList[i].opcode == OpCodes.Call)
                 {
-                    if ((MethodInfo)InstructionList[i].operand != AccessTools.Method(typeof(PhotonNetwork), "CreateRoom"))
+                    if ((MethodInfo)InstructionList[i].operand == AccessTools.Method(typeof(PhotonNetwork), "CreateRoom"))
+                    {
+                        InstructionList.Insert(i - 3, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(RoomInfoPatch), "PatchMethod")));
+                    }
+                    else
                     {
                         Plugin.Log.LogError("Failed to patch PhotonService.PhotonCreateRoom. Targeted method appears to have changed. Index: " + i.ToString());
-                        return InstructionList.AsEnumerable();
                     }
-                    InstructionList.Insert(i - 3, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(RoomInfoPatch), "PatchMethod")));
+                    break;
                 }
             }
             return InstructionList.AsEnumerable();

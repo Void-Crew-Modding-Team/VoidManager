@@ -4,7 +4,7 @@ using HarmonyLib;
 
 namespace VoidManager
 {
-    [BepInPlugin("Mest.VoidManager", "VoidManager", "0.0.1")]
+    [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
     [BepInProcess("Void Crew.exe")]
     public class Plugin : BaseUnityPlugin
     {
@@ -14,8 +14,9 @@ namespace VoidManager
         private void Awake()
         {
             instance = this;
-            Harmony.PatchAll();
             Log = Logger;
+
+            Harmony.PatchAll();
             Log.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
             
         }

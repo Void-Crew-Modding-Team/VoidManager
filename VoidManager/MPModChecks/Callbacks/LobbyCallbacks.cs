@@ -11,10 +11,11 @@ namespace VoidManager.MPModChecks.Callbacks
     class LobbyCallbacks : ILobbyCallbacks //Exists for ClientSide mod check in lobby join menus.
     {
         internal static LobbyCallbacks Instance;
+        internal static MatchmakingTerminal ActiveTerminal;
 
         public Hashtable SelectedRoomProperties; 
 
-        static FieldInfo MatchlistFO = AccessTools.Field(typeof(MatchmakingHandler), "matchList");
+        static FieldInfo MatchlistFO = AccessTools.Field(typeof(MatchmakingTerminal), "matchList");
 
         public void OnJoinedLobby()
         {
@@ -31,7 +32,12 @@ namespace VoidManager.MPModChecks.Callbacks
 
         public void OnRoomListUpdate(List<RoomInfo> roomList)
         {
-            string SelectedRoomID = ((MatchmakingList)MatchlistFO.GetValue(MatchmakingHandler.Instance)).GetSelectedRoom().RoomId;
+            if (ActiveTerminal == null)
+            {
+                return;
+            }
+
+            string SelectedRoomID = ((MatchmakingList)MatchlistFO.GetValue(ActiveTerminal)).GetSelectedRoom().RoomId;
             foreach (RoomInfo roomInfo in roomList)
             {
                 if(roomInfo.Name == SelectedRoomID)
@@ -61,6 +67,23 @@ namespace VoidManager.MPModChecks.Callbacks
         {
             PhotonNetwork.RemoveCallbackTarget(LobbyCallbacks.Instance);
             LobbyCallbacks.Instance = null;
+        }
+    }
+    [HarmonyPatch(typeof(MatchmakingTerminal), "OnEnable")]
+    class TerminalEnablePatch
+    { 
+        static void Postfix(MatchmakingTerminal __instance)
+        {
+            LobbyCallbacks.ActiveTerminal = __instance;
+        }
+    }
+
+    [HarmonyPatch(typeof(MatchmakingTerminal), "OnDisable")]
+    class TerminalDisablePatch
+    {
+        static void Postfix()
+        {
+            LobbyCallbacks.ActiveTerminal = null;
         }
     }
 }

@@ -18,9 +18,16 @@ namespace VoidManager.MPModChecks.Callbacks
 
         public void OnEvent(EventData photonEvent)
         {
-            Player sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(photonEvent.Sender);
             if (photonEvent.Code == MPModCheckManager.PlayerMPUserDataEventCode)
             {
+                Player sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(photonEvent.Sender);
+
+                if (sender.IsLocal)
+                {
+                    Plugin.Log.LogWarning("Recieved data from self. Ignoring data.");
+                    return;
+                }
+
                 object[] data = (object[])photonEvent.CustomData;
                 if ((bool)data[0])//Hashfull vs Hashless marker
                 {
@@ -53,7 +60,10 @@ namespace VoidManager.MPModChecks.Callbacks
             MPModCheckManager.Instance.SendModListToOthers();
 
             //Add host mod list to local cache.
-            MPModCheckManager.Instance.AddNetworkedPeerMods(PhotonNetwork.MasterClient, MPModCheckManager.Instance.GetHostModList());
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                MPModCheckManager.Instance.AddNetworkedPeerMods(PhotonNetwork.MasterClient, MPModCheckManager.Instance.GetHostModList());
+            }
         }
 
         public void OnLeftRoom()
@@ -73,7 +83,7 @@ namespace VoidManager.MPModChecks.Callbacks
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                Plugin.instance.StartCoroutine(MPModCheckManager.PlayerJoinedChecks(newPlayer));
+                PunSingleton<PhotonService>.Instance.StartCoroutine(MPModCheckManager.PlayerJoinedChecks(newPlayer)); //Plugin is not a valid monobehaviour.
             }
             else
             {
