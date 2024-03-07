@@ -25,6 +25,11 @@ namespace VoidManager
             {
                 Assembly assembly = BepinPlugin.Instance.GetType().Assembly;
                 // Finds VoidPlugin class.
+                if(BepinPlugin.Metadata.GUID == MyPluginInfo.PLUGIN_GUID)
+                {
+                    Chat.Router.CommandHandler.DiscoverCommands(assembly, BepinPlugin.Metadata.Name);
+                    continue;
+                }
                 var voidPluginInstances = assembly.GetTypes().Where(t => typeof(VoidPlugin).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
                 if (voidPluginInstances.Any())
                 {
