@@ -122,8 +122,8 @@ namespace VoidManager.MPModChecks
                 }
                 else
                 {
-                    ProcessedMods[i] = new MPModDataBlock(GUID, currentMod.Metadata.Name, currentMod.Metadata.Version.ToString(), MultiplayerType.Hidden, string.Empty, PluginHandler.GetFileHash(currentMod.Location));
-                    UpdateHighestLevelOfMPMods(MultiplayerType.Hidden);
+                    ProcessedMods[i] = new MPModDataBlock(GUID, currentMod.Metadata.Name, currentMod.Metadata.Version.ToString(), MultiplayerType.All, string.Empty, PluginHandler.GetFileHash(currentMod.Location));
+                    UpdateHighestLevelOfMPMods(MultiplayerType.All);
                 }
             }
             ProcessedMods = ProcessedMods.Where(mod => mod != null).ToArray();
