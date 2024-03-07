@@ -60,7 +60,7 @@ namespace VoidManager.MPModChecks.Callbacks
             MPModCheckManager.Instance.SendModListToOthers();
 
             //Add host mod list to local cache.
-            if (!PhotonNetwork.IsMasterClient)
+            if (!PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(MPModCheckManager.RoomModsPropertyKey))
             {
                 MPModCheckManager.Instance.AddNetworkedPeerMods(PhotonNetwork.MasterClient, MPModCheckManager.Instance.GetHostModList());
             }

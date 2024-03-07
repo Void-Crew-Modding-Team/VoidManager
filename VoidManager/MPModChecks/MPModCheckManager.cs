@@ -88,10 +88,12 @@ namespace VoidManager.MPModChecks
             if (HighestLevelOfMPMods == MultiplayerType.Hidden && MT != MultiplayerType.Hidden)
             {
                 HighestLevelOfMPMods = MT;
+                Plugin.Log.LogInfo("Incrementing MPType to " + MT.ToString());
             }
             else if (HighestLevelOfMPMods == MultiplayerType.Client && MT == MultiplayerType.All)
             {
                 HighestLevelOfMPMods = MultiplayerType.All;
+                Plugin.Log.LogInfo("Incrementing MPType to MPType.All");
             }
         }
 
@@ -106,7 +108,7 @@ namespace VoidManager.MPModChecks
             {
                 PluginInfo currentMod = UnprocessedMods[i].Value;
                 string GUID = currentMod.Metadata.GUID;
-                if (GUID == MyPluginInfo.PLUGIN_GUID)
+                if (GUID == MyPluginInfo.PLUGIN_GUID)//Do not add VoidManager. Without a VoidPlugin it defaults to lacking
                 {
                     continue;
                 }
@@ -120,8 +122,8 @@ namespace VoidManager.MPModChecks
                 }
                 else
                 {
-                    ProcessedMods[i] = new MPModDataBlock(GUID, currentMod.Metadata.Name, currentMod.Metadata.Version.ToString(), MultiplayerType.All, string.Empty, PluginHandler.GetFileHash(currentMod.Location));
-                    UpdateHighestLevelOfMPMods(MultiplayerType.All);
+                    ProcessedMods[i] = new MPModDataBlock(GUID, currentMod.Metadata.Name, currentMod.Metadata.Version.ToString(), MultiplayerType.Hidden, string.Empty, PluginHandler.GetFileHash(currentMod.Location));
+                    UpdateHighestLevelOfMPMods(MultiplayerType.Hidden);
                 }
             }
             ProcessedMods = ProcessedMods.Where(mod => mod != null).ToArray();
@@ -470,10 +472,12 @@ namespace VoidManager.MPModChecks
             {
                 if (HighestLevelOfMPMods == MultiplayerType.All)
                 {
+                    Plugin.Log.LogMessage("Client has MPType.All mods, mod check failed.");
                     return false; //Case: Host doesn't have mods, but Client has mod(s) which need the host to install.
                 }
                 else
                 {
+                    Plugin.Log.LogMessage("Clientside mod check passed.");
                     return true; //Case: Host doesn't have mods, but client doesn't have restrictive mods.
                 }
             }
