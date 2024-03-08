@@ -10,4 +10,4 @@
 - [ ] Mod Manager UI
 - [ ] Enable/Disable Mods
 - [ ] Allow/Disallow Client Mods
-- [ ] Handle Mod-Only Sessions
+- [X] Handle Mod-Only Sessions
