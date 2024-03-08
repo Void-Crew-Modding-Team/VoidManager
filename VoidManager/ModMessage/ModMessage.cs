@@ -1,9 +1,7 @@
-﻿using BepInEx.Logging;
-using ExitGames.Client.Photon;
+﻿using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Linq;
-using Logger = VoidManager.Utilities.Logger;
 
 namespace VoidManager.ModMessage
 {
@@ -21,25 +19,25 @@ namespace VoidManager.ModMessage
         /// <summary>
         /// Send data to a Photon Player's mod specified by harmonyIdentifier and handlerIdentifier
         /// </summary>
-        /// <param name="harmonyIdentifier">VoidCrewManager.VoidCrewMod.HarmonyIdentifier()</param>
+        /// <param name="pluginGUID">VoidCrewManager.VoidCrewMod.HarmonyIdentifier()</param>
         /// <param name="handlerIdentifier">VoidCrewManager.ModMessage.GetIdentifier()</param>
         /// <param name="player"></param>
         /// <param name="arguments"></param>
         /// <param name="reliable">Send as reliable event</param>
-        public static void Send(string harmonyIdentifier, string handlerIdentifier, Player player, object[] arguments, bool reliable = false)
-            => Send(harmonyIdentifier, handlerIdentifier, new Player[] { player }, arguments, reliable);
+        public static void Send(string pluginGUID, string handlerIdentifier, Player player, object[] arguments, bool reliable = false)
+            => Send(pluginGUID, handlerIdentifier, new Player[] { player }, arguments, reliable);
 
         /// <summary>
         /// Send data to multiple Photon Player's mod specified by harmonyIdentifier and handlerIdentifier
         /// </summary>
-        /// <param name="harmonyIdentifier">VoidCrewManager.VoidCrewMod.HarmonyIdentifier()</param>
+        /// <param name="pluginGUID">VoidCrewManager.VoidCrewMod.HarmonyIdentifier()</param>
         /// <param name="handlerIdentifier">VoidCrewManager.ModMessage.GetIdentifier()</param>
         /// <param name="players">List of players</param>
         /// <param name="arguments"></param>
         /// <param name="reliable">Send as reliable event</param>
-        public static void Send(string harmonyIdentifier, string handlerIdentifier, Player[] players, object[] arguments, bool reliable = false)
+        public static void Send(string pluginGUID, string handlerIdentifier, Player[] players, object[] arguments, bool reliable = false)
         {
-            object[] information = new object[] { harmonyIdentifier, handlerIdentifier, 
+            object[] information = new object[] { pluginGUID, handlerIdentifier, 
                 PhotonNetwork.LocalPlayer.ActorNumber};
             information.Concat(arguments);
 
@@ -53,14 +51,14 @@ namespace VoidManager.ModMessage
         /// <summary>
         /// Send data to multiple Photon Player's mod specified by harmonyIdentifier and handlerIdentifier
         /// </summary>
-        /// <param name="harmonyIdentifier">VoidCrewManager.VoidCrewMod.HarmonyIdentifier()</param>
+        /// <param name="pluginGUID">VoidCrewManager.VoidCrewMod.HarmonyIdentifier()</param>
         /// <param name="handlerIdentifier">VoidCrewManager.ModMessage.GetIdentifier()</param>
         /// <param name="recieverGroup">Photon.Realtime.ReceiverGroup (Others, All, Master)</param>
         /// <param name="arguments"></param>
         /// <param name="reliable">Send as reliable event</param>
-        public static void Send(string harmonyIdentifier, string handlerIdentifier, ReceiverGroup recieverGroup, object[] arguments, bool reliable = false)
+        public static void Send(string pluginGUID, string handlerIdentifier, ReceiverGroup recieverGroup, object[] arguments, bool reliable = false)
         {
-            object[] information = new object[] { harmonyIdentifier, handlerIdentifier,
+            object[] information = new object[] { pluginGUID, handlerIdentifier,
                 PhotonNetwork.LocalPlayer.ActorNumber};
             information.Concat(arguments);
 
@@ -95,7 +93,7 @@ namespace VoidManager.ModMessage
                 object[] args = (object[])photonEvent.CustomData;
                 if (args == null || args.Length < 3)
                 {
-                    Logger.Info("Recieved Invalid ModMessage");
+                    Plugin.Log.LogInfo("Recieved Invalid ModMessage");
                     return;
                 }
                 if (ModMessageHandler.modMessageHandlers.TryGetValue($"{args[0]}#{args[1]}", out ModMessage modMessage)
@@ -103,7 +101,7 @@ namespace VoidManager.ModMessage
                 {
                     modMessage.Handle((args.Length > 3 ? args.Skip(3).ToArray() : null), senderId);
                 }
-                Logger.Info($"Recieved Unrecognised ModMessage ({args[0] ?? "N/A"}#{args[1] ?? "N/A"}) from {args[2] ?? "N/A"}");
+                Plugin.Log.LogInfo($"Recieved Unrecognised ModMessage ({args[0] ?? "N/A"}#{args[1] ?? "N/A"}) from {args[2] ?? "N/A"}");
             }
         }
     }
