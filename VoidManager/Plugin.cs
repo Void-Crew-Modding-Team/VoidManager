@@ -1,9 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using VoidManager.ModMessage;
 
 namespace VoidManager
 {
@@ -11,21 +8,17 @@ namespace VoidManager
     [BepInProcess("Void Crew.exe")]
     public class Plugin : BaseUnityPlugin
     {
-        public static readonly Dictionary<string, VoidCrewMod> activeMods;
+        internal static Plugin instance;
         internal static readonly Harmony Harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
-        internal static ManualLogSource Log = new ManualLogSource(MyPluginInfo.PLUGIN_NAME);
+        internal static ManualLogSource Log;
         private void Awake()
         {
-            Harmony.PatchAll();
-            Logger.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
+            instance = this;
             Log = Logger;
-        }
-    }
-    public abstract class VoidCrewMod
-    {
-        internal string HarmonyIdentifier()
-        {
-            throw new NotImplementedException();
+
+            Harmony.PatchAll();
+            Log.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
+            
         }
     }
 }

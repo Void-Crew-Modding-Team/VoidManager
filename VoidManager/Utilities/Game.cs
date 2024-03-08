@@ -1,4 +1,5 @@
 ﻿using CG.Game;
+using Photon.Pun;
 using System;
 using System.Collections.Generic;
 
@@ -75,6 +76,17 @@ namespace VoidManager.Utilities
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// Returns the Local player
+        /// </summary>
+        public static CG.Game.Player.Player LocalPlayer
+        {
+            get
+            {
+                return GetPlayerFromID(PhotonNetwork.LocalPlayer.ActorNumber);
+            }
         }
     }
 }

@@ -1,9 +1,8 @@
-﻿using VoidManager.Chat.Router;
-using VoidManager.Utilities;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using VoidManager.Chat.Router;
+using VoidManager.Utilities;
 
 namespace VoidManager.Chat
 {

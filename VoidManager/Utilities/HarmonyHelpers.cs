@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using Gameplay.Chat;
+using HarmonyLib;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -52,7 +53,7 @@ namespace VoidManager.Utilities
 
                         if (showDebugOutput && foundTargetSequence)
                         {
-                            Logger.Info($"[Helper] Found {targetSequence.ElementAt(x).opcode} at {i + x}");
+                            Plugin.Log.LogInfo($"[Helper] Found {targetSequence.ElementAt(x).opcode} at {i + x}");
                         }
                     }
 
@@ -91,7 +92,7 @@ namespace VoidManager.Utilities
                         sb.AppendLine(stackTrace[lineNumber]);
                     }
 
-                    Logger.Info(sb.ToString());
+                    Plugin.Log.LogInfo(sb.ToString());
                     break;
                 }
             }
@@ -136,7 +137,7 @@ namespace VoidManager.Utilities
 
                         if (showDebugOutput && foundTargetSequence)
                         {
-                            Logger.Info($"Found {targetSequence.ElementAt(x).opcode} at {i + x}");
+                            Plugin.Log.LogInfo($"Found {targetSequence.ElementAt(x).opcode} at {i + x}");
                         }
                     }
 
@@ -160,7 +161,7 @@ namespace VoidManager.Utilities
                         sb.AppendLine(stackTrace[lineNumber]);
                     }
 
-                    Logger.Info(sb.ToString());
+                    Plugin.Log.LogInfo(sb.ToString());
                     break;
                 }
             }
@@ -216,7 +217,7 @@ namespace VoidManager.Utilities
                 sb.AppendLine($"\t{c.ToString()}");
             }
 
-            Logger.Info(sb.ToString());
+            Plugin.Log.LogInfo(sb.ToString());
         }
 
         /// <summary>

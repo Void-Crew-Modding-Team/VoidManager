@@ -1,8 +1,6 @@
 ﻿using CG.Profile;
 using HarmonyLib;
-using Photon.Pun;
-using VoidManager.Utilities;
-using static VoidManager.Utilities.Logger;
+using VoidManager.MPModChecks;
 
 namespace VoidManager
 {
@@ -10,11 +8,14 @@ namespace VoidManager
     internal class PluginDetectPatch
     {
         [HarmonyPostfix]
-        public static void DiscoverCommandMods()
+        public static void PostAwakeInit()
         {
-            Logger.Info($"[{MyPluginInfo.PLUGIN_NAME}] Discovering mods w/Commands . . .", LogType.GameLog);
-            Chat.Router.CommandHandler.DiscoverPlugins();
-            Logger.Info($"[{MyPluginInfo.PLUGIN_NAME}] Discovered {Chat.Router.CommandHandler.chatCommandCount} chat commands", LogType.GameLog);
+            Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Discovering mods . . .");
+            PluginHandler.DiscoverPlugins();
+            Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] . . . Discovery finished");
+
+            new MPModCheckManager();
+
             new ModMessage.RecieveModMessage();
         }
     }

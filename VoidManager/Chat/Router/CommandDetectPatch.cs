@@ -26,15 +26,15 @@ namespace VoidManager.Chat.Router
     internal class PublicCommandDetectPatch
     { // Other player chat command
         [HarmonyPostfix]
-        public static void DiscoverPublicCommand(string displayName, IChannelTextMessage channelTextMessage)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Method Declaration", "Harmony003:Harmony non-ref patch parameters modified", Justification = "Not relevant")]
+        public static void DiscoverPublicCommand(Photon.Realtime.Player p, string channelTextMessage)
         {
-            string result = channelTextMessage.Message;
-            if (!result.StartsWith("!")) return;
-            result = result.Substring(1);
-            string alias = result.Split(' ')[0];
-            CG.Game.Player.Player Player = Game.GetPlayerByName(channelTextMessage.Sender.DisplayName);
-            string arguments = result.Substring(alias.Length + (result.Split(' ').Count() == 1 ? 0 : 1));
-            Logger.Info($"'!{alias} {arguments}' attempted by {displayName}");
+            if (!channelTextMessage.StartsWith("!")) return;
+            channelTextMessage = channelTextMessage.Substring(1);
+            string alias = channelTextMessage.Split(' ')[0];
+            CG.Game.Player.Player Player = Game.GetPlayerByName(p.NickName);
+            string arguments = channelTextMessage.Substring(alias.Length + (channelTextMessage.Split(' ').Count() == 1 ? 0 : 1));
+            Plugin.Log.LogInfo($"'!{alias} {arguments}' attempted by {p.NickName}");
             CommandHandler.ExecuteCommandFromAlias(alias, arguments, true, Game.GetIDFromPlayer(Player));
         }
     }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using VoidManager.Utilities;
-using static VoidManager.Utilities.Logger;
 
 namespace VoidManager.Chat.Router
 {
@@ -25,11 +23,11 @@ namespace VoidManager.Chat.Router
             {
                 if (publicCommand) { if (publicCommands.ContainsKey(alias)) publicCommands[alias].Execute(arguments, playerId); }
                 else if (chatCommands.ContainsKey(alias)) chatCommands[alias].Execute(arguments);
-                else Logger.Info($"'{(publicCommand ? "!" : "/")}{alias} {arguments}' cound not be found!");
+                else Plugin.Log.LogInfo($"'{(publicCommand ? "!" : "/")}{alias} {arguments}' cound not be found!");
             }
             catch (Exception ex)
             {
-                Logger.Info($"'{(publicCommand ? "!" : "/")}{alias} {arguments}' failed! \nCommand Exception: {ex.Message}!\n{ex.StackTrace}", LogType.WarningLog);
+                Plugin.Log.LogError($"'{(publicCommand ? "!" : "/")}{alias} {arguments}' failed! \nCommand Exception: {ex.Message}!\n{ex.StackTrace}");
             }
         }
 
@@ -76,34 +74,30 @@ namespace VoidManager.Chat.Router
         /// <summary>
         /// Iterates through the current Plugin files and searches for commands.
         /// </summary>
-        public static void DiscoverPlugins()
+        public static void DiscoverCommands(System.Reflection.Assembly assembly, string ModName = "")
         {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (var assembly in assemblies)
-            {
-                var types = assembly.GetTypes();
+            var types = assembly.GetTypes();
 
-                // Finds ChatCommand implementations from all the Assemblies in the same file location.
-                var chatCommandInstances = types.Where(t => typeof(ChatCommand).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+            // Finds ChatCommand implementations from all the Assemblies in the same file location.
+            var chatCommandInstances = types.Where(t => typeof(ChatCommand).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
 
-                foreach (var modType in chatCommandInstances)
-                { // Iterates through each discovered ChatCommand
-                    ChatCommand modInstance = (ChatCommand)Activator.CreateInstance(modType);
-                    foreach (string commandAlias in Array.ConvertAll(modInstance.CommandAliases(), d => d.ToLower()))
+            foreach (var modType in chatCommandInstances)
+            { // Iterates through each discovered ChatCommand
+                ChatCommand modInstance = (ChatCommand)Activator.CreateInstance(modType);
+                foreach (string commandAlias in Array.ConvertAll(modInstance.CommandAliases(), d => d.ToLower()))
+                {
+                    if (chatCommands.ContainsKey(commandAlias))
                     {
-                        if (chatCommands.ContainsKey(commandAlias))
-                        {
-                            Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Found duplicate command alias {commandAlias}");
-                            continue;
-                        }
-                        else
-                        {
-                            chatCommands.Add(commandAlias, modInstance);
-                        }
+                        Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] [{ModName}] Found duplicate command alias {commandAlias}");
+                        continue;
+                    }
+                    else
+                    {
+                        chatCommands.Add(commandAlias, modInstance);
                     }
                 }
+                Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] [{ModName}] Added {chatCommandCount} chat commands");
             }
-            Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Added {chatCommandCount} chat commands");
         }
     }
 }
