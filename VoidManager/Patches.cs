@@ -15,8 +15,6 @@ namespace VoidManager
             Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] . . . Discovery finished");
 
             new MPModCheckManager();
-
-            new ModMessage.RecieveModMessage();
         }
     }
 }

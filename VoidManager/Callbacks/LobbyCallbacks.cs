@@ -6,14 +6,14 @@ using System.Collections.Generic;
 using System.Reflection;
 using UI.Matchmaking;
 
-namespace VoidManager.MPModChecks.Callbacks
+namespace VoidManager.Callbacks
 {
     class LobbyCallbacks : ILobbyCallbacks //Exists for ClientSide mod check in lobby join menus.
     {
         internal static LobbyCallbacks Instance;
         internal static MatchmakingTerminal ActiveTerminal;
 
-        public Hashtable SelectedRoomProperties; 
+        public Hashtable SelectedRoomProperties;
 
         static FieldInfo MatchlistFO = AccessTools.Field(typeof(MatchmakingTerminal), "matchList");
 
@@ -27,7 +27,7 @@ namespace VoidManager.MPModChecks.Callbacks
 
         public void OnLobbyStatisticsUpdate(List<TypedLobbyInfo> lobbyStatistics)
         {
-            
+
         }
 
         public void OnRoomListUpdate(List<RoomInfo> roomList)
@@ -40,7 +40,7 @@ namespace VoidManager.MPModChecks.Callbacks
             string SelectedRoomID = ((MatchmakingList)MatchlistFO.GetValue(ActiveTerminal)).GetSelectedRoom().RoomId;
             foreach (RoomInfo roomInfo in roomList)
             {
-                if(roomInfo.Name == SelectedRoomID)
+                if (roomInfo.Name == SelectedRoomID)
                 {
                     SelectedRoomProperties = roomInfo.CustomProperties;
                     break;
@@ -59,7 +59,7 @@ namespace VoidManager.MPModChecks.Callbacks
             PhotonNetwork.AddCallbackTarget(LobbyCallbacks.Instance);
         }
     }
-    [HarmonyPatch(typeof(MatchmakingHandler), "StartRetrievingRooms")]
+    [HarmonyPatch(typeof(MatchmakingHandler), "StopRetrievingRooms")]
     class UnSubscribePatch
     {
         [HarmonyPostfix]
@@ -71,7 +71,7 @@ namespace VoidManager.MPModChecks.Callbacks
     }
     [HarmonyPatch(typeof(MatchmakingTerminal), "OnEnable")]
     class TerminalEnablePatch
-    { 
+    {
         static void Postfix(MatchmakingTerminal __instance)
         {
             LobbyCallbacks.ActiveTerminal = __instance;

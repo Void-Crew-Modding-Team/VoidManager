@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
-using VoidManager.ModMessage;
+using VoidManager.ModMessages;
 
 namespace VoidManager
 {

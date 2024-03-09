@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 using UI.Matchmaking;
-using VoidManager.MPModChecks.Callbacks;
+using VoidManager.Callbacks;
 
 namespace VoidManager.MPModChecks
 {

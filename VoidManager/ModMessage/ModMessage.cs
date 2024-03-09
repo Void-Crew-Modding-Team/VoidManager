@@ -3,7 +3,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Linq;
 
-namespace VoidManager.ModMessage
+namespace VoidManager.ModMessages
 {
     /// <summary>
     /// Abstract class for ModMessages.
@@ -43,7 +43,7 @@ namespace VoidManager.ModMessage
             RaiseEventOptions raiseEventOptions = new RaiseEventOptions();
             raiseEventOptions.TargetActors = players.Select(player => player.ActorNumber).ToArray();
 
-            PhotonNetwork.RaiseEvent(RecieveModMessage.ModMessageEventCode, information, raiseEventOptions, 
+            PhotonNetwork.RaiseEvent(ModMessageHandler.ModMessageEventCode, information, raiseEventOptions, 
                 (reliable ? SendOptions.SendReliable : SendOptions.SendUnreliable));
         }
 
@@ -63,7 +63,7 @@ namespace VoidManager.ModMessage
             RaiseEventOptions raiseEventOptions = new RaiseEventOptions();
             raiseEventOptions.Receivers = recieverGroup;
 
-            PhotonNetwork.RaiseEvent(RecieveModMessage.ModMessageEventCode, information, raiseEventOptions,
+            PhotonNetwork.RaiseEvent(ModMessageHandler.ModMessageEventCode, information, raiseEventOptions,
                 (reliable ? SendOptions.SendReliable : SendOptions.SendUnreliable));
         }
 
