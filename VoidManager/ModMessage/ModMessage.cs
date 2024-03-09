@@ -17,10 +17,10 @@ namespace VoidManager.ModMessage
         public string GetIdentifier() => GetType().Namespace + "." + GetType().Name;
 
         /// <summary>
-        /// Send data to a Photon Player's mod specified by harmonyIdentifier and handlerIdentifier
+        /// Send data to a Photon Player's mod specified by PluginGUID and handlerIdentifier
         /// </summary>
-        /// <param name="pluginGUID">VoidCrewManager.VoidCrewMod.HarmonyIdentifier()</param>
-        /// <param name="handlerIdentifier">VoidCrewManager.ModMessage.GetIdentifier()</param>
+        /// <param name="pluginGUID">BepinPlugin.GUID</param>
+        /// <param name="handlerIdentifier">VoidManager.ModMessage.GetIdentifier()</param>
         /// <param name="player"></param>
         /// <param name="arguments"></param>
         /// <param name="reliable">Send as reliable event</param>
@@ -28,44 +28,42 @@ namespace VoidManager.ModMessage
             => Send(pluginGUID, handlerIdentifier, new Player[] { player }, arguments, reliable);
 
         /// <summary>
-        /// Send data to multiple Photon Player's mod specified by harmonyIdentifier and handlerIdentifier
+        /// Send data to multiple Photon Player's mod specified by PluginGUID and handlerIdentifier
         /// </summary>
-        /// <param name="pluginGUID">VoidCrewManager.VoidCrewMod.HarmonyIdentifier()</param>
-        /// <param name="handlerIdentifier">VoidCrewManager.ModMessage.GetIdentifier()</param>
-        /// <param name="players">List of players</param>
+        /// <param name="pluginGUID">BepinPlugin.GUID</param>
+        /// <param name="handlerIdentifier">VoidManager.ModMessage.GetIdentifier()</param>
+        /// <param name="players">Array of players</param>
         /// <param name="arguments"></param>
         /// <param name="reliable">Send as reliable event</param>
         public static void Send(string pluginGUID, string handlerIdentifier, Player[] players, object[] arguments, bool reliable = false)
         {
-            object[] information = new object[] { pluginGUID, handlerIdentifier, 
-                PhotonNetwork.LocalPlayer.ActorNumber};
+            object[] information = new object[] { pluginGUID, handlerIdentifier};
             information.Concat(arguments);
 
             RaiseEventOptions raiseEventOptions = new RaiseEventOptions();
             raiseEventOptions.TargetActors = players.Select(player => player.ActorNumber).ToArray();
 
-            PhotonNetwork.RaiseEvent(RecieveModMessage.eventCode, information, raiseEventOptions, 
+            PhotonNetwork.RaiseEvent(RecieveModMessage.ModMessageEventCode, information, raiseEventOptions, 
                 (reliable ? SendOptions.SendReliable : SendOptions.SendUnreliable));
         }
 
         /// <summary>
-        /// Send data to multiple Photon Player's mod specified by harmonyIdentifier and handlerIdentifier
+        /// Send data to multiple Photon Player's mod specified by PluginGUID and handlerIdentifier
         /// </summary>
-        /// <param name="pluginGUID">VoidCrewManager.VoidCrewMod.HarmonyIdentifier()</param>
-        /// <param name="handlerIdentifier">VoidCrewManager.ModMessage.GetIdentifier()</param>
+        /// <param name="pluginGUID">BepinPlugin.GUID</param>
+        /// <param name="handlerIdentifier">VoidManager.ModMessage.GetIdentifier()</param>
         /// <param name="recieverGroup">Photon.Realtime.ReceiverGroup (Others, All, Master)</param>
         /// <param name="arguments"></param>
         /// <param name="reliable">Send as reliable event</param>
         public static void Send(string pluginGUID, string handlerIdentifier, ReceiverGroup recieverGroup, object[] arguments, bool reliable = false)
         {
-            object[] information = new object[] { pluginGUID, handlerIdentifier,
-                PhotonNetwork.LocalPlayer.ActorNumber};
+            object[] information = new object[] { pluginGUID, handlerIdentifier};
             information.Concat(arguments);
 
             RaiseEventOptions raiseEventOptions = new RaiseEventOptions();
             raiseEventOptions.Receivers = recieverGroup;
 
-            PhotonNetwork.RaiseEvent(RecieveModMessage.eventCode, information, raiseEventOptions,
+            PhotonNetwork.RaiseEvent(RecieveModMessage.ModMessageEventCode, information, raiseEventOptions,
                 (reliable ? SendOptions.SendReliable : SendOptions.SendUnreliable));
         }
 
@@ -73,36 +71,7 @@ namespace VoidManager.ModMessage
         /// Recieve data from other players
         /// </summary>
         /// <param name="arguments"></param>
-        /// <param name="senderId"></param>
-        public abstract void Handle(object[] arguments, int senderId);
-    }
-    public class RecieveModMessage : MonoBehaviourPun, IOnEventCallback
-    {
-        internal static byte eventCode = (byte)99;
-        public static RecieveModMessage Instance = null;
-        public RecieveModMessage()
-        {
-            Instance = this;
-            PhotonNetwork.AddCallbackTarget(this);
-        }
-
-        public void OnEvent(EventData photonEvent)
-        {
-            if (eventCode == photonEvent.Code)
-            {
-                object[] args = (object[])photonEvent.CustomData;
-                if (args == null || args.Length < 3)
-                {
-                    Plugin.Log.LogInfo("Recieved Invalid ModMessage");
-                    return;
-                }
-                if (ModMessageHandler.modMessageHandlers.TryGetValue($"{args[0]}#{args[1]}", out ModMessage modMessage)
-                    && int.TryParse((string)args[2], out int senderId))
-                {
-                    modMessage.Handle((args.Length > 3 ? args.Skip(3).ToArray() : null), senderId);
-                }
-                Plugin.Log.LogInfo($"Recieved Unrecognised ModMessage ({args[0] ?? "N/A"}#{args[1] ?? "N/A"}) from {args[2] ?? "N/A"}");
-            }
-        }
+        /// <param name="sender"></param>
+        public abstract void Handle(object[] arguments, Player sender);
     }
 }
