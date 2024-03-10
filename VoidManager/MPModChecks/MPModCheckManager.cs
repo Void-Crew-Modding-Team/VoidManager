@@ -11,7 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using VoidManager.MPModChecks.Callbacks;
+using VoidManager.Callbacks;
 using VoidManager.Utilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 

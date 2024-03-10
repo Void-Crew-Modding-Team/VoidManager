@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
+using VoidManager.ModMessages;
 
 namespace VoidManager
 {
@@ -35,6 +36,7 @@ namespace VoidManager
                 {
                     VoidPlugin voidPlugin = (VoidPlugin)Activator.CreateInstance(voidPluginInstances.First());
                     Chat.Router.CommandHandler.DiscoverCommands(assembly, BepinPlugin.Metadata.Name);
+                    ModMessageHandler.DiscoverModMessages(assembly, BepinPlugin);
                     ActiveVoidPlugins.Add(BepinPlugin.Metadata.GUID, voidPlugin);
                     voidPlugin.VersionInfo = FileVersionInfo.GetVersionInfo(BepinPlugin.Location);
                     voidPlugin.ModHash = GetFileHash(BepinPlugin.Location);
