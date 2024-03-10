@@ -1,7 +1,7 @@
 # Todo
 ## Command Handler
 - [x] Local Chat Commands
-- [ ] Public Chat Commands
+- [x] Public Chat Commands
 ## Mod Messages
 - [x] Client - Client Communication
 - [x] Mod - Mod Communication
