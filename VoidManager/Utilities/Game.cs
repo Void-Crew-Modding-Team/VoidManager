@@ -22,7 +22,7 @@ namespace VoidManager.Utilities
         {
             get
             {
-                return Instance == null ? true : false;
+                return Instance == null ? false : true;
             }
         }
 
