@@ -1,21 +1,17 @@
-﻿using ExitGames.Client.Photon;
+﻿using Client.Utils;
 using HarmonyLib;
-using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
-using System.Reflection;
 using UI.Matchmaking;
 
 namespace VoidManager.Callbacks
 {
     class LobbyCallbacks : ILobbyCallbacks //Exists for ClientSide mod check in lobby join menus.
     {
-        internal static LobbyCallbacks Instance;
-        internal static MatchmakingTerminal ActiveTerminal;
-
-        public Hashtable SelectedRoomProperties;
-
-        static FieldInfo MatchlistFO = AccessTools.Field(typeof(MatchmakingTerminal), "matchList");
+        public static LoadBalancingClient MatchmakingLoadBalancingClient = null;
+        public static LobbyCallbacks Instance;
+        public MatchmakingTerminal ActiveTerminal;
+        public List<RoomInfo> RoomList;
 
         public void OnJoinedLobby()
         {
@@ -32,58 +28,40 @@ namespace VoidManager.Callbacks
 
         public void OnRoomListUpdate(List<RoomInfo> roomList)
         {
-            if (ActiveTerminal == null)
-            {
-                return;
-            }
-
-            string SelectedRoomID = ((MatchmakingList)MatchlistFO.GetValue(ActiveTerminal)).GetSelectedRoom().RoomId;
-            foreach (RoomInfo roomInfo in roomList)
-            {
-                if (roomInfo.Name == SelectedRoomID)
-                {
-                    SelectedRoomProperties = roomInfo.CustomProperties;
-                    break;
-                }
-            }
+            Plugin.Log.LogInfo("Copying room");
+            RoomList = roomList.DeepCopy();
+        }
+    }
+    [HarmonyPatch(typeof(MatchmakingHandler), "Awake")]
+    class ClientGrabPatch
+    {
+        [HarmonyPostfix]
+        static void GrabClient(LoadBalancingClient ___client)
+        {
+            LobbyCallbacks.MatchmakingLoadBalancingClient = ___client;
         }
     }
 
-    [HarmonyPatch(typeof(MatchmakingHandler), "StartRetrievingRooms")]
-    class SubscribePatch
-    {
-        [HarmonyPostfix]
-        static void AddTarget()
-        {
-            LobbyCallbacks.Instance = new LobbyCallbacks();
-            PhotonNetwork.AddCallbackTarget(LobbyCallbacks.Instance);
-        }
-    }
-    [HarmonyPatch(typeof(MatchmakingHandler), "StopRetrievingRooms")]
-    class UnSubscribePatch
-    {
-        [HarmonyPostfix]
-        static void RemoveTarget()
-        {
-            PhotonNetwork.RemoveCallbackTarget(LobbyCallbacks.Instance);
-            LobbyCallbacks.Instance = null;
-        }
-    }
-    [HarmonyPatch(typeof(MatchmakingTerminal), "OnEnable")]
+    [HarmonyPatch(typeof(MatchmakingTerminal), "PanelActiveChange")]
     class TerminalEnablePatch
     {
-        static void Postfix(MatchmakingTerminal __instance)
+        [HarmonyPostfix]
+        static void PanelChange(bool isActive, MatchmakingTerminal __instance)
         {
-            LobbyCallbacks.ActiveTerminal = __instance;
-        }
-    }
-
-    [HarmonyPatch(typeof(MatchmakingTerminal), "OnDisable")]
-    class TerminalDisablePatch
-    {
-        static void Postfix()
-        {
-            LobbyCallbacks.ActiveTerminal = null;
+            Plugin.Log.LogInfo("Setting Active Terminal " + isActive.ToString());
+            if (isActive)
+            {
+                LobbyCallbacks.Instance = new LobbyCallbacks();
+                LobbyCallbacks.MatchmakingLoadBalancingClient.AddCallbackTarget(LobbyCallbacks.Instance);
+                LobbyCallbacks.Instance.ActiveTerminal = __instance;
+            }
+            else
+            {
+                LobbyCallbacks.Instance.ActiveTerminal = null;
+                LobbyCallbacks.Instance.RoomList = null;
+                LobbyCallbacks.MatchmakingLoadBalancingClient.RemoveCallbackTarget(LobbyCallbacks.Instance);
+                LobbyCallbacks.Instance = null;
+            }
         }
     }
 }
