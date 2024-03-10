@@ -47,9 +47,9 @@ namespace VoidManager
                     voidPlugin.BepinPlugin = BepinPlugin;
                 }
             }
-            Plugin.Log.LogInfo($"Created {CommandHandler.chatCommandCount} local command(s) and {CommandHandler.publicCommandCount} public command(s)");
-            Plugin.Log.LogInfo($"Created {ModMessageHandler.modMessageHandlers.Count()} mod message(s)");
-            Plugin.Log.LogInfo($"Discovered {ActiveVoidPlugins.Count} VoidManager plugin(s) from {ActiveBepinPlugins.Count} mod(s)");
+            Plugin.Log.LogInfo($"Loaded {CommandHandler.chatCommandCount} local command(s) and {CommandHandler.publicCommandCount} public command(s)");
+            Plugin.Log.LogInfo($"Loaded {ModMessageHandler.modMessageHandlers.Count()} mod message(s)");
+            Plugin.Log.LogInfo($"Discovered {ActiveVoidPlugins.Count} VoidManager plugin(s) from {ActiveBepinPlugins.Count - 1} mod(s)");
         }
 
         public static byte[] GetFileHash(string fileLocation)
