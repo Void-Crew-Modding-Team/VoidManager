@@ -1,6 +1,7 @@
 ﻿using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
+using System;
 using System.Linq;
 
 namespace VoidManager.ModMessages
@@ -11,10 +12,17 @@ namespace VoidManager.ModMessages
     public abstract class ModMessage
     {
         /// <summary>
-        /// Gets the unique identifier for this mod
+        /// Gets the unique identifier for this ModMessaeg
         /// </summary>
         /// <returns>namespace.name</returns>
         public string GetIdentifier() => GetType().Namespace + "." + GetType().Name;
+
+        /// <summary>
+        /// Gets the unique identifier for the given ModMessage
+        /// </summary>
+        /// <param name="ModMessageType"></param>
+        /// <returns></returns>
+        public static string GetIdentifier(Type ModMessageType) => ModMessageType.Namespace + "." + ModMessageType.Name;
 
         /// <summary>
         /// Send data to a Photon Player's mod specified by PluginGUID and handlerIdentifier
@@ -38,7 +46,7 @@ namespace VoidManager.ModMessages
         public static void Send(string pluginGUID, string handlerIdentifier, Player[] players, object[] arguments, bool reliable = false)
         {
             object[] information = new object[] { pluginGUID, handlerIdentifier};
-            information.Concat(arguments);
+            information = information.Concat(arguments).ToArray();
 
             RaiseEventOptions raiseEventOptions = new RaiseEventOptions();
             raiseEventOptions.TargetActors = players.Select(player => player.ActorNumber).ToArray();
@@ -58,7 +66,7 @@ namespace VoidManager.ModMessages
         public static void Send(string pluginGUID, string handlerIdentifier, ReceiverGroup recieverGroup, object[] arguments, bool reliable = false)
         {
             object[] information = new object[] { pluginGUID, handlerIdentifier};
-            information.Concat(arguments);
+            information = information.Concat(arguments).ToArray();
 
             RaiseEventOptions raiseEventOptions = new RaiseEventOptions();
             raiseEventOptions.Receivers = recieverGroup;

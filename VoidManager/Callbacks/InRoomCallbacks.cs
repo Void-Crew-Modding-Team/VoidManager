@@ -62,6 +62,7 @@ namespace VoidManager.Callbacks
                 if (ModMessageHandler.modMessageHandlers.TryGetValue($"{args[0]}#{args[1]}", out ModMessage modMessage))
                 {
                     modMessage.Handle(args.Length > 2 ? args.Skip(2).ToArray() : null, Sender);
+                    return;
                 }
 
                 //Fail in event targetted ModMessage was not found.
