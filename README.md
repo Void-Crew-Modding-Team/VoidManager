@@ -3,8 +3,8 @@
 - [x] Local Chat Commands
 - [ ] Public Chat Commands
 ## Mod Messages
-- [ ] Client - Client Communication
-- [ ] Mod - Mod Communication
+- [x] Client - Client Communication
+- [x] Mod - Mod Communication
 ## Mod Management
 - [ ] Config Manager
 - [ ] Mod Manager UI
