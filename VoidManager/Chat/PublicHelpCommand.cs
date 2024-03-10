@@ -26,13 +26,6 @@ namespace VoidManager.Chat
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                IOrderedEnumerable<PublicCommand> publicCommands = Router.CommandHandler.GetPublicCommands();
-
-                if (publicCommands.Count() <= 1)
-                {
-                    return;
-                }
-
                 int page = 1;
                 if (!string.IsNullOrWhiteSpace(arguments))
                 {
@@ -42,7 +35,7 @@ namespace VoidManager.Chat
                         {
                             arguments = arguments.Substring(1);
                         }
-                        PublicCommand cmd = Router.CommandHandler.GetPublicCommand(arguments);
+                        PublicCommand cmd = Router.CommandHandler.GetPublicCommand(arguments.Split(' ')[0]);
                         StringBuilder stringBuilder = new StringBuilder();
                         if (cmd != null)
                         {
@@ -56,36 +49,35 @@ namespace VoidManager.Chat
                         }
                         else
                         {
-                            stringBuilder.AppendLine($"Command !{arguments} not found");
+                            stringBuilder.AppendLine($"Public Command !{arguments} not found");
                         }
                         Messaging.Echo(stringBuilder.ToString(), false);
                         return;
                     }
                 }
 
-                int commandsPerPage = 13 /*(PLXMLOptionsIO.Instance.CurrentOptions.GetStringValueAsInt("ChatNumLines") * 5 + 10) - 2*/; //Minimum value
-                int pages = Mathf.CeilToInt(publicCommands.Count() / (float)commandsPerPage);
-
+                int commandsPerPage = 6;
+                IOrderedEnumerable<PublicCommand> commands = Router.CommandHandler.GetPublicCommands();
+                int pages = UnityEngine.Mathf.CeilToInt(commands.Count() / (float)commandsPerPage);
                 page--; //Pages start from 1
                 if (page < 0)
                 {
                     page = 0;
                 }
 
-                StringBuilder stringBuilder1 = new StringBuilder();
-                string header = pages == 1 && page == 0 ? $"<color=green>Available Commands:</color>" : $"<color=green>Available Commands:</color> Page {page + 1} : {pages}";
-                stringBuilder1.AppendLine(header);
+                StringBuilder stringBuilder2 = new StringBuilder();
+                stringBuilder2.AppendLine(pages == 1 && page == 0 ? "<color=green>Public Command List:</color> :" : $"<color=green>Public Command List:</color> Page {page + 1} : {pages}");
                 for (int i = 0; i < commandsPerPage; i++)
                 {
                     int index = i + page * commandsPerPage;
-                    if (i + page * commandsPerPage >= publicCommands.Count())
+                    if (i + page * commandsPerPage >= commands.Count())
                         break;
-                    PublicCommand command = publicCommands.ElementAt(index);
-                    stringBuilder1.AppendLine($"!{command.CommandAliases()[0]} - {command.Description()}");
+                    PublicCommand command = commands.ElementAt(index);
+                    stringBuilder2.AppendLine($"!{command.CommandAliases()[0]} - {command.Description()}");
 
                 }
-                stringBuilder1.AppendLine("Use <color=green>!help <command></color> for details about a specific command");
-                Messaging.Echo(stringBuilder1.ToString(), false);
+                stringBuilder2.AppendLine("Use <color=green>!help <command></color> for details about a specific public command");
+                Messaging.Echo(stringBuilder2.ToString(), false);
             }
         }
     }

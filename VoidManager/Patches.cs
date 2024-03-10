@@ -10,9 +10,9 @@ namespace VoidManager
         [HarmonyPostfix]
         public static void PostAwakeInit()
         {
-            Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Discovering mods . . .");
+            Plugin.Log.LogInfo($"- - - Void Manager Initialization - - -");
             PluginHandler.DiscoverPlugins();
-            Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] . . . Discovery finished");
+            Plugin.Log.LogInfo($"- - - - - - - - - - - - - - - - - - - -");
 
             new MPModCheckManager();
         }

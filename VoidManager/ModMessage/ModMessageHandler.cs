@@ -18,12 +18,14 @@ namespace VoidManager.ModMessages
 
             // Finds ModMessage implementations from all the Assemblies in the same file location.
             var modMessageInstances = types.Where(t => typeof(ModMessage).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
-
+            int modMessageCount = 0;
             foreach (var modType in modMessageInstances)
             { // Iterates through each discovered ModMessage
                 ModMessage modMessageHandler = (ModMessage)Activator.CreateInstance(modType);
                 modMessageHandlers.Add(bepinPlugin.Metadata.GUID + "#" + modMessageHandler.GetIdentifier(), modMessageHandler);
+                modMessageCount++;
             }
+            Plugin.Log.LogInfo($"[{bepinPlugin.Metadata.Name}] Added {modMessageCount} mod messages");
         }
     }
 }

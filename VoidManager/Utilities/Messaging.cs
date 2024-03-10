@@ -24,7 +24,10 @@ namespace VoidManager.Utilities
         public static void Echo(string message, bool local = true)
         {
             if (local) TextChat.Instance.AddLog(new Log($"", message));//fixme
-            else VivoxVoiceManager.Instance.SendTextMessage($"[Mod Manager]::{message}", VivoxVoiceManager.Instance.TextChannel, null, null);
+            else
+            {
+                VivoxVoiceManager.Instance.SendTextMessage($"[Mod Manager]: {message}", VivoxVoiceManager.Instance.TextChannel, null, null);
+            }
         }
     }
 }

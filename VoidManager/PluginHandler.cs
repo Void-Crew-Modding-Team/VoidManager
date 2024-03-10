@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
+using VoidManager.Chat.Router;
 using VoidManager.ModMessages;
 
 namespace VoidManager
@@ -29,6 +30,8 @@ namespace VoidManager
                 if(BepinPlugin.Metadata.GUID == MyPluginInfo.PLUGIN_GUID)
                 {
                     Chat.Router.CommandHandler.DiscoverCommands(assembly, BepinPlugin.Metadata.Name);
+                    Chat.Router.CommandHandler.DiscoverPublicCommands(assembly, BepinPlugin.Metadata.Name);
+                    ModMessageHandler.DiscoverModMessages(assembly, BepinPlugin);
                     continue;
                 }
                 var voidPluginInstances = assembly.GetTypes().Where(t => typeof(VoidPlugin).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
@@ -36,6 +39,7 @@ namespace VoidManager
                 {
                     VoidPlugin voidPlugin = (VoidPlugin)Activator.CreateInstance(voidPluginInstances.First());
                     Chat.Router.CommandHandler.DiscoverCommands(assembly, BepinPlugin.Metadata.Name);
+                    Chat.Router.CommandHandler.DiscoverPublicCommands(assembly, BepinPlugin.Metadata.Name);
                     ModMessageHandler.DiscoverModMessages(assembly, BepinPlugin);
                     ActiveVoidPlugins.Add(BepinPlugin.Metadata.GUID, voidPlugin);
                     voidPlugin.VersionInfo = FileVersionInfo.GetVersionInfo(BepinPlugin.Location);
@@ -43,8 +47,9 @@ namespace VoidManager
                     voidPlugin.BepinPlugin = BepinPlugin;
                 }
             }
-            Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Discovered {ActiveBepinPlugins.Count} Mods");
-            Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] Discovered {ActiveVoidPlugins.Count} VoidManager Plugins");
+            Plugin.Log.LogInfo($"Created {CommandHandler.chatCommandCount} local command(s) and {CommandHandler.publicCommandCount} public command(s)");
+            Plugin.Log.LogInfo($"Created {ModMessageHandler.modMessageHandlers.Count()} mod message(s)");
+            Plugin.Log.LogInfo($"Discovered {ActiveVoidPlugins.Count} VoidManager plugin(s) from {ActiveBepinPlugins.Count} mod(s)");
         }
 
         public static byte[] GetFileHash(string fileLocation)

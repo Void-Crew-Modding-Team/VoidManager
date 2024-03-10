@@ -77,10 +77,9 @@ namespace VoidManager.Chat.Router
         public static void DiscoverCommands(System.Reflection.Assembly assembly, string ModName = "")
         {
             var types = assembly.GetTypes();
-
             // Finds ChatCommand implementations from all the Assemblies in the same file location.
             var chatCommandInstances = types.Where(t => typeof(ChatCommand).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
-
+            int commandCount = 0;
             foreach (var modType in chatCommandInstances)
             { // Iterates through each discovered ChatCommand
                 ChatCommand modInstance = (ChatCommand)Activator.CreateInstance(modType);
@@ -88,16 +87,45 @@ namespace VoidManager.Chat.Router
                 {
                     if (chatCommands.ContainsKey(commandAlias))
                     {
-                        Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] [{ModName}] Found duplicate command alias {commandAlias}");
+                        Plugin.Log.LogInfo($"[{ModName}] Found duplicate command alias {commandAlias}");
                         continue;
                     }
                     else
                     {
                         chatCommands.Add(commandAlias, modInstance);
+                        commandCount++;
                     }
                 }
-                Plugin.Log.LogInfo($"[{MyPluginInfo.PLUGIN_NAME}] [{ModName}] Added {chatCommandCount} chat commands");
             }
+            Plugin.Log.LogInfo($"[{ModName}] Added {commandCount} chat commands");
+        }
+        /// <summary>
+        /// Iterates through the current Plugin files and searches for public commands.
+        /// </summary>
+        public static void DiscoverPublicCommands(System.Reflection.Assembly assembly, string ModName = "")
+        {
+            var types = assembly.GetTypes();
+            // Finds PublicCommand implementations from all the Assemblies in the same file location.
+            var publicCommandInstances = types.Where(t => typeof(PublicCommand).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+            int commandCount = 0;
+            foreach (var modType in publicCommandInstances)
+            { // Iterates through each discovered PublicCommand
+                PublicCommand modInstance = (PublicCommand)Activator.CreateInstance(modType);
+                foreach (string commandAlias in Array.ConvertAll(modInstance.CommandAliases(), d => d.ToLower()))
+                {
+                    if (publicCommands.ContainsKey(commandAlias))
+                    {
+                        Plugin.Log.LogInfo($"[{ModName}] Found duplicate public command alias {commandAlias}");
+                        continue;
+                    }
+                    else
+                    {
+                        publicCommands.Add(commandAlias, modInstance);
+                        commandCount++;
+                    }
+                }
+            }
+            Plugin.Log.LogInfo($"[{ModName}] Added {commandCount} public commands");
         }
     }
 }
