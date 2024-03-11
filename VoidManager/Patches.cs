@@ -16,6 +16,8 @@ namespace VoidManager
             PluginHandler.DiscoverPlugins();
             Plugin.Log.LogInfo($"- - - - - - - - - - - - - - - - - - - -");
 
+            new Events();
+
             new MPModCheckManager();
         }
     }
