@@ -24,6 +24,9 @@ namespace VoidManager.MPModChecks
             instance = this;
             UpdateMyModList();
             BuildRoomProperties();
+            Events.Instance.OnPlayerEnteredRoomEvent += PlayerJoined;
+            Events.Instance.OnPlayerLeftRoomEvent += RemoveNetworkedPeerMods;
+            Events.Instance.OnLeftRoomEvent += ClearAllNetworkedPeerMods;
         }
 
         internal const byte PlayerMPUserDataEventCode = 99;
@@ -374,6 +377,8 @@ namespace VoidManager.MPModChecks
                 return;
             }
             NetworkedPeersModLists.Add(Player, modList);
+
+            Events.Instance.CallClientModlistRecievedEvent(Player);
         }
 
         /// <summary>
@@ -444,6 +449,18 @@ namespace VoidManager.MPModChecks
             PhotonNetwork.RaiseEvent(MPModCheckManager.PlayerMPUserDataEventCode, new object[] { false, SerializeHashlessMPUserData() }, null, SendOptions.SendReliable);
         }
 
+        internal void PlayerJoined(Player JoiningPlayer)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                PunSingleton<PhotonService>.Instance.StartCoroutine(MPModCheckManager.PlayerJoinedChecks(JoiningPlayer)); //Plugin is not a valid monobehaviour.
+            }
+            else
+            {
+                MPModCheckManager.Instance.SendModlistToClient(JoiningPlayer);
+            }
+        }
+
         public static IEnumerator PlayerJoinedChecks(Player JoiningPlayer)
         {
             for (int i = 0; i < 50; i++)
@@ -462,6 +479,7 @@ namespace VoidManager.MPModChecks
                 Messaging.Echo($"Kicked player {JoiningPlayer.NickName} for not having mods.", false);
                 PhotonNetwork.CloseConnection(JoiningPlayer);
             }
+            Events.Instance.CallHostOnClientVerifiedEvent(JoiningPlayer);
         }
 
         internal bool ModChecksClientside(Hashtable RoomProperties)
@@ -696,6 +714,7 @@ namespace VoidManager.MPModChecks
             else
             {
                 Plugin.Log.LogMessage("Hostside mod check passed for player " + joiningPlayer.NickName);
+                Events.Instance.CallHostOnClientVerifiedEvent(joiningPlayer);
             }
         }
     }

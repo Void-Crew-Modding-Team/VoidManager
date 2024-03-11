@@ -89,11 +89,14 @@ namespace VoidManager.Callbacks
             {
                 MPModCheckManager.Instance.AddNetworkedPeerMods(PhotonNetwork.MasterClient, MPModCheckManager.Instance.GetHostModList());
             }
+
+            //Above controls whether a game is joined, so it is better to let it run first.
+            Events.Instance.CallOnJoinedRoomEvent();
         }
 
         public void OnLeftRoom()
         {
-            MPModCheckManager.Instance.ClearAllNetworkedPeerMods();
+            Events.Instance.CallOnLeftRoomEvent();
         }
 
         public void OnMasterClientSwitched(Player newMasterClient)
@@ -102,23 +105,18 @@ namespace VoidManager.Callbacks
             {
                 MPModCheckManager.Instance.UpdateLobbyProperties();
             }
+
+            Events.Instance.CallOnMasterClientSwitchedEvent(newMasterClient);
         }
 
         public void OnPlayerEnteredRoom(Player newPlayer)
         {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                PunSingleton<PhotonService>.Instance.StartCoroutine(MPModCheckManager.PlayerJoinedChecks(newPlayer)); //Plugin is not a valid monobehaviour.
-            }
-            else
-            {
-                MPModCheckManager.Instance.SendModlistToClient(newPlayer);
-            }
+            Events.Instance.CallOnPlayerEnteredRoomEvent(newPlayer);
         }
 
-        public void OnPlayerLeftRoom(Player otherPlayer)
+        public void OnPlayerLeftRoom(Player leavingPlayer)
         {
-            MPModCheckManager.Instance.RemoveNetworkedPeerMods(otherPlayer);
+            Events.Instance.CallOnPlayerLeftRoomEvent(leavingPlayer);
         }
 
 
