@@ -1,6 +1,5 @@
 ﻿using CG.GameLoopStateMachine.GameStates;
 using ExitGames.Client.Photon;
-using HarmonyLib;
 using Photon.Pun;
 using Photon.Realtime;
 using Steamworks;
@@ -147,24 +146,6 @@ namespace VoidManager.Callbacks
 
         public void OnCreateRoomFailed(short returnCode, string message)
         {
-        }
-    }
-
-    //Initialize Room Callbacks class.
-    [HarmonyPatch(typeof(GSMainMenu), "OnEnter")]
-    class InitPatch
-    {
-        static bool RoomCallbacksInitialized = false;
-
-        [HarmonyPostfix]
-        static void InitRoomCallbacks()
-        {
-            if (RoomCallbacksInitialized)
-            {
-                return;
-            }
-            RoomCallbacksInitialized = true;
-            MPModCheckManager.RoomCallbacksClass = new RoomCallbacks();
         }
     }
 }

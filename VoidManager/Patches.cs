@@ -1,5 +1,7 @@
-﻿using CG.Profile;
+﻿using CG.GameLoopStateMachine.GameStates;
+using CG.Profile;
 using HarmonyLib;
+using VoidManager.Callbacks;
 using VoidManager.MPModChecks;
 
 namespace VoidManager
@@ -15,6 +17,25 @@ namespace VoidManager
             Plugin.Log.LogInfo($"- - - - - - - - - - - - - - - - - - - -");
 
             new MPModCheckManager();
+        }
+    }
+
+
+    //Initialize Room Callbacks class.
+    [HarmonyPatch(typeof(GSMainMenu), "OnEnter")]
+    class InitPatch
+    {
+        static bool RoomCallbacksInitialized = false;
+
+        [HarmonyPostfix]
+        static void InitRoomCallbacks()
+        {
+            if (RoomCallbacksInitialized)
+            {
+                return;
+            }
+            RoomCallbacksInitialized = true;
+            MPModCheckManager.RoomCallbacksClass = new RoomCallbacks();
         }
     }
 }
