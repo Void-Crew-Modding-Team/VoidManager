@@ -16,6 +16,7 @@ namespace VoidManager.CustomGUI
     {
         public static GUIMain Instance = null;
         GameObject Background;
+        GameObject MMCanvas;
         UnityEngine.UI.Image Image;
         public bool GUIActive = false;
         Rect Window;
@@ -56,18 +57,21 @@ namespace VoidManager.CustomGUI
         internal GUIMain()
         {
             Instance = this;
-            UnityEngine.Object.DontDestroyOnLoad(this);
+            MMCanvas = new GameObject("ModManagerCanvas", new Type[] { typeof(Canvas) } );
+            Canvas canvasComponent = MMCanvas.GetComponent<Canvas>();
+            canvasComponent.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvasComponent.sortingOrder = 1000;
+            canvasComponent.transform.SetAsLastSibling();
+            DontDestroyOnLoad(MMCanvas);
+
             updateWindowSize();
             settings.Add(new VManSettings());
 
             //Background image to block mouse clicks passing IMGUI
-            Background = new GameObject("GUIMainBG");
+            Background = new GameObject("GUIMainBG", new Type[] { typeof(GraphicRaycaster) });
             Image = Background.AddComponent<UnityEngine.UI.Image>();
-            Image.color = Color.red;
-            //Image.color = Color.clear;
-            //Background.transform.SetParent(MenuScreenController.Instance.gameObject.transform);
-            Background.transform.SetParent(((HUD_LayoutContainer)HudCanvasInfo.GetValue(null)).gameObject.transform);
-            UnityEngine.Object.DontDestroyOnLoad(Background);
+            Image.color = Color.clear;
+            Background.transform.SetParent(MMCanvas.transform);
             Background.SetActive(false);
         }
 
