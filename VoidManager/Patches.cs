@@ -1,6 +1,7 @@
 ﻿using CG.GameLoopStateMachine.GameStates;
 using CG.Profile;
 using HarmonyLib;
+using UnityEngine;
 using VoidManager.Callbacks;
 using VoidManager.MPModChecks;
 
@@ -12,6 +13,8 @@ namespace VoidManager
         [HarmonyPostfix]
         public static void PostAwakeInit()
         {
+            new GameObject("ModManager", typeof(CustomGUI.GUIMain)) { hideFlags = HideFlags.HideAndDontSave };
+
             Plugin.Log.LogInfo($"- - - Void Manager Initialization - - -");
             PluginHandler.DiscoverPlugins();
             Plugin.Log.LogInfo($"- - - - - - - - - - - - - - - - - - - -");

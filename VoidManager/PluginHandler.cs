@@ -29,8 +29,8 @@ namespace VoidManager
                 // Finds VoidPlugin class.
                 if(BepinPlugin.Metadata.GUID == MyPluginInfo.PLUGIN_GUID)
                 {
-                    Chat.Router.CommandHandler.DiscoverCommands(assembly, BepinPlugin.Metadata.Name);
-                    Chat.Router.CommandHandler.DiscoverPublicCommands(assembly, BepinPlugin.Metadata.Name);
+                    CommandHandler.DiscoverCommands(assembly, BepinPlugin.Metadata.Name);
+                    CommandHandler.DiscoverPublicCommands(assembly, BepinPlugin.Metadata.Name);
                     ModMessageHandler.DiscoverModMessages(assembly, BepinPlugin);
                     continue;
                 }
@@ -38,9 +38,10 @@ namespace VoidManager
                 if (voidPluginInstances.Any())
                 {
                     VoidPlugin voidPlugin = (VoidPlugin)Activator.CreateInstance(voidPluginInstances.First());
-                    Chat.Router.CommandHandler.DiscoverCommands(assembly, BepinPlugin.Metadata.Name);
-                    Chat.Router.CommandHandler.DiscoverPublicCommands(assembly, BepinPlugin.Metadata.Name);
+                    CommandHandler.DiscoverCommands(assembly, BepinPlugin.Metadata.Name);
+                    CommandHandler.DiscoverPublicCommands(assembly, BepinPlugin.Metadata.Name);
                     ModMessageHandler.DiscoverModMessages(assembly, BepinPlugin);
+                    CustomGUI.GUIMain.Instance.DiscoverGUIMenus(assembly, voidPlugin);
                     ActiveVoidPlugins.Add(BepinPlugin.Metadata.GUID, voidPlugin);
                     voidPlugin.VersionInfo = FileVersionInfo.GetVersionInfo(BepinPlugin.Location);
                     voidPlugin.ModHash = GetFileHash(BepinPlugin.Location);
