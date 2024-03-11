@@ -109,6 +109,7 @@ namespace VoidManager.Callbacks
 
         public void OnPlayerEnteredRoom(Player newPlayer)
         {
+            MPModCheckManager.Instance.PlayerJoined(newPlayer);
             Events.Instance.CallOnPlayerEnteredRoomEvent(newPlayer);
         }
 

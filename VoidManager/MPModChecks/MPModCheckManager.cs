@@ -25,7 +25,6 @@ namespace VoidManager.MPModChecks
             instance = this;
             UpdateMyModList();
             BuildRoomProperties();
-            Events.Instance.OnPlayerEnteredRoomEvent += PlayerJoined;
             Events.Instance.OnPlayerLeftRoomEvent += RemoveNetworkedPeerMods;
             Events.Instance.OnLeftRoomEvent += ClearAllNetworkedPeerMods;
         }
