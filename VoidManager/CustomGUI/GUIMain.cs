@@ -1,18 +1,16 @@
-﻿using System;
+﻿using BepInEx;
+using CG.Input;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
+using UnityEngine.UI;
 using static UnityEngine.GUILayout;
-using BepInEx;
-using VoidManager.Chat.Router;
-using HarmonyLib;
-using CG.Client.Player.HUD;
 
 namespace VoidManager.CustomGUI
 {
-    internal class GUIMain : MonoBehaviour
+    class GUIMain : MonoBehaviour, IShowCursorSource, IInputActionMapRequest
     {
         public static GUIMain Instance = null;
         GameObject Background;
@@ -36,11 +34,6 @@ namespace VoidManager.CustomGUI
         List<ModSettingsMenu> settings = new List<ModSettingsMenu>();
         ushort selectedSettings = ushort.MaxValue;
 
-        public bool ShouldUnlockCursor()
-        {
-            return Plugin.Bindings.MenuUnlockCursor.Value && GUIActive;
-        }
-
         internal void updateWindowSize()
         {
             float Height = Plugin.Bindings.MenuHeight.Value;
@@ -53,7 +46,6 @@ namespace VoidManager.CustomGUI
             ModSettingsArea = new Rect(6, 43, Screen.width * Width - 12, Screen.height * Height - 45);
         }
 
-        private static FieldInfo HudCanvasInfo = AccessTools.Field(typeof(HUD_LayoutContainer), "_instance");
         internal GUIMain()
         {
             Instance = this;
@@ -103,7 +95,7 @@ namespace VoidManager.CustomGUI
             {
                 settings[selectedSettings].OnOpen();
             }
-
+            GUIToggleCursor(true);
             Background.SetActive(true);
         }
 
@@ -113,7 +105,7 @@ namespace VoidManager.CustomGUI
             {
                 settings[selectedSettings].OnClose();
             }
-
+            GUIToggleCursor(false);
             Background.SetActive(false);
         }
 
@@ -356,6 +348,30 @@ namespace VoidManager.CustomGUI
                 hasSettingsMenu = true;
             }
             if (hasSettingsMenu) Plugin.Log.LogInfo($"[{voidPlugin.BepinPlugin.Metadata.Name}] detected settings menu");
+        }
+
+        bool ShowingCursor;
+
+        void GUIToggleCursor(bool enable)
+        {
+            if(!Plugin.Bindings.MenuUnlockCursor.Value && !(!enable && ShowingCursor))
+            {
+                return; // Stop early if unlocking cursor is disabled, but allow passthrough if cursor is enabled and is getting set to disabled.
+            }
+
+            ShowingCursor = enable;
+            CursorUtility.ShowCursor(this, enable);
+
+            if (ShowingCursor)
+            {
+                InputActionMapRequests.AddOrChangeRequestAllMaps(this, false);
+                InputActionMapRequests.AddOrChangeRequest(this, "GlobalBindings", true);
+                InputActionMapRequests.AddOrChangeRequest(this, "Debug", true);
+            }
+            else
+            {
+                InputActionMapRequests.RemoveRequestAllMaps(this);
+            }
         }
     }
 }
