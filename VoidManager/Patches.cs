@@ -23,7 +23,7 @@ namespace VoidManager
 
     //Initialize Room Callbacks class.
     [HarmonyPatch(typeof(GSMainMenu), "OnEnter")]
-    class InitPatch
+    class InitRoomCallbacksPatch
     {
         static bool RoomCallbacksInitialized = false;
 

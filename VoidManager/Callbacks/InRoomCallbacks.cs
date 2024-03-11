@@ -1,5 +1,4 @@
-﻿using CG.GameLoopStateMachine.GameStates;
-using ExitGames.Client.Photon;
+﻿using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using Steamworks;

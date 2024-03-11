@@ -46,6 +46,7 @@ namespace VoidManager.Callbacks
     class TerminalEnablePatch
     {
         [HarmonyPostfix]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Method Declaration", "Harmony003:Harmony non-ref patch parameters modified", Justification = "Irrelevant")]
         static void PanelChange(bool isActive, MatchmakingTerminal __instance)
         {
             Plugin.Log.LogInfo("Setting Active Terminal " + isActive.ToString());
