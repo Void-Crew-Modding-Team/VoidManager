@@ -106,6 +106,14 @@ namespace VoidManager.CustomGUI
             {
                 MenuUnlockCursor.Value = !MenuUnlockCursor.Value;
             }
+
+
+            //MPModChecks trust MPType.Unspecified
+            HorizontalSlider(0, 100, 100);
+            if (Button($"Trust MPType.Unspecified mods: {(TrustMPTypeUnspecified.Value ? "Trusted" : "Not Trusted")}"))
+            {
+                TrustMPTypeUnspecified.Value = !TrustMPTypeUnspecified.Value;
+            }
         }
     }
 }

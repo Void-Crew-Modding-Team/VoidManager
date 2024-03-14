@@ -7,7 +7,6 @@ namespace VoidManager.ModMessages
 {
     public class ModMessageHandler
     {
-        internal const byte ModMessageEventCode = 98;
         public static Dictionary<string, ModMessage> modMessageHandlers = new Dictionary<string, ModMessage>();
         /// <summary>
         /// Scans the given assembly for ModMessage classes.

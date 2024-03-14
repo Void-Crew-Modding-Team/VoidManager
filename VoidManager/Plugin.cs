@@ -32,6 +32,8 @@ namespace VoidManager
             MenuUnlockCursor = Config.Bind("Menu", "Unlock Cursor", true, "");
 
             MenuOpenKeybind = Config.Bind("Menu", "Open Keybind", OpenMenu, "");
+
+            TrustMPTypeUnspecified = Config.Bind("Multiplayer", "TrustMPTypeUnspecified", false, "");
         }
         internal class Bindings
         {
@@ -50,6 +52,8 @@ namespace VoidManager
 
             internal static ConfigEntry<KeyboardShortcut> MenuOpenKeybind;
             internal static KeyboardShortcut OpenMenu = new KeyboardShortcut(KeyCode.F5);
+
+            internal static ConfigEntry<bool> TrustMPTypeUnspecified;
         }
     }
 }

@@ -3,6 +3,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using System.Linq;
+using VoidManager.Callbacks;
 
 namespace VoidManager.ModMessages
 {

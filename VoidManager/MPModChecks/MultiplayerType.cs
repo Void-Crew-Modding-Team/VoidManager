@@ -1,10 +1,11 @@
 ﻿namespace VoidManager.MPModChecks
 {
     //MultiplayerType
-    public enum MultiplayerType
+    public enum MultiplayerType : byte
     {
+        Hidden,
         Client,
-        All,
-        Hidden
+        Unspecified,
+        All
     }
 }

@@ -29,11 +29,10 @@ namespace VoidManager.MPModChecks
             Events.Instance.OnLeftRoomEvent += ClearAllNetworkedPeerMods;
         }
 
-        internal const byte PlayerMPUserDataEventCode = 99;
-        internal const string RoomModsPropertyKey = "Mods";
 
         internal static InRoomCallbacks RoomCallbacksClass;
         private MPModDataBlock[] MyModList = null;
+        private MPModDataBlock[] MyMPUnspecifiedModList = null;
         private MPModDataBlock[] MyMPModList = null;
         byte[] RoomProperties;
         internal Dictionary<Player, MPUserDataBlock> NetworkedPeersModLists = new Dictionary<Player, MPUserDataBlock>();
@@ -87,13 +86,18 @@ namespace VoidManager.MPModChecks
 
         private void UpdateHighestLevelOfMPMods(MultiplayerType MT)
         {
-            //Tier: All > Client > Hidden
+            //Tiers: Hidden < Client < Unspecified < All
             if (HighestLevelOfMPMods == MultiplayerType.Hidden && MT != MultiplayerType.Hidden)
             {
                 HighestLevelOfMPMods = MT;
                 Plugin.Log.LogInfo("Incrementing MPType to " + MT.ToString());
             }
-            else if (HighestLevelOfMPMods == MultiplayerType.Client && MT == MultiplayerType.All)
+            else if (HighestLevelOfMPMods == MultiplayerType.Client && MT > MultiplayerType.Client)
+            {
+                HighestLevelOfMPMods = MT;
+                Plugin.Log.LogInfo("Incrementing MPType to " + MT.ToString());
+            }
+            else if (HighestLevelOfMPMods == MultiplayerType.Unspecified && MT > MultiplayerType.Unspecified)
             {
                 HighestLevelOfMPMods = MultiplayerType.All;
                 Plugin.Log.LogInfo("Incrementing MPType to MPType.All");
@@ -125,13 +129,14 @@ namespace VoidManager.MPModChecks
                 }
                 else
                 {
-                    ProcessedMods[i] = new MPModDataBlock(GUID, currentMod.Metadata.Name, currentMod.Metadata.Version.ToString(), MultiplayerType.All, string.Empty, PluginHandler.GetFileHash(currentMod.Location));
-                    UpdateHighestLevelOfMPMods(MultiplayerType.All);
+                    ProcessedMods[i] = new MPModDataBlock(GUID, currentMod.Metadata.Name, currentMod.Metadata.Version.ToString(), MultiplayerType.Unspecified, string.Empty, PluginHandler.GetFileHash(currentMod.Location));
+                    UpdateHighestLevelOfMPMods(MultiplayerType.Unspecified);
                 }
             }
             ProcessedMods = ProcessedMods.Where(mod => mod != null).ToArray();
             MyModList = ProcessedMods;
             MyMPModList = ProcessedMods.Where(Mod => Mod.MPType == MultiplayerType.All).ToArray();
+            MyMPUnspecifiedModList = ProcessedMods.Where(Mod => Mod.MPType == MultiplayerType.Unspecified).ToArray();
             stopwatch.Stop();
             Plugin.Log.LogInfo("Finished Building MyModList, time elapsted: " + stopwatch.ElapsedMilliseconds.ToString());
             Plugin.Log.LogInfo($"MyModList:\n{GetModListAsString(MyModList)}\n");
@@ -484,13 +489,21 @@ namespace VoidManager.MPModChecks
 
         internal bool ModChecksClientside(Hashtable RoomProperties)
         {
+            LastModCheckFailReason = string.Empty;
             Plugin.Log.LogMessage($"Starting Clientside mod checks for room: {RoomProperties["R_Na"]}");
 
             if (!RoomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))//Host doesn't have mods
             {
                 if (HighestLevelOfMPMods == MultiplayerType.All)
                 {
-                    Plugin.Log.LogMessage("Client has MPType.All mods, mod check failed.");
+                    LastModCheckFailReason = "Host has no mods, but client has MPType.All mods.";
+                    Plugin.Log.LogMessage("Mod check failed.\n" + LastModCheckFailReason);
+                    return false; //Case: Host doesn't have mods, but Client has mod(s) which need the host to install.
+                }
+                else if(HighestLevelOfMPMods >= MultiplayerType.Unspecified)
+                {
+                    LastModCheckFailReason = "Host has no mods, but client has MPType.Unspecified mods.";
+                    Plugin.Log.LogMessage("Mod check failed.\n" + LastModCheckFailReason);
                     return false; //Case: Host doesn't have mods, but Client has mod(s) which need the host to install.
                 }
                 else
@@ -596,10 +609,8 @@ namespace VoidManager.MPModChecks
             //return false and finalize error message.
             if(errorMessage != string.Empty)
             {
-                LastModCheckFailReason += errorMessage;
-
-                errorMessage = "Couldn't join session.\n" + errorMessage;
-                Plugin.Log.LogMessage(errorMessage);
+                LastModCheckFailReason = errorMessage;
+                Plugin.Log.LogMessage("Couldn't join session.\n" + errorMessage);
                 return false;
             }
 
@@ -611,7 +622,20 @@ namespace VoidManager.MPModChecks
         internal void ModChecksHostOnClientJoin(Player joiningPlayer)
         {
             MPUserDataBlock JoiningPlayerMPData = GetNetworkedPeerMods(joiningPlayer);
-            MPModDataBlock[] JoiningClientMPMods = JoiningPlayerMPData.ModData.Where(Mod => Mod.MPType == MultiplayerType.All).ToArray();
+            MPModDataBlock[] JoiningClientMPTypeAllMods = JoiningPlayerMPData.ModData.Where(Mod => Mod.MPType == MultiplayerType.All).ToArray();
+
+            MPModDataBlock[] HostModListForProcessing;
+            if (!Plugin.Bindings.TrustMPTypeUnspecified.Value)
+            {
+                MPModDataBlock[] JoiningClientMPTypeUnspecifiedMods = JoiningPlayerMPData.ModData.Where(Mod => Mod.MPType == MultiplayerType.Unspecified).ToArray();
+                JoiningClientMPTypeAllMods = JoiningClientMPTypeAllMods.Concat(JoiningClientMPTypeUnspecifiedMods).ToArray();
+
+                HostModListForProcessing = MyModList.Concat(MyMPUnspecifiedModList).ToArray();
+            }
+            else
+            {
+                HostModListForProcessing = MyModList;
+            }
 
             List<string> MismatchedVersions = new List<string>();
             List<string> JoiningClientMissing = new List<string>();
@@ -625,11 +649,11 @@ namespace VoidManager.MPModChecks
             {
                 MPModDataBlock CurrentLocalMod = MyMPModList[i];
                 bool found = false;
-                for (x = 0; x < JoiningClientMPMods.Length; x++)
+                for (x = 0; x < JoiningClientMPTypeAllMods.Length; x++)
                 {
-                    if (CurrentLocalMod.ModGUID == JoiningClientMPMods[x].ModGUID)
+                    if (CurrentLocalMod.ModGUID == JoiningClientMPTypeAllMods[x].ModGUID)
                     {
-                        CurrentJoiningClientMod = JoiningClientMPMods[x];
+                        CurrentJoiningClientMod = JoiningClientMPTypeAllMods[x];
                         found = true;
                         if (CurrentLocalMod.Version != CurrentJoiningClientMod.Version)
                         {
@@ -654,10 +678,11 @@ namespace VoidManager.MPModChecks
                 }
             }
 
+
             //Compare Local mods against Joining Client mods
-            for (i = 0; i < JoiningClientMPMods.Length; i++)
+            for (i = 0; i < JoiningClientMPTypeAllMods.Length; i++)
             {
-                CurrentJoiningClientMod = JoiningClientMPMods[i];
+                CurrentJoiningClientMod = JoiningClientMPTypeAllMods[i];
                 bool found = false;
                 for (x = 0; x < MyMPModList.Length; x++)
                 {
@@ -671,12 +696,13 @@ namespace VoidManager.MPModChecks
                 {
                     //Host MPType.All Mod not found in Joining Client mods
                     LocalClientMissing.Add(CurrentJoiningClientMod.ModName);
-                    Plugin.Log.LogMessage($"Client must uninstall the MPType.All Mod '{CurrentJoiningClientMod.ModName}'");
+                    Plugin.Log.LogMessage($"Client must uninstall the {CurrentJoiningClientMod.MPType.ToString()} Mod '{CurrentJoiningClientMod.ModName}'");
                 }
             }
 
 
-                string errorMessage = string.Empty;
+
+            string errorMessage = string.Empty;
 
             if (MismatchedVersions.Count > 0) //Case: Client and Host have mismatched mod versions
             {
@@ -708,6 +734,7 @@ namespace VoidManager.MPModChecks
             {
                 //Send message to joining client.
                 //fixme Possible send list via steammanager for non-modded clients.
+                Messaging.Echo($"Kicking player {joiningPlayer.NickName} from session for incompatable mods.", false);
                 PhotonNetwork.CloseConnection(joiningPlayer);
                 Plugin.Log.LogMessage($"Kicked player {joiningPlayer.NickName} from session for incompatable mods.\n{errorMessage}");
             }
