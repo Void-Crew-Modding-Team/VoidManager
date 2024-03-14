@@ -32,7 +32,7 @@ namespace VoidManager.MPModChecks
         internal const byte PlayerMPUserDataEventCode = 99;
         internal const string RoomModsPropertyKey = "Mods";
 
-        internal static RoomCallbacks RoomCallbacksClass;
+        internal static InRoomCallbacks RoomCallbacksClass;
         private MPModDataBlock[] MyModList = null;
         private MPModDataBlock[] MyMPModList = null;
         byte[] RoomProperties;
@@ -77,12 +77,12 @@ namespace VoidManager.MPModChecks
                 Plugin.Log.LogWarning("Attempted to update lobby properties while room was null");
                 return;
             }
-            if(!CurrentRoom.CustomProperties.ContainsKey(RoomModsPropertyKey))//If the key doesn't already exist, there have been no limitations imposed on the room.
+            if(!CurrentRoom.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))//If the key doesn't already exist, there have been no limitations imposed on the room.
             {
                 return;
             }
 
-            PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { RoomModsPropertyKey, RoomProperties } });
+            PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { InRoomCallbacks.RoomModsPropertyKey, RoomProperties } });
         }
 
         private void UpdateHighestLevelOfMPMods(MultiplayerType MT)
@@ -289,11 +289,11 @@ namespace VoidManager.MPModChecks
         /// <returns></returns>
         internal MPUserDataBlock GetHostModList()
         {
-            if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(RoomModsPropertyKey))
+            if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))
             {
                 try
                 {
-                    return DeserializeHashlessMPUserData((byte[])PhotonNetwork.CurrentRoom.CustomProperties[RoomModsPropertyKey]);
+                    return DeserializeHashlessMPUserData((byte[])PhotonNetwork.CurrentRoom.CustomProperties[InRoomCallbacks.RoomModsPropertyKey]);
                 }
                 catch
                 {
@@ -431,7 +431,7 @@ namespace VoidManager.MPModChecks
             {
                 return;
             }
-            PhotonNetwork.RaiseEvent(MPModCheckManager.PlayerMPUserDataEventCode, new object[] { false, SerializeHashlessMPUserData() }, new RaiseEventOptions { TargetActors = new int[1] { Player.ActorNumber } }, SendOptions.SendReliable);
+            PhotonNetwork.RaiseEvent(InRoomCallbacks.PlayerMPUserDataEventCode, new object[] { false, SerializeHashlessMPUserData() }, new RaiseEventOptions { TargetActors = new int[1] { Player.ActorNumber } }, SendOptions.SendReliable);
         }
 
         internal void SendModlistToHost()
@@ -440,13 +440,13 @@ namespace VoidManager.MPModChecks
             {
                 return;
             }
-            PhotonNetwork.RaiseEvent(MPModCheckManager.PlayerMPUserDataEventCode, new object[] { true, SerializeHashfullMPUserData() }, new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient }, SendOptions.SendReliable);
+            PhotonNetwork.RaiseEvent(InRoomCallbacks.PlayerMPUserDataEventCode, new object[] { true, SerializeHashfullMPUserData() }, new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient }, SendOptions.SendReliable);
         }
 
         internal void SendModListToOthers()
         {
             Plugin.Log.LogMessage("sending others");
-            PhotonNetwork.RaiseEvent(MPModCheckManager.PlayerMPUserDataEventCode, new object[] { false, SerializeHashlessMPUserData() }, null, SendOptions.SendReliable);
+            PhotonNetwork.RaiseEvent(InRoomCallbacks.PlayerMPUserDataEventCode, new object[] { false, SerializeHashlessMPUserData() }, null, SendOptions.SendReliable);
         }
 
         internal void PlayerJoined(Player JoiningPlayer)
@@ -486,7 +486,7 @@ namespace VoidManager.MPModChecks
         {
             Plugin.Log.LogMessage($"Starting Clientside mod checks for room: {RoomProperties["R_Na"]}");
 
-            if (!RoomProperties.ContainsKey(RoomModsPropertyKey))//Host doesn't have mods
+            if (!RoomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))//Host doesn't have mods
             {
                 if (HighestLevelOfMPMods == MultiplayerType.All)
                 {
@@ -503,7 +503,7 @@ namespace VoidManager.MPModChecks
             
 
             //Selects only mods which have MPType set to all for comparison.
-            MPUserDataBlock HostModData = DeserializeHashlessMPUserData((byte[])RoomProperties[RoomModsPropertyKey]);
+            MPUserDataBlock HostModData = DeserializeHashlessMPUserData((byte[])RoomProperties[InRoomCallbacks.RoomModsPropertyKey]);
             MPModDataBlock[] HostMods = HostModData.ModData.Where(Mod => Mod.MPType == MultiplayerType.All).ToArray();
 
             Plugin.Log.LogMessage($"Void Manager versions - Host: {HostModData.VMVersion} Client: {MyPluginInfo.PLUGIN_VERSION}");

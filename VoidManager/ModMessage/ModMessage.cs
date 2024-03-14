@@ -51,7 +51,7 @@ namespace VoidManager.ModMessages
             RaiseEventOptions raiseEventOptions = new RaiseEventOptions();
             raiseEventOptions.TargetActors = players.Select(player => player.ActorNumber).ToArray();
 
-            PhotonNetwork.RaiseEvent(ModMessageHandler.ModMessageEventCode, information, raiseEventOptions, 
+            PhotonNetwork.RaiseEvent(InRoomCallbacks.ModMessageEventCode, information, raiseEventOptions, 
                 (reliable ? SendOptions.SendReliable : SendOptions.SendUnreliable));
         }
 
@@ -71,7 +71,7 @@ namespace VoidManager.ModMessages
             RaiseEventOptions raiseEventOptions = new RaiseEventOptions();
             raiseEventOptions.Receivers = recieverGroup;
 
-            PhotonNetwork.RaiseEvent(ModMessageHandler.ModMessageEventCode, information, raiseEventOptions,
+            PhotonNetwork.RaiseEvent(InRoomCallbacks.ModMessageEventCode, information, raiseEventOptions,
                 (reliable ? SendOptions.SendReliable : SendOptions.SendUnreliable));
         }
 

@@ -10,16 +10,21 @@ using VoidManager.MPModChecks;
 
 namespace VoidManager.Callbacks
 {
-    class RoomCallbacks : IInRoomCallbacks, IMatchmakingCallbacks, IOnEventCallback
+    class InRoomCallbacks : IInRoomCallbacks, IMatchmakingCallbacks, IOnEventCallback
     {
-        public RoomCallbacks()
+        public InRoomCallbacks()
         {
             PhotonNetwork.AddCallbackTarget(this);
         }
 
+        internal const byte PlayerMPUserDataEventCode = 99;
+        internal const byte ModMessageEventCode = 98;
+        //internal const byte InfoMessageEventCode = 97;
+        internal const string RoomModsPropertyKey = "Mods";
+
         public void OnEvent(EventData photonEvent)
         {
-            if (photonEvent.Code == MPModCheckManager.PlayerMPUserDataEventCode)//MPModChecksEvents
+            if (photonEvent.Code == PlayerMPUserDataEventCode)//MPModChecksEvents
             {
                 Player sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(photonEvent.Sender);
 
@@ -44,7 +49,7 @@ namespace VoidManager.Callbacks
                     MPModCheckManager.Instance.AddNetworkedPeerMods(sender, MPModCheckManager.DeserializeHashlessMPUserData((byte[])data[1]));
                 }
             }
-            else if (photonEvent.Code == ModMessageHandler.ModMessageEventCode)//ModMessagesEvents
+            else if (photonEvent.Code == ModMessageEventCode)//ModMessagesEvents
             {
                 Player Sender = PhotonNetwork.NetworkingClient.CurrentRoom.GetPlayer(photonEvent.Sender);
                 object[] args = (object[])photonEvent.CustomData;
@@ -83,7 +88,7 @@ namespace VoidManager.Callbacks
             MPModCheckManager.Instance.SendModListToOthers();
 
             //Add host mod list to local cache.
-            if (!PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(MPModCheckManager.RoomModsPropertyKey))
+            if (!PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(RoomModsPropertyKey))
             {
                 MPModCheckManager.Instance.AddNetworkedPeerMods(PhotonNetwork.MasterClient, MPModCheckManager.Instance.GetHostModList());
             }

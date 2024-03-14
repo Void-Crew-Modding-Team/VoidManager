@@ -40,7 +40,7 @@ namespace VoidManager
                 return;
             }
             RoomCallbacksInitialized = true;
-            MPModCheckManager.RoomCallbacksClass = new RoomCallbacks();
+            MPModCheckManager.RoomCallbacksClass = new InRoomCallbacks();
         }
     }
 }
