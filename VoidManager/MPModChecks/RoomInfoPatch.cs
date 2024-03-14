@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using VoidManager.Callbacks;
 
 namespace VoidManager.MPModChecks
 {
@@ -13,7 +14,7 @@ namespace VoidManager.MPModChecks
     {
         static RoomOptions PatchMethod(RoomOptions RoomOptions)
         {
-            RoomOptions.CustomRoomProperties.Add(MPModCheckManager.RoomModsPropertyKey, MPModCheckManager.Instance.GetRoomProperties());
+            RoomOptions.CustomRoomProperties.Add(InRoomCallbacks.RoomModsPropertyKey, MPModCheckManager.Instance.GetRoomProperties());
 
 
             //Rebuild CRPFL array with new value. Litterally adding an index to an array.
@@ -24,7 +25,7 @@ namespace VoidManager.MPModChecks
             {
                 NewCRPFL[i] = RoomOptions.CustomRoomPropertiesForLobby[i];
             }
-            NewCRPFL[i] = MPModCheckManager.RoomModsPropertyKey; //i was incremented and is still usefull.
+            NewCRPFL[i] = InRoomCallbacks.RoomModsPropertyKey; //i was incremented and is still usefull.
             RoomOptions.CustomRoomPropertiesForLobby = NewCRPFL;
 
 

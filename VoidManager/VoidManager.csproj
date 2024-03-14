@@ -89,6 +89,10 @@
       <HintPath>Files\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.UIElementsModule">
+      <HintPath>Files\UnityEngine.UIElementsModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.UIModule">
       <HintPath>Files\UnityEngine.UIModule.dll</HintPath>
       <Private>False</Private>
