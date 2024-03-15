@@ -1,4 +1,6 @@
-﻿using ExitGames.Client.Photon;
+﻿using CG.GameLoopStateMachine;
+using CG.GameLoopStateMachine.GameStates;
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using Steamworks;
@@ -70,6 +72,13 @@ namespace VoidManager.Callbacks
 
                 //Fail in event targetted ModMessage was not found.
                 Plugin.Log.LogInfo($"Recieved Unrecognised ModMessage ({args[0] ?? "N/A"}#{args[1] ?? "N/A"}) from {Sender.NickName ?? "N/A"}");
+            }
+            else if (photonEvent.Code == 203)
+            {
+                if (Singleton<GameStateMachine>.Instance.CurrentState is not GSIngame)//fixes bug with vanilla getting kicked too early. Treated like a normal photon disconnect, but the error code will be the input value.
+                {
+                    PhotonService.Instance.OnDisconnected(DisconnectCause.DisconnectByServerLogic);
+                }
             }
         }
 
