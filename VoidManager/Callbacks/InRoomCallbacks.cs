@@ -75,9 +75,12 @@ namespace VoidManager.Callbacks
             }
             else if (photonEvent.Code == 203)
             {
-                if (Singleton<GameStateMachine>.Instance.CurrentState is not GSIngame)//fixes bug with vanilla getting kicked too early. Treated like a normal photon disconnect, but the error code will be the input value.
+                if (Singleton<GameStateMachine>.Instance.CurrentState is GSSpawn)//fixes bug with vanilla getting kicked too early. Treated like a normal photon disconnect, but the error code will be the input value.
                 {
-                    PhotonService.Instance.OnDisconnected(DisconnectCause.DisconnectByServerLogic);
+                    Plugin.Log.LogInfo("Kicked while in GSSpawn State.");
+                    Singleton<GameStateMachine>.Instance.GetState<GSPhotonDisconnected>().MessageHeaderOverride = "Kicked";
+                    Singleton<GameStateMachine>.Instance.GetState<GSPhotonDisconnected>().MessageBodyOverride = "Kicked on join.";
+                    Singleton<GameStateMachine>.Instance.ChangeState<GSPhotonDisconnected>();
                 }
             }
         }
