@@ -11,10 +11,10 @@
 - [x] Handle Mod-Only Sessions
 
 ## 1.0 Blockers
-- [ ] Mods default to 'unspecified', host can allow/disallow unspecified mod types in their game.
+- [x] Mods default to 'unspecified', host can allow/disallow unspecified mod types in their game.
 
 ## Extra
 - [ ] Sent Message History
 - [ ] mod whitelist/blacklisting
-- [ ] Mark rooms as modded
+- [x] Mark rooms as modded
 - [ ] Clients ability to view a room's mod list before joining.
