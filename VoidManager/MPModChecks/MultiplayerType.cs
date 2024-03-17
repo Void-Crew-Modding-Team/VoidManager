@@ -4,8 +4,9 @@
     public enum MultiplayerType : byte
     {
         Hidden,
-        Client,
-        Unspecified,
-        All
+        Client = 3,
+        Unspecified = 6,
+        //HostMustHave,
+        All = 10
     }
 }
