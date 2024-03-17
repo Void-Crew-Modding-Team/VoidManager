@@ -4,6 +4,7 @@ using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using Steamworks;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ToolClasses;
@@ -21,7 +22,7 @@ namespace VoidManager.Callbacks
 
         internal const byte PlayerMPUserDataEventCode = 99;
         internal const byte ModMessageEventCode = 98;
-        //internal const byte InfoMessageEventCode = 97;
+        internal const byte InfoMessageEventCode = 97;
         internal const string RoomModsPropertyKey = "Mods";
 
         public void OnEvent(EventData photonEvent)
@@ -72,6 +73,22 @@ namespace VoidManager.Callbacks
 
                 //Fail in event targetted ModMessage was not found.
                 Plugin.Log.LogInfo($"Recieved Unrecognised ModMessage ({args[0] ?? "N/A"}#{args[1] ?? "N/A"}) from {Sender.NickName ?? "N/A"}");
+            }
+            else if (photonEvent.Code == InfoMessageEventCode)
+            {
+                try
+                {
+                    object[] EventData = (object[])photonEvent.CustomData;
+                    if (EventData.Length == 2);
+                    {
+                        KickMessagePatch.KickTitle = EventData[0].ToString();
+                        KickMessagePatch.KickMessage = EventData[1].ToString();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Plugin.Log.LogError("Recieved Photon Event with InfoMessage code, but could not parse data.\n" + ex);
+                }
             }
             else if (photonEvent.Code == 203)
             {

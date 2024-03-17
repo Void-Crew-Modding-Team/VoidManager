@@ -610,6 +610,8 @@ namespace VoidManager.MPModChecks
             if(errorMessage != string.Empty)
             {
                 LastModCheckFailReason = errorMessage;
+                KickMessagePatch.KickTitle = "Disconnected: Incompatable mod list";
+                KickMessagePatch.KickMessage = errorMessage;
                 Plugin.Log.LogMessage("Couldn't join session.\n" + errorMessage);
                 return false;
             }
@@ -735,6 +737,7 @@ namespace VoidManager.MPModChecks
                 //Send message to joining client.
                 //fixme Possible send list via steammanager for non-modded clients.
                 Messaging.Echo($"Kicking player {joiningPlayer.NickName} from session for incompatable mods.", false);
+                PhotonNetwork.RaiseEvent(InRoomCallbacks.InfoMessageEventCode, new object[] { "Kicked: Incompatable mod list", errorMessage }, new RaiseEventOptions { TargetActors = new int[] { joiningPlayer.ActorNumber } }, SendOptions.SendUnreliable);
                 PhotonNetwork.CloseConnection(joiningPlayer);
                 Plugin.Log.LogMessage($"Kicked player {joiningPlayer.NickName} from session for incompatable mods.\n{errorMessage}");
             }
