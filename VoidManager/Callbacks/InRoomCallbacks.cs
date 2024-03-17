@@ -79,7 +79,7 @@ namespace VoidManager.Callbacks
                 try
                 {
                     object[] EventData = (object[])photonEvent.CustomData;
-                    if (EventData.Length == 2);
+                    if (EventData.Length == 2)
                     {
                         KickMessagePatch.KickTitle = EventData[0].ToString();
                         KickMessagePatch.KickMessage = EventData[1].ToString();
