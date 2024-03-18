@@ -38,14 +38,14 @@ namespace VoidManager
                 if (voidPluginInstances.Any())
                 {
                     VoidPlugin voidPlugin = (VoidPlugin)Activator.CreateInstance(voidPluginInstances.First());
+                    voidPlugin.VersionInfo = FileVersionInfo.GetVersionInfo(BepinPlugin.Location);
+                    voidPlugin.ModHash = GetFileHash(BepinPlugin.Location);
+                    voidPlugin.BepinPlugin = BepinPlugin;
                     CommandHandler.DiscoverCommands(assembly, BepinPlugin.Metadata.Name);
                     CommandHandler.DiscoverPublicCommands(assembly, BepinPlugin.Metadata.Name);
                     ModMessageHandler.DiscoverModMessages(assembly, BepinPlugin);
                     CustomGUI.GUIMain.Instance.DiscoverGUIMenus(assembly, voidPlugin);
                     ActiveVoidPlugins.Add(BepinPlugin.Metadata.GUID, voidPlugin);
-                    voidPlugin.VersionInfo = FileVersionInfo.GetVersionInfo(BepinPlugin.Location);
-                    voidPlugin.ModHash = GetFileHash(BepinPlugin.Location);
-                    voidPlugin.BepinPlugin = BepinPlugin;
                 }
             }
             Plugin.Log.LogInfo($"Loaded {CommandHandler.chatCommandCount} local command(s) and {CommandHandler.publicCommandCount} public command(s)");

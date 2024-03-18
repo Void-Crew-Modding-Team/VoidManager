@@ -2,7 +2,6 @@
 using CG.Input;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
