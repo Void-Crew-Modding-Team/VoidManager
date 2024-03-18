@@ -40,9 +40,7 @@ Drag and drop `VoidManager.dll` into `Void Crew\BepInEx\plugins`
 
 ---------------------
 
-🤔 : Development Guide :
-
-(Will be uploaded to Github wiki soon)
+🤔 : Development Guide : **Documentation to create Void Manager mods are** [on the wiki](https://github.com/Void-Crew-Modding-Team/VoidManager/wiki)
 
 ---------------------
 
