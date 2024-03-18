@@ -222,9 +222,9 @@ namespace VoidManager.CustomGUI
                     Label($"Based on the 'Pulsar Mod Loader' developed by Tom Ritcher");
                     BeginHorizontal();
                     if (Button("Github"))
-                        Process.Start("https://github.com/PULSAR-Modders/pulsar-mod-loader");
+                        Application.OpenURL("https://github.com/Void-Crew-Modding-Team/VoidManager");
                     if (Button("Discord"))
-                        Process.Start("https://discord.gg/j3Pydn6");
+                        Application.OpenURL("https://discord.gg/4QhRRBWsJz");
                     EndHorizontal();
                     break;
                     #endregion
