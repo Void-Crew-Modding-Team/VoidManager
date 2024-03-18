@@ -29,6 +29,14 @@ Notes on Multiplayer mod checks: By default, any given mod must be installed by 
 - `/` is the prefix for client commands. `/help` lists all commands available.
 - `!` is the prefix for public commands. `!help` lists all public commands available.
 
+👥 : Multiplayer Functionality : 
+
+**Complex**  -  VoidManager handles mods connectiveity to prevent mods not configured for VoidManager from joining vanilla games. If all mods are configured for VoidManager as Client mods, clients will be allowed to join vanilla games. This behaviour is to prevent mods which break vanilla clients from doing so.
+
+- ✅ Client
+- ⬜ Host
+- ⬜ All
+
 ---------------------
 
 🔧 : Install Instructions : **Install following the normal BepInEx procedure.**
