@@ -14,7 +14,7 @@ Notes on Multiplayer mod checks: By default, any given mod must be installed by 
 
 ---------------------
 
-💡 : Function : **Adds numerous features to assist in mod handling and management.**
+### 💡 : Function : **Several features to assist in mod handling and management.**
 - Handling for mods requiring installation by all users
 - Restrictions for unspecified mods
 - Client side chat commands
@@ -23,13 +23,13 @@ Notes on Multiplayer mod checks: By default, any given mod must be installed by 
 - Marked Void Manager rooms
 - Mod settings UI
 
-🎮 : Client Usage :
+### 🎮 : Client Usage :
 
 - `F5` ingame will bring up a menu which lists all installed `Void Manager` plugins and their mod settings.
 - `/` is the prefix for client commands. `/help` lists all commands available.
 - `!` is the prefix for public commands. `!help` lists all public commands available.
 
-👥 : Multiplayer Functionality : 
+### 👥 : Multiplayer Functionality : 
 
 **Complex**  -  VoidManager handles mods connectiveity to prevent mods not configured for VoidManager from joining vanilla games. If all mods are configured for VoidManager as Client mods, clients will be allowed to join vanilla games. This behaviour is to prevent mods which break vanilla clients from doing so.
 
@@ -39,22 +39,22 @@ Notes on Multiplayer mod checks: By default, any given mod must be installed by 
 
 ---------------------
 
-🔧 : Install Instructions : **Install following the normal BepInEx procedure.**
+## 🔧 : Install Instructions : **Install following the normal BepInEx procedure.**
 
 Ensure that you have [BepInEx 5](https://thunderstore.io/c/void-crew/p/BepInEx/BepInExPack/) installed, stable version 5 **MONO** build to be precise.
 
-✔️ : Mod install : **Unzip the contents into the BepInEx plugin directory**
+#### ✔️ : Mod install : **Unzip the contents into the BepInEx plugin directory**
 
 Drag and drop `VoidManager.dll` into `Void Crew\BepInEx\plugins`
 
 ---------------------
 
-🤔 : Development Guide : **Documentation to create Void Manager mods is** [on the wiki](https://github.com/Void-Crew-Modding-Team/VoidManager/wiki)
+### 🤔 : Development Guide : **Documentation to create Void Manager mods is** [on the wiki](https://github.com/Void-Crew-Modding-Team/VoidManager/wiki)
 
 ---------------------
 
-Future Plans:
+### Future Plans:
 
-- [ ] Sent Message History
-- [ ] mod whitelist/blacklisting
-- [ ] Clients ability to view a room's mod list before joining.
+- Sent Message History
+- mod whitelist/blacklisting
+- Clients ability to view a room's mod list before joining.
