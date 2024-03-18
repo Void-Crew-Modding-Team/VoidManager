@@ -10,6 +10,7 @@
 
 Developed by Mest and Dragon, based on [Pulsar Mod Loader](https://github.com/PULSAR-Modders/pulsar-mod-loader)
 
+Notes on Multiplayer mod checks: By default, any given mod must be installed by the host for clients to join. The host can configure this setting with VoidManager vie the F5 menu (ModManager > Mod Settings > VoidManager > Trust MPType.Unspecified mods). Additionally, Mods configured for VoidManager can change this setting.
 
 ---------------------
 
@@ -40,7 +41,7 @@ Drag and drop `VoidManager.dll` into `Void Crew\BepInEx\plugins`
 
 ---------------------
 
-🤔 : Development Guide : **Documentation to create Void Manager mods are** [on the wiki](https://github.com/Void-Crew-Modding-Team/VoidManager/wiki)
+🤔 : Development Guide : **Documentation to create Void Manager mods is** [on the wiki](https://github.com/Void-Crew-Modding-Team/VoidManager/wiki)
 
 ---------------------
 
