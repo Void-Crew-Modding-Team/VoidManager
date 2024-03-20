@@ -18,7 +18,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace VoidManager.MPModChecks
 {
-    class MPModCheckManager //Todo - Mark modded lobbies.
+    public class MPModCheckManager //Todo - Mark modded lobbies.
     {
         internal MPModCheckManager()
         {
