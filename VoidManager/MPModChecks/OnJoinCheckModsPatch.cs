@@ -30,7 +30,7 @@ namespace VoidManager.MPModChecks
             {
                 if (RI.Name == ___matchList.GetSelectedRoom().RoomId)
                 {
-                    if (!MPModCheckManager.Instance.ModChecksClientside(RI.CustomProperties))
+                    if (!MPModCheckManager.Instance.ModChecksClientside(RI.CustomProperties, false))
                     {
                         ___failPopup.Show("VoidManager blocked connection, Modlists incompatable.\n" + MPModCheckManager.Instance.LastModCheckFailReason);
                         return false;

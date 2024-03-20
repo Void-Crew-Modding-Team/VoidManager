@@ -487,7 +487,7 @@ namespace VoidManager.MPModChecks
             Events.Instance.CallHostOnClientVerifiedEvent(JoiningPlayer);
         }
 
-        internal bool ModChecksClientside(Hashtable RoomProperties)
+        internal bool ModChecksClientside(Hashtable RoomProperties, bool inRoom = true)
         {
             LastModCheckFailReason = string.Empty;
             Plugin.Log.LogMessage($"Starting Clientside mod checks for room: {RoomProperties["R_Na"]}");
@@ -609,9 +609,17 @@ namespace VoidManager.MPModChecks
             //return false and finalize error message.
             if(errorMessage != string.Empty)
             {
-                LastModCheckFailReason = errorMessage;
-                KickMessagePatch.KickTitle = "Disconnected: Incompatable mod list";
-                KickMessagePatch.KickMessage = errorMessage;
+                if (inRoom) //Provide kickedMessage popup
+                {
+                    KickMessagePatches.KickTitle = "Disconnected: Incompatable mod list";
+                    KickMessagePatches.KickMessage = errorMessage;
+                }
+                else //Provide Terminal fail to join popup
+                {
+                    LastModCheckFailReason = errorMessage;
+                }
+
+
                 Plugin.Log.LogMessage("Couldn't join session.\n" + errorMessage);
                 return false;
             }
