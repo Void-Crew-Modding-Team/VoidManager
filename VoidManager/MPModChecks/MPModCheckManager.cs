@@ -123,7 +123,7 @@ namespace VoidManager.MPModChecks
             MyMPModList = ProcessedMods.Where(Mod => Mod.MPType == MultiplayerType.All).ToArray();
             MyMPUnspecifiedModList = ProcessedMods.Where(Mod => Mod.MPType == MultiplayerType.Unspecified).ToArray();
             stopwatch.Stop();
-            Plugin.Log.LogInfo("Finished Building MyModList, time elapsted: " + stopwatch.ElapsedMilliseconds.ToString());
+            Plugin.Log.LogInfo("Finished Building MyModList, time elapsted: " + stopwatch.ElapsedMilliseconds.ToString() + " ms");
             Plugin.Log.LogInfo($"MyModList:\n{GetModListAsString(MyModList)}\n");
         }
 
