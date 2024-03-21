@@ -2,7 +2,6 @@
 using HarmonyLib;
 using System.Linq;
 using UI.Chat;
-using VivoxUnity;
 using VoidManager.Utilities;
 
 namespace VoidManager.Chat.Router

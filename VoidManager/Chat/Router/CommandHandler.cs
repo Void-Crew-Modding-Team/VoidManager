@@ -97,7 +97,10 @@ namespace VoidManager.Chat.Router
                     }
                 }
             }
-            Plugin.Log.LogInfo($"[{ModName}] Detected {commandCount} chat commands");
+            if (commandCount != 0)
+            {
+                Plugin.Log.LogInfo($"[{ModName}] Detected {commandCount} chat commands");
+            }
         }
         /// <summary>
         /// Iterates through the current Plugin files and searches for public commands.
@@ -125,7 +128,10 @@ namespace VoidManager.Chat.Router
                     }
                 }
             }
-            Plugin.Log.LogInfo($"[{ModName}] Detected {commandCount} public commands");
+            if (commandCount != 0)
+            {
+                Plugin.Log.LogInfo($"[{ModName}] Detected {commandCount} public commands");
+            }
         }
     }
 }

@@ -75,17 +75,17 @@ namespace VoidManager.MPModChecks
             if (HighestLevelOfMPMods == MultiplayerType.Hidden && MT != MultiplayerType.Hidden)
             {
                 HighestLevelOfMPMods = MT;
-                Plugin.Log.LogInfo("Incrementing MPType to " + MT.ToString());
+                Plugin.Log.LogInfo("Incrementing HighestLevelOfMPMods to " + MT.ToString());
             }
             else if (HighestLevelOfMPMods == MultiplayerType.Client && MT > MultiplayerType.Client)
             {
                 HighestLevelOfMPMods = MT;
-                Plugin.Log.LogInfo("Incrementing MPType to " + MT.ToString());
+                Plugin.Log.LogInfo("Incrementing HighestLevelOfMPMods to " + MT.ToString());
             }
             else if (HighestLevelOfMPMods == MultiplayerType.Unspecified && MT > MultiplayerType.Unspecified)
             {
                 HighestLevelOfMPMods = MultiplayerType.All;
-                Plugin.Log.LogInfo("Incrementing MPType to MPType.All");
+                Plugin.Log.LogInfo("Incrementing HighestLevelOfMPMods to MPType.All");
             }
         }
 

@@ -13,15 +13,15 @@ namespace VoidManager
         [HarmonyPostfix]
         public static void PostAwakeInit()
         {
+            Plugin.Log.LogInfo($"- - - Void Manager Initialization - - -");
             Events.Instance = new Events();
 
             new GameObject("ModManager", typeof(CustomGUI.GUIMain)) { hideFlags = HideFlags.HideAndDontSave };
-
-            Plugin.Log.LogInfo($"- - - Void Manager Initialization - - -");
+            
             PluginHandler.DiscoverPlugins();
-            Plugin.Log.LogInfo($"- - - - - - - - - - - - - - - - - - - -");
 
             MPModCheckManager.Instance = new MPModCheckManager();
+            Plugin.Log.LogInfo($"- - - - - - - - - - - - - - - - - - - -");
         }
     }
 

@@ -24,7 +24,10 @@ namespace VoidManager.ModMessages
                 modMessageHandlers.Add(bepinPlugin.Metadata.GUID + "#" + modMessageHandler.GetIdentifier(), modMessageHandler);
                 modMessageCount++;
             }
-            Plugin.Log.LogInfo($"[{bepinPlugin.Metadata.Name}] Detected {modMessageCount} mod messages");
+            if (modMessageCount != 0)
+            {
+                Plugin.Log.LogInfo($"[{bepinPlugin.Metadata.Name}] Detected {modMessageCount} mod messages");
+            }
         }
     }
 }
