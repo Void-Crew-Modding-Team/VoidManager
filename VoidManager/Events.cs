@@ -1,132 +1,96 @@
 ﻿using Photon.Realtime;
+using System;
 
 namespace VoidManager
 {
     public class Events
     {
         /// <summary>
-        /// creates VoidManager.Events Instance.
-        /// </summary>
-        internal Events()
-        {
-            Instance = this;
-        }
-
-        /// <summary>
         /// The current Events Instance.
         /// </summary>
-        public static Events Instance;
+        public static Events Instance { get; internal set; }
 
-        /// <summary>
-        /// Used by OnPlayerEnteredRoomEvent
-        /// </summary>
-        public delegate void OnPlayerEnteredRoomDelegate(Player joiningPlayer);
+
+        public class PlayerEventArgs : EventArgs
+        {
+            public Player player;
+        }
+
 
         /// <summary>
         /// Called by photon on player join.
         /// </summary>
-        public event OnPlayerEnteredRoomDelegate OnPlayerEnteredRoomEvent;
+        public event EventHandler<PlayerEventArgs> PlayerEnteredRoom;
 
-        internal void CallOnPlayerEnteredRoomEvent(Player joiningPlayer)
+        internal void OnPlayerEnteredRoom(Player joiningPlayer)
         {
-            OnPlayerEnteredRoomEvent?.Invoke(joiningPlayer);
+            PlayerEnteredRoom?.Invoke(this, new PlayerEventArgs() { player = joiningPlayer });
         }
 
-
-        /// <summary>
-        /// Used by OnPlayerLeftRoomEvent
-        /// </summary>
-        public delegate void OnPlayerLeftRoomDelegate(Player leavingPlayer);
 
         /// <summary>
         /// Called by photon on player leave.
         /// </summary>
-        public event OnPlayerLeftRoomDelegate OnPlayerLeftRoomEvent;
+        public event EventHandler<PlayerEventArgs> PlayerLeftRoom;
 
-        internal void CallOnPlayerLeftRoomEvent(Player leavingPlayer)
+        internal void OnPlayerLeftRoom(Player leavingPlayer)
         {
-            OnPlayerLeftRoomEvent?.Invoke(leavingPlayer);
+            PlayerLeftRoom?.Invoke(this, new PlayerEventArgs() { player = leavingPlayer });
         }
 
-
-        /// <summary>
-        /// Used by OnJoinedRoomEvent
-        /// </summary>
-        public delegate void OnJoinedRoomDelegate();
 
         /// <summary>
         /// Called by photon on room join.
         /// </summary>
-        public event OnJoinedRoomDelegate OnJoinedRoomEvent;
+        public event EventHandler JoinedRoom;
 
-        internal void CallOnJoinedRoomEvent()
+        internal void OnJoinedRoom()
         {
-            OnJoinedRoomEvent?.Invoke();
+            JoinedRoom?.Invoke(this, EventArgs.Empty);
         }
 
-
-        /// <summary>
-        /// Used by OnLeftRoomEvent
-        /// </summary>
-        public delegate void OnLeftRoomDelegate();
 
         /// <summary>
         /// Called by photon on room leave.
         /// </summary>
-        public event OnLeftRoomDelegate OnLeftRoomEvent;
+        public event EventHandler LeftRoom;
 
-        internal void CallOnLeftRoomEvent()
+        internal void CallOnLeftRoom()
         {
-            OnLeftRoomEvent?.Invoke();
+            LeftRoom?.Invoke(this, EventArgs.Empty);
         }
 
-
-        /// <summary>
-        /// Used by OnMasterClientSwitchedEvent
-        /// </summary>
-        public delegate void OnMasterClientSwitchedDelegate(Player newMasterClient);
 
         /// <summary>
         /// Called by photon on MasterClient switch.
         /// </summary>
-        public event OnMasterClientSwitchedDelegate OnMasterClientSwitchedEvent;
+        public event EventHandler<PlayerEventArgs> MasterClientSwitched;
 
-        internal void CallOnMasterClientSwitchedEvent(Player newMasterClient)
+        internal void CallOnMasterClientSwitched(Player newMasterClient)
         {
-            OnMasterClientSwitchedEvent?.Invoke(newMasterClient);
+            MasterClientSwitched?.Invoke(this, new PlayerEventArgs() { player = newMasterClient });
         }
 
-
-        /// <summary>
-        /// Used by HostOnClientVerifiedEvent
-        /// </summary>
-        public delegate void HostOnClientVerifiedDelegate(Player verifiedPlayer);
 
         /// <summary>
         /// Called by VoidManager after client passed Mod Checks.
         /// </summary>
-        public event HostOnClientVerifiedDelegate HostOnClientVerifiedEvent;
+        public event EventHandler<PlayerEventArgs> HostVerifiedClient;
 
-        internal void CallHostOnClientVerifiedEvent(Player verifiedPlayer) //Called by ModChecksHostOnClientJoin and PlayerJoinedChecks
+        internal void CallHostOnClientVerified(Player verifiedPlayer) //Called by ModChecksHostOnClientJoin and PlayerJoinedChecks
         {
-            HostOnClientVerifiedEvent?.Invoke(verifiedPlayer);
+            HostVerifiedClient?.Invoke(this, new PlayerEventArgs() { player = verifiedPlayer });
         }
 
 
         /// <summary>
-        /// Used by ClientModlistRecievedEvent
-        /// </summary>
-        /// <param name="DataSender"></param>
-        public delegate void ClientModlistRecievedDelegate(Player DataSender);
-
-        /// <summary>
         /// Called after a client modlist has been recieved by the MPModCheckManager instance.
         /// </summary>
-        public event ClientModlistRecievedDelegate ClientModlistRecievedEvent;
+        public event EventHandler<PlayerEventArgs> ClientModlistRecieved;
 
-        internal void CallClientModlistRecievedEvent(Player DataSender)
+        internal void OnClientModlistRecieved(Player DataSender)
         {
-            ClientModlistRecievedEvent?.Invoke(DataSender);
+            ClientModlistRecieved?.Invoke(this, new PlayerEventArgs() { player = DataSender });
         }
     }
 }

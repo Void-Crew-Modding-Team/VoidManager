@@ -11,7 +11,7 @@ namespace VoidManager.CustomGUI
 {
     class GUIMain : MonoBehaviour, IShowCursorSource, IInputActionMapRequest
     {
-        public static GUIMain Instance = null;
+        public static GUIMain Instance { get; internal set; }
         GameObject Background;
         GameObject MMCanvas;
         UnityEngine.UI.Image Image;

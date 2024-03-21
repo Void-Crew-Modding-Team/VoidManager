@@ -123,12 +123,13 @@ namespace VoidManager.Callbacks
             }
 
             //Above controls whether a game is joined, so it is better to let it run first.
-            Events.Instance.CallOnJoinedRoomEvent();
+            Events.Instance.OnJoinedRoom();
         }
 
         public void OnLeftRoom()
         {
-            Events.Instance.CallOnLeftRoomEvent();
+            MPModCheckManager.Instance.ClearAllNetworkedPeerMods();
+            Events.Instance.CallOnLeftRoom();
         }
 
         public void OnMasterClientSwitched(Player newMasterClient)
@@ -138,18 +139,19 @@ namespace VoidManager.Callbacks
                 MPModCheckManager.Instance.UpdateLobbyProperties();
             }
 
-            Events.Instance.CallOnMasterClientSwitchedEvent(newMasterClient);
+            Events.Instance.CallOnMasterClientSwitched(newMasterClient);
         }
 
         public void OnPlayerEnteredRoom(Player newPlayer)
         {
             MPModCheckManager.Instance.PlayerJoined(newPlayer);
-            Events.Instance.CallOnPlayerEnteredRoomEvent(newPlayer);
+            Events.Instance.OnPlayerEnteredRoom(newPlayer);
         }
 
         public void OnPlayerLeftRoom(Player leavingPlayer)
         {
-            Events.Instance.CallOnPlayerLeftRoomEvent(leavingPlayer);
+            Events.Instance.OnPlayerLeftRoom(leavingPlayer);
+            MPModCheckManager.Instance.RemoveNetworkedPeerMods(leavingPlayer);
         }
 
 

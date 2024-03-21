@@ -22,11 +22,8 @@ namespace VoidManager.MPModChecks
     {
         internal MPModCheckManager()
         {
-            instance = this;
             UpdateMyModList();
             BuildRoomProperties();
-            Events.Instance.OnPlayerLeftRoomEvent += RemoveNetworkedPeerMods;
-            Events.Instance.OnLeftRoomEvent += ClearAllNetworkedPeerMods;
         }
 
 
@@ -39,19 +36,7 @@ namespace VoidManager.MPModChecks
         private MultiplayerType HighestLevelOfMPMods = MultiplayerType.Hidden;
         public string LastModCheckFailReason;
 
-        private static MPModCheckManager instance;
-
-        public static MPModCheckManager Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    return new MPModCheckManager();
-                }
-                return instance;
-            }
-        }
+        public static MPModCheckManager Instance { get; internal set; }
 
         public byte[] GetRoomProperties()
         {
@@ -383,7 +368,7 @@ namespace VoidManager.MPModChecks
             }
             NetworkedPeersModLists.Add(Player, modList);
 
-            Events.Instance.CallClientModlistRecievedEvent(Player);
+            Events.Instance.OnClientModlistRecieved(Player);
         }
 
         /// <summary>
@@ -398,7 +383,6 @@ namespace VoidManager.MPModChecks
         /// <summary>
         /// Clears all lists from NetworkedPeersModLists
         /// </summary>
-        /// <param name="Player"></param>
         internal void ClearAllNetworkedPeerMods()
         {
             NetworkedPeersModLists.Clear();
@@ -484,7 +468,7 @@ namespace VoidManager.MPModChecks
                 Messaging.Echo($"Kicked player {JoiningPlayer.NickName} for not having mods.", false);
                 PhotonNetwork.CloseConnection(JoiningPlayer);
             }
-            Events.Instance.CallHostOnClientVerifiedEvent(JoiningPlayer);
+            Events.Instance.CallHostOnClientVerified(JoiningPlayer);
         }
 
         internal bool ModChecksClientside(Hashtable RoomProperties, bool inRoom = true)
@@ -751,7 +735,7 @@ namespace VoidManager.MPModChecks
             else
             {
                 Plugin.Log.LogMessage("Hostside mod check passed for player " + joiningPlayer.NickName);
-                Events.Instance.CallHostOnClientVerifiedEvent(joiningPlayer);
+                Events.Instance.CallHostOnClientVerified(joiningPlayer);
             }
         }
     }
