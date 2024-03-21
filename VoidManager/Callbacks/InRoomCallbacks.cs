@@ -10,6 +10,7 @@ using System.Linq;
 using ToolClasses;
 using VoidManager.ModMessages;
 using VoidManager.MPModChecks;
+using VoidManager.Utilities;
 
 namespace VoidManager.Callbacks
 {
@@ -22,7 +23,7 @@ namespace VoidManager.Callbacks
 
         internal const byte PlayerMPUserDataEventCode = 99;
         internal const byte ModMessageEventCode = 98;
-        internal const byte InfoMessageEventCode = 97;
+        internal const byte KickMessageEventCode = 97;
         internal const string RoomModsPropertyKey = "Mods";
 
         public void OnEvent(EventData photonEvent)
@@ -74,12 +75,18 @@ namespace VoidManager.Callbacks
                 //Fail in event targetted ModMessage was not found.
                 Plugin.Log.LogInfo($"Recieved Unrecognised ModMessage ({args[0] ?? "N/A"}#{args[1] ?? "N/A"}) from {Sender.NickName ?? "N/A"}");
             }
-            else if (photonEvent.Code == InfoMessageEventCode)
+            else if (photonEvent.Code == KickMessageEventCode)
             {
                 try
                 {
+                    Player sender = PhotonNetwork.CurrentRoom.GetPlayer(photonEvent.Sender);//Not sure why others are using Networking client. If this ends up working right, the others should be replaced. TestMe
+                    if (sender.IsMasterClient)
+                    {
+                        Plugin.Log.LogInfo("Recieved Kick Message from non-host. Sender: ");
+                        return;
+                    }
                     object[] EventData = (object[])photonEvent.CustomData;
-                    if (EventData.Length == 2)
+                    if (EventData.Length >= 2)
                     {
                         KickMessagePatches.KickTitle = EventData[0].ToString();
                         KickMessagePatches.KickMessage = EventData[1].ToString();

@@ -728,7 +728,7 @@ namespace VoidManager.MPModChecks
             {
                 //Send message to joining client.
                 Messaging.Echo($"Kicking player {joiningPlayer.NickName} from session for incompatable mods.", false);
-                PhotonNetwork.RaiseEvent(InRoomCallbacks.InfoMessageEventCode, new object[] { "Kicked: Incompatable mod list", errorMessage }, new RaiseEventOptions { TargetActors = new int[] { joiningPlayer.ActorNumber } }, SendOptions.SendUnreliable);
+                Messaging.KickMessage("Kicked: Incompatable mod list", errorMessage, joiningPlayer);
                 PhotonNetwork.CloseConnection(joiningPlayer);
                 Plugin.Log.LogMessage($"Kicked player {joiningPlayer.NickName} from session for incompatable mods.\n{errorMessage}");
             }

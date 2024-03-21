@@ -1,7 +1,9 @@
-﻿using Gameplay.Chat;
+﻿using ExitGames.Client.Photon;
+using Gameplay.Chat;
+using Photon.Pun;
+using Photon.Realtime;
 using System.Reflection;
-using UI.Ping;
-using static System.Net.Mime.MediaTypeNames;
+using VoidManager.Callbacks;
 
 namespace VoidManager.Utilities
 {
@@ -27,6 +29,19 @@ namespace VoidManager.Utilities
             else
             {
                 VivoxVoiceManager.Instance.SendTextMessage($"[Mod Manager]: {message}", VivoxVoiceManager.Instance.TextChannel, null, null);
+            }
+        }
+
+        public static void KickMessage(string title, string body, Player player)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                Plugin.Log.LogInfo($"Sending kick message to {player.NickName}: {title}::{body}");
+                PhotonNetwork.RaiseEvent(InRoomCallbacks.KickMessageEventCode, new object[] { title, body }, new RaiseEventOptions { TargetActors = new int[] { player.ActorNumber } }, SendOptions.SendUnreliable);
+            }
+            else
+            {
+                Plugin.Log.LogWarning($"Cannot send kick message while not master client.");
             }
         }
     }
