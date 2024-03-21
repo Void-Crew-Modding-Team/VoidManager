@@ -18,7 +18,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace VoidManager.MPModChecks
 {
-    public class MPModCheckManager //Todo - Mark modded lobbies.
+    public class MPModCheckManager
     {
         internal MPModCheckManager()
         {
@@ -274,7 +274,7 @@ namespace VoidManager.MPModChecks
         }
 
         /// <summary>
-        /// Converts a ModDataBlock array to a string list, Usually for logging purposes. Starts with a new line
+        /// Converts a ModDataBlock array to a string list, usually for logging purposes. Starts with a new line
         /// </summary>
         /// <param name="ModDatas"></param>
         /// <returns>Converts ModDataBLocks to a string list.</returns>
@@ -326,19 +326,19 @@ namespace VoidManager.MPModChecks
         }
 
         /// <summary>
-        /// Checks if given player has mod, checked by HarmonyID
+        /// Checks if given player has mod, checked by mod GUID
         /// </summary>
         /// <param name="Player"></param>
-        /// <param name="HarmonyIdentifier"></param>
+        /// <param name="ModGUID"></param>
         /// <returns>Returns true if player has mod</returns>
-        public bool NetworkedPeerHasMod(Player Player, string HarmonyIdentifier)
+        public bool NetworkedPeerHasMod(Player Player, string ModGUID)
         {
             MPUserDataBlock userData = GetNetworkedPeerMods(Player);
             if (userData != null)
             {
                 foreach (MPModDataBlock modData in userData.ModData)
                 {
-                    if (modData.ModGUID == HarmonyIdentifier)
+                    if (modData.ModGUID == ModGUID)
                     {
                         return true;
                     }
@@ -348,18 +348,18 @@ namespace VoidManager.MPModChecks
         }
 
         /// <summary>
-        /// Finds all Networked Peers with a given harmony ID
+        /// Finds all Networked Peers with a given mod GUID
         /// </summary>
-        /// <param name="HarmonyIdentifier"></param>
+        /// <param name="ModGUID"></param>
         /// <returns>NetworkedPeers using given mod</returns>
-        public List<Player> NetworkedPeersWithMod(string HarmonyIdentifier)
+        public List<Player> NetworkedPeersWithMod(string ModGUID)
         {
             List<Player> playerList = new List<Player>();
             foreach (KeyValuePair<Player, MPUserDataBlock> userEntry in NetworkedPeersModLists)
             {
                 foreach (MPModDataBlock modData in userEntry.Value.ModData)
                 {
-                    if (modData.ModGUID == HarmonyIdentifier)
+                    if (modData.ModGUID == ModGUID)
                     {
                         playerList.Add(userEntry.Key);
                     }
@@ -682,14 +682,14 @@ namespace VoidManager.MPModChecks
                 }
                 if (!found)
                 {
-                    //Client MPType.All Mod not found in host mods
+                    //Client MPType.All mod not found in host mods
                     JoiningClientMissing.Add(CurrentLocalMod.ModName);
                     Plugin.Log.LogMessage($"Client is missing the required mod '{CurrentLocalMod.ModName}'");
                 }
             }
 
 
-            //Compare Local mods against Joining Client mods
+            //Compare local mods against joining client mods
             for (i = 0; i < JoiningClientMPTypeAllMods.Length; i++)
             {
                 CurrentJoiningClientMod = JoiningClientMPTypeAllMods[i];
@@ -743,7 +743,6 @@ namespace VoidManager.MPModChecks
             if (errorMessage != string.Empty)
             {
                 //Send message to joining client.
-                //fixme Possible send list via steammanager for non-modded clients.
                 Messaging.Echo($"Kicking player {joiningPlayer.NickName} from session for incompatable mods.", false);
                 PhotonNetwork.RaiseEvent(InRoomCallbacks.InfoMessageEventCode, new object[] { "Kicked: Incompatable mod list", errorMessage }, new RaiseEventOptions { TargetActors = new int[] { joiningPlayer.ActorNumber } }, SendOptions.SendUnreliable);
                 PhotonNetwork.CloseConnection(joiningPlayer);

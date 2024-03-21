@@ -18,7 +18,7 @@ namespace VoidManager
         public static Dictionary<string, VoidPlugin> ActiveVoidPlugins { get; private set; }
 
         /// <summary>
-        /// Iterates through the current Plugin files and searches for commands.
+        /// Iterates through the current plugin files and searches for VoidPlugins.
         /// </summary>
         internal static void DiscoverPlugins()
         {
