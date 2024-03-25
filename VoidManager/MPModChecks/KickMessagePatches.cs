@@ -4,13 +4,12 @@ using UnityEngine.SceneManagement;
 
 namespace VoidManager.MPModChecks
 {
-    [HarmonyPatch(typeof(GSPhotonDisconnected), "OnSceneLoaded")]
     internal class KickMessagePatches
     {
         internal static string KickTitle;
         internal static string KickMessage;
 
-
+        [HarmonyPatch(typeof(GSPhotonDisconnected), "OnSceneLoaded")]
         class KickedPatch
         {
             [HarmonyPostfix]
