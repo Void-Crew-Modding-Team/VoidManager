@@ -481,12 +481,16 @@ namespace VoidManager.MPModChecks
                 if (HighestLevelOfMPMods == MultiplayerType.All)
                 {
                     LastModCheckFailReason = "Host has no mods, but client has MPType.All mods.";
+                    KickMessagePatches.KickTitle = "Disconnected: Incompatable mod list";
+                    KickMessagePatches.KickMessage = LastModCheckFailReason;
                     Plugin.Log.LogMessage("Mod check failed.\n" + LastModCheckFailReason);
                     return false; //Case: Host doesn't have mods, but Client has mod(s) which need the host to install.
                 }
                 else if(HighestLevelOfMPMods >= MultiplayerType.Unspecified)
                 {
                     LastModCheckFailReason = "Host has no mods, but client has MPType.Unspecified mods.";
+                    KickMessagePatches.KickTitle = "Disconnected: Incompatable mod list";
+                    KickMessagePatches.KickMessage = LastModCheckFailReason;
                     Plugin.Log.LogMessage("Mod check failed.\n" + LastModCheckFailReason);
                     return false; //Case: Host doesn't have mods, but Client has mod(s) which need the host to install.
                 }

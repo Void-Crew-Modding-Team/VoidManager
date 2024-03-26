@@ -114,9 +114,7 @@ namespace VoidManager.Callbacks
             if (!MPModCheckManager.Instance.ModChecksClientside(PhotonNetwork.CurrentRoom.CustomProperties))
             {
                 Plugin.Log.LogInfo("Disconnecting from Room");
-                SteamMatchmaking.LeaveLobby(Singleton<SteamService>.Instance.GetCurrentLobbyID());
-                PhotonNetwork.LeaveRoom(false);
-
+                GameStateMachine.Instance.ChangeState<GSPhotonDisconnected>();
                 return;
             }
             //Sends to host twice. Should fixme

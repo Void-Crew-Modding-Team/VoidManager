@@ -26,7 +26,7 @@ namespace VoidManager.MPModChecks
                 }
             }
         }
-        [HarmonyPatch(typeof(GSQuitFromMenu), "OnSceneLoaded")]
+        /*[HarmonyPatch(typeof(GSQuitFromMenu), "OnSceneLoaded")]
         class ClientChecksFailedPatch
         {
             [HarmonyPostfix]
@@ -42,7 +42,7 @@ namespace VoidManager.MPModChecks
                     KickMessage = null;
                 }
             }
-        }
+        }*/
     }
     
 }
