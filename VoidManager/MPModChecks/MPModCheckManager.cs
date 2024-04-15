@@ -408,7 +408,7 @@ namespace VoidManager.MPModChecks
                 }
                 catch
                 {
-                    Plugin.Log.LogError("Failed to Deserialize host mod list. Could be an older version of PML");
+                    Plugin.Log.LogError("Failed to Deserialize host mod list. Could be an older version of VoidManager");
                 }
             }
             return new MPUserDataBlock();
