@@ -2,9 +2,9 @@
 {
     public class MPUserDataBlock
     {
-        public MPUserDataBlock(string PMLVersion, MPModDataBlock[] ModData)
+        public MPUserDataBlock(string VoidManagerVersion, MPModDataBlock[] ModData)
         {
-            this.VMVersion = PMLVersion;
+            this.VMVersion = VoidManagerVersion;
             this.ModData = ModData;
         }
 

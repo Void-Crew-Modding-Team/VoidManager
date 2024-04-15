@@ -233,7 +233,7 @@ namespace VoidManager.MPModChecks
                 using (BinaryReader reader = new BinaryReader(memoryStream))
                 {
 
-                    string PMLVersion = reader.ReadString();
+                    string VoidManager = reader.ReadString();
                     int ModCount = reader.ReadInt32();
                     MPModDataBlock[] ModList = new MPModDataBlock[ModCount];
                     for (int i = 0; i < ModCount; i++)
@@ -247,7 +247,7 @@ namespace VoidManager.MPModChecks
                         ModList[i] = new MPModDataBlock(HarmonyIdent, modname, ModVersion, MPType, ModID, Hash);
                     }
                     memoryStream.Dispose();
-                    return new MPUserDataBlock(PMLVersion, ModList);
+                    return new MPUserDataBlock(VoidManager, ModList);
                 }
             }
             catch (Exception ex)
@@ -360,7 +360,7 @@ namespace VoidManager.MPModChecks
         /// <param name="modList"></param>
         public void AddNetworkedPeerMods(Player Player, MPUserDataBlock modList)
         {
-            Plugin.Log.LogMessage($"recieved modlist from user '{Player.NickName}' with the following info:\nPMLVersion: {modList.VMVersion}\nModList:\n{MPModCheckManager.GetModListAsString(modList.ModData)}\n");
+            Plugin.Log.LogMessage($"recieved modlist from user '{Player.NickName}' with the following info:\nVoidManager Version: {modList.VMVersion}\nModList:\n{MPModCheckManager.GetModListAsString(modList.ModData)}\n");
             if (NetworkedPeersModLists.ContainsKey(Player))
             {
                 NetworkedPeersModLists[Player] = modList;
