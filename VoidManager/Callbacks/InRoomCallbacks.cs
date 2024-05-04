@@ -34,7 +34,7 @@ namespace VoidManager.Callbacks
 
                 if (sender.IsLocal)
                 {
-                    Plugin.Log.LogWarning("Recieved data from self. Ignoring data.");
+                    BepinPlugin.Log.LogWarning("Recieved data from self. Ignoring data.");
                     return;
                 }
 
@@ -45,7 +45,7 @@ namespace VoidManager.Callbacks
                 }
                 else if (PhotonNetwork.IsMasterClient) //Data is hashless but recieving player is host. Data recieved should be hashfull when sent to host. Also no point turning down hashfull data from other clients when local is client.
                 {
-                    Plugin.Log.LogWarning($"Recieved hashless data from {sender.NickName}, but expecting hashfull data. Data will not be added.");
+                    BepinPlugin.Log.LogWarning($"Recieved hashless data from {sender.NickName}, but expecting hashfull data. Data will not be added.");
                     return;
                 }
                 else
@@ -61,7 +61,7 @@ namespace VoidManager.Callbacks
                 //Fail in event args cannot possibly work for a proper ModMessage
                 if (args == null || args.Length < 2)
                 {
-                    Plugin.Log.LogInfo($"Recieved Invalid ModMessage from {Sender.NickName ?? "N/A"}");
+                    BepinPlugin.Log.LogInfo($"Recieved Invalid ModMessage from {Sender.NickName ?? "N/A"}");
                     return;
                 }
 
@@ -73,7 +73,7 @@ namespace VoidManager.Callbacks
                 }
 
                 //Fail in event targetted ModMessage was not found.
-                Plugin.Log.LogInfo($"Recieved Unrecognised ModMessage ({args[0] ?? "N/A"}#{args[1] ?? "N/A"}) from {Sender.NickName ?? "N/A"}");
+                BepinPlugin.Log.LogInfo($"Recieved Unrecognised ModMessage ({args[0] ?? "N/A"}#{args[1] ?? "N/A"}) from {Sender.NickName ?? "N/A"}");
             }
             else if (photonEvent.Code == KickMessageEventCode)
             {
@@ -82,7 +82,7 @@ namespace VoidManager.Callbacks
                     Player sender = PhotonNetwork.CurrentRoom.GetPlayer(photonEvent.Sender);//Not sure why others are using Networking client. If this ends up working right, the others should be replaced. TestMe
                     if (sender.IsMasterClient)
                     {
-                        Plugin.Log.LogInfo("Recieved Kick Message from non-host. Sender: ");
+                        BepinPlugin.Log.LogInfo("Recieved Kick Message from non-host. Sender: ");
                         return;
                     }
                     object[] EventData = (object[])photonEvent.CustomData;
@@ -94,14 +94,14 @@ namespace VoidManager.Callbacks
                 }
                 catch (Exception ex)
                 {
-                    Plugin.Log.LogError("Recieved Photon Event with InfoMessage code, but could not parse data.\n" + ex);
+                    BepinPlugin.Log.LogError("Recieved Photon Event with InfoMessage code, but could not parse data.\n" + ex);
                 }
             }
             else if (photonEvent.Code == 203)
             {
                 if (Singleton<GameStateMachine>.Instance.CurrentState is GSSpawn)//fixes bug with vanilla getting kicked too early. Treated like a normal photon disconnect, but the error code will be the input value.
                 {
-                    Plugin.Log.LogInfo("Kicked while in GSSpawn State.");
+                    BepinPlugin.Log.LogInfo("Kicked while in GSSpawn State.");
                     Singleton<GameStateMachine>.Instance.GetState<GSPhotonDisconnected>().MessageHeaderOverride = "Kicked";
                     Singleton<GameStateMachine>.Instance.GetState<GSPhotonDisconnected>().MessageBodyOverride = "Kicked on join.";
                     Singleton<GameStateMachine>.Instance.ChangeState<GSPhotonDisconnected>();
@@ -113,7 +113,7 @@ namespace VoidManager.Callbacks
         {
             if (!MPModCheckManager.Instance.ModChecksClientside(PhotonNetwork.CurrentRoom.CustomProperties))
             {
-                Plugin.Log.LogInfo("Disconnecting from Room");
+                BepinPlugin.Log.LogInfo("Disconnecting from Room");
                 GameStateMachine.Instance.ChangeState<GSPhotonDisconnected>();
                 return;
             }

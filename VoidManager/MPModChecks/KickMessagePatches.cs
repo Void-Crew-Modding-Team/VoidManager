@@ -17,7 +17,7 @@ namespace VoidManager.MPModChecks
             {
                 if (scene.buildIndex == CloneStarConstants.MainMenuSceneIndex && KickTitle != null && KickMessage != null)
                 {
-                    Plugin.Log.LogInfo($"Pushing Kick Message via info screen. Title:{KickTitle} message:\n");
+                    BepinPlugin.Log.LogInfo($"Pushing Kick Message via info screen. Title:{KickTitle} message:\n");
 
                     MenuScreenController.Instance.ShowMessagePopup(KickTitle, KickMessage);
 

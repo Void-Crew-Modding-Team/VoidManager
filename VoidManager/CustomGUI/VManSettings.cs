@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 using static UnityEngine.GUILayout;
-using static VoidManager.Plugin.Bindings;
+using static VoidManager.BepinPlugin.Bindings;
 
 
 namespace VoidManager.CustomGUI
@@ -39,7 +39,7 @@ namespace VoidManager.CustomGUI
             GUI.skin.label.alignment = TextAnchor.UpperLeft;
             BeginHorizontal();
             {
-                Label($"ModInfoTextAnchor: {Plugin.Bindings.ModInfoTextAnchor.Value.ToString()}");
+                Label($"ModInfoTextAnchor: {BepinPlugin.Bindings.ModInfoTextAnchor.Value.ToString()}");
 
                 if (Button("<"))
                     ModInfoTextAnchor.Value = Enum.GetValues(typeof(TextAnchor)).Cast<TextAnchor>().SkipWhile(e => (int)e != (int)ModInfoTextAnchor.Value - 1).First();

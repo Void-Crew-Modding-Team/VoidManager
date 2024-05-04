@@ -33,7 +33,7 @@ namespace VoidManager.Chat.Router
             string alias = channelTextMessage.Split(' ')[0];
             CG.Game.Player.Player Player = Game.GetPlayerByName(p.NickName);
             string arguments = channelTextMessage.Substring(alias.Length + (channelTextMessage.Split(' ').Count() == 1 ? 0 : 1));
-            Plugin.Log.LogInfo($"'!{alias} {arguments}' attempted by {p.NickName}");
+            BepinPlugin.Log.LogInfo($"'!{alias} {arguments}' attempted by {p.NickName}");
             CommandHandler.ExecuteCommandFromAlias(alias, arguments, true, Game.GetIDFromPlayer(Player));
         }
     }

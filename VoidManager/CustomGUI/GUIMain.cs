@@ -35,9 +35,9 @@ namespace VoidManager.CustomGUI
 
         internal void updateWindowSize()
         {
-            float Height = Plugin.Bindings.MenuHeight.Value;
-            float Width = Plugin.Bindings.MenuWidth.Value;
-            float ModlistWidth = Plugin.Bindings.MenuListWidth.Value;
+            float Height = BepinPlugin.Bindings.MenuHeight.Value;
+            float Width = BepinPlugin.Bindings.MenuWidth.Value;
+            float ModlistWidth = BepinPlugin.Bindings.MenuListWidth.Value;
 
             Window = new Rect((Screen.width * .5f - ((Screen.width * Width) / 2)), Screen.height * .5f - ((Screen.height * Height) / 2), Screen.width * Width, Screen.height * Height);
             ModListArea = new Rect(6, 43, Window.width * ModlistWidth, Screen.height * Height - 45);
@@ -74,7 +74,7 @@ namespace VoidManager.CustomGUI
 
         void Update()
         {
-            if (Plugin.Bindings.OpenMenu.IsDown())
+            if (BepinPlugin.Bindings.OpenMenu.IsDown())
             {
                 GUIActive = !GUIActive;
                 if (GUIActive)
@@ -138,7 +138,7 @@ namespace VoidManager.CustomGUI
             {
                 #region ModList and ModInfo
                 case 0:
-                    GUI.skin.label.alignment = Plugin.Bindings.ModInfoTextAnchor.Value;
+                    GUI.skin.label.alignment = BepinPlugin.Bindings.ModInfoTextAnchor.Value;
                     BeginArea(ModListArea);
                     {
                         ModListScroll = BeginScrollView(ModListScroll);
@@ -346,14 +346,14 @@ namespace VoidManager.CustomGUI
                 settings.Add(modInstance);
                 hasSettingsMenu = true;
             }
-            if (hasSettingsMenu) Plugin.Log.LogInfo($"[{voidPlugin.BepinPlugin.Metadata.Name}] detected settings menu");
+            if (hasSettingsMenu) BepinPlugin.Log.LogInfo($"[{voidPlugin.BepinPlugin.Metadata.Name}] detected settings menu");
         }
 
         bool ShowingCursor;
 
         void GUIToggleCursor(bool enable)
         {
-            if(!Plugin.Bindings.MenuUnlockCursor.Value && !(!enable && ShowingCursor))
+            if(!BepinPlugin.Bindings.MenuUnlockCursor.Value && !(!enable && ShowingCursor))
             {
                 return; // Stop early if unlocking cursor is disabled, but allow passthrough if cursor is enabled and is getting set to disabled.
             }

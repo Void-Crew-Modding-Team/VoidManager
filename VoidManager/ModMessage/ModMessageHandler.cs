@@ -26,7 +26,7 @@ namespace VoidManager.ModMessages
             }
             if (modMessageCount != 0)
             {
-                Plugin.Log.LogInfo($"[{bepinPlugin.Metadata.Name}] Detected {modMessageCount} mod messages");
+                BepinPlugin.Log.LogInfo($"[{bepinPlugin.Metadata.Name}] Detected {modMessageCount} mod messages");
             }
         }
     }

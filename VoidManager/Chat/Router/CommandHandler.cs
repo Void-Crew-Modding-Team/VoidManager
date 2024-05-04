@@ -23,11 +23,11 @@ namespace VoidManager.Chat.Router
             {
                 if (publicCommand) { if (publicCommands.ContainsKey(alias)) publicCommands[alias].Execute(arguments, playerId); }
                 else if (chatCommands.ContainsKey(alias)) chatCommands[alias].Execute(arguments);
-                else Plugin.Log.LogInfo($"'{(publicCommand ? "!" : "/")}{alias} {arguments}' cound not be found!");
+                else BepinPlugin.Log.LogInfo($"'{(publicCommand ? "!" : "/")}{alias} {arguments}' cound not be found!");
             }
             catch (Exception ex)
             {
-                Plugin.Log.LogError($"'{(publicCommand ? "!" : "/")}{alias} {arguments}' failed! \nCommand Exception: {ex.Message}!\n{ex.StackTrace}");
+                BepinPlugin.Log.LogError($"'{(publicCommand ? "!" : "/")}{alias} {arguments}' failed! \nCommand Exception: {ex.Message}!\n{ex.StackTrace}");
             }
         }
 
@@ -87,7 +87,7 @@ namespace VoidManager.Chat.Router
                 {
                     if (chatCommands.ContainsKey(commandAlias))
                     {
-                        Plugin.Log.LogInfo($"[{ModName}] Found duplicate command alias {commandAlias}");
+                        BepinPlugin.Log.LogInfo($"[{ModName}] Found duplicate command alias {commandAlias}");
                         continue;
                     }
                     else
@@ -99,7 +99,7 @@ namespace VoidManager.Chat.Router
             }
             if (commandCount != 0)
             {
-                Plugin.Log.LogInfo($"[{ModName}] Detected {commandCount} chat commands");
+                BepinPlugin.Log.LogInfo($"[{ModName}] Detected {commandCount} chat commands");
             }
         }
         /// <summary>
@@ -118,7 +118,7 @@ namespace VoidManager.Chat.Router
                 {
                     if (publicCommands.ContainsKey(commandAlias))
                     {
-                        Plugin.Log.LogInfo($"[{ModName}] Found duplicate public command alias {commandAlias}");
+                        BepinPlugin.Log.LogInfo($"[{ModName}] Found duplicate public command alias {commandAlias}");
                         continue;
                     }
                     else
@@ -130,7 +130,7 @@ namespace VoidManager.Chat.Router
             }
             if (commandCount != 0)
             {
-                Plugin.Log.LogInfo($"[{ModName}] Detected {commandCount} public commands");
+                BepinPlugin.Log.LogInfo($"[{ModName}] Detected {commandCount} public commands");
             }
         }
     }

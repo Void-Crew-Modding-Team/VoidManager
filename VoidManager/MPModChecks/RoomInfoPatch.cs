@@ -47,7 +47,7 @@ namespace VoidManager.MPModChecks
                     }
                     else
                     {
-                        Plugin.Log.LogError("Failed to patch PhotonService.PhotonCreateRoom. Targeted method appears to have changed. Index: " + i.ToString());
+                        BepinPlugin.Log.LogError("Failed to patch PhotonService.PhotonCreateRoom. Targeted method appears to have changed. Index: " + i.ToString());
                     }
                     break;
                 }

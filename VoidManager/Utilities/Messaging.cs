@@ -36,12 +36,12 @@ namespace VoidManager.Utilities
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                Plugin.Log.LogInfo($"Sending kick message to {player.NickName}: {title}::{body}");
+                BepinPlugin.Log.LogInfo($"Sending kick message to {player.NickName}: {title}::{body}");
                 PhotonNetwork.RaiseEvent(InRoomCallbacks.KickMessageEventCode, new object[] { title, body }, new RaiseEventOptions { TargetActors = new int[] { player.ActorNumber } }, SendOptions.SendUnreliable);
             }
             else
             {
-                Plugin.Log.LogWarning($"Cannot send kick message while not master client.");
+                BepinPlugin.Log.LogWarning($"Cannot send kick message while not master client.");
             }
         }
     }

@@ -53,7 +53,7 @@ namespace VoidManager.Utilities
 
                         if (showDebugOutput && foundTargetSequence)
                         {
-                            Plugin.Log.LogInfo($"[Helper] Found {targetSequence.ElementAt(x).opcode} at {i + x}");
+                            BepinPlugin.Log.LogInfo($"[Helper] Found {targetSequence.ElementAt(x).opcode} at {i + x}");
                         }
                     }
 
@@ -92,7 +92,7 @@ namespace VoidManager.Utilities
                         sb.AppendLine(stackTrace[lineNumber]);
                     }
 
-                    Plugin.Log.LogInfo(sb.ToString());
+                    BepinPlugin.Log.LogInfo(sb.ToString());
                     break;
                 }
             }
@@ -137,7 +137,7 @@ namespace VoidManager.Utilities
 
                         if (showDebugOutput && foundTargetSequence)
                         {
-                            Plugin.Log.LogInfo($"Found {targetSequence.ElementAt(x).opcode} at {i + x}");
+                            BepinPlugin.Log.LogInfo($"Found {targetSequence.ElementAt(x).opcode} at {i + x}");
                         }
                     }
 
@@ -161,7 +161,7 @@ namespace VoidManager.Utilities
                         sb.AppendLine(stackTrace[lineNumber]);
                     }
 
-                    Plugin.Log.LogInfo(sb.ToString());
+                    BepinPlugin.Log.LogInfo(sb.ToString());
                     break;
                 }
             }
@@ -217,7 +217,7 @@ namespace VoidManager.Utilities
                 sb.AppendLine($"\t{c.ToString()}");
             }
 
-            Plugin.Log.LogInfo(sb.ToString());
+            BepinPlugin.Log.LogInfo(sb.ToString());
         }
 
         /// <summary>

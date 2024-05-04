@@ -15,13 +15,13 @@ namespace VoidManager.MPModChecks
             {
                 if(LCI.ActiveTerminal == null)
                 {
-                    Plugin.Log.LogInfo("Terminal");
+                    BepinPlugin.Log.LogInfo("Terminal");
                 }
                 if(LCI.RoomList == null)
                 {
-                    Plugin.Log.LogInfo("Roomlist");
+                    BepinPlugin.Log.LogInfo("Roomlist");
                 }
-                Plugin.Log.LogInfo("Attempted to join room, VoidManager LobbyCallbacks instance, Active Terminal, or RoomList not found");
+                BepinPlugin.Log.LogInfo("Attempted to join room, VoidManager LobbyCallbacks instance, Active Terminal, or RoomList not found");
                 ___failPopup.Show("VoidManager could not find the room. Please wait a moment then try again. Could also be bugged.");
                 return false;
             }
@@ -44,7 +44,7 @@ namespace VoidManager.MPModChecks
             }
 
 
-            Plugin.Log.LogInfo("Attempted to join room, VoidManager could not find the room.");
+            BepinPlugin.Log.LogInfo("Attempted to join room, VoidManager could not find the room.");
             ___failPopup.Show("VoidManager could not find the room. Please wait a moment then try again. Could also be bugged.");
             return false;
         }

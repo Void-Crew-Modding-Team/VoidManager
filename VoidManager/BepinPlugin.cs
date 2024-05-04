@@ -4,15 +4,15 @@ using BepInEx.Logging;
 using HarmonyLib;
 using System;
 using UnityEngine;
-using static VoidManager.Plugin.Bindings;
+using static VoidManager.BepinPlugin.Bindings;
 
 namespace VoidManager
 {
     [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
     [BepInProcess("Void Crew.exe")]
-    public class Plugin : BaseUnityPlugin
+    public class BepinPlugin : BaseUnityPlugin
     {
-        internal static Plugin instance;
+        internal static BepinPlugin instance;
         internal static readonly Harmony Harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
         internal static ManualLogSource Log;
         private void Awake()

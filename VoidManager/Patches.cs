@@ -13,7 +13,7 @@ namespace VoidManager
         [HarmonyPostfix]
         public static void PostAwakeInit()
         {
-            Plugin.Log.LogInfo($"- - - Void Manager Initialization - - -");
+            BepinPlugin.Log.LogInfo($"- - - Void Manager Initialization - - -");
             Events.Instance = new Events();
 
             new GameObject("ModManager", typeof(CustomGUI.GUIMain)) { hideFlags = HideFlags.HideAndDontSave };
@@ -21,7 +21,7 @@ namespace VoidManager
             PluginHandler.DiscoverPlugins();
 
             MPModCheckManager.Instance = new MPModCheckManager();
-            Plugin.Log.LogInfo($"- - - - - - - - - - - - - - - - - - - -");
+            BepinPlugin.Log.LogInfo($"- - - - - - - - - - - - - - - - - - - -");
         }
     }
 

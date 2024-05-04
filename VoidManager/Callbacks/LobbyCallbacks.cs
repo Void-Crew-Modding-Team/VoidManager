@@ -28,7 +28,7 @@ namespace VoidManager.Callbacks
 
         public void OnRoomListUpdate(List<RoomInfo> roomList)
         {
-            Plugin.Log.LogInfo("Copying room");
+            BepinPlugin.Log.LogInfo("Copying room");
             RoomList = roomList.DeepCopy();
         }
     }
@@ -49,7 +49,7 @@ namespace VoidManager.Callbacks
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Method Declaration", "Harmony003:Harmony non-ref patch parameters modified", Justification = "Irrelevant")]
         static void PanelChange(bool isActive, MatchmakingTerminal __instance)
         {
-            Plugin.Log.LogInfo("Setting Active Terminal " + isActive.ToString());
+            BepinPlugin.Log.LogInfo("Setting Active Terminal " + isActive.ToString());
             if (isActive)
             {
                 LobbyCallbacks.Instance = new LobbyCallbacks();

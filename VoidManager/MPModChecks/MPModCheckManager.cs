@@ -58,7 +58,7 @@ namespace VoidManager.MPModChecks
             Room CurrentRoom = PhotonNetwork.CurrentRoom;
             if (CurrentRoom == null) //This would probably break stuff
             {
-                Plugin.Log.LogWarning("Attempted to update lobby properties while room was null");
+                BepinPlugin.Log.LogWarning("Attempted to update lobby properties while room was null");
                 return;
             }
             if(!CurrentRoom.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))//If the key doesn't already exist, there have been no limitations imposed on the room.
@@ -75,23 +75,23 @@ namespace VoidManager.MPModChecks
             if (HighestLevelOfMPMods == MultiplayerType.Hidden && MT != MultiplayerType.Hidden)
             {
                 HighestLevelOfMPMods = MT;
-                Plugin.Log.LogInfo("Incrementing HighestLevelOfMPMods to " + MT.ToString());
+                BepinPlugin.Log.LogInfo("Incrementing HighestLevelOfMPMods to " + MT.ToString());
             }
             else if (HighestLevelOfMPMods == MultiplayerType.Client && MT > MultiplayerType.Client)
             {
                 HighestLevelOfMPMods = MT;
-                Plugin.Log.LogInfo("Incrementing HighestLevelOfMPMods to " + MT.ToString());
+                BepinPlugin.Log.LogInfo("Incrementing HighestLevelOfMPMods to " + MT.ToString());
             }
             else if (HighestLevelOfMPMods == MultiplayerType.Unspecified && MT > MultiplayerType.Unspecified)
             {
                 HighestLevelOfMPMods = MultiplayerType.All;
-                Plugin.Log.LogInfo("Incrementing HighestLevelOfMPMods to MPType.All");
+                BepinPlugin.Log.LogInfo("Incrementing HighestLevelOfMPMods to MPType.All");
             }
         }
 
         private void UpdateMyModList()
         {
-            Plugin.Log.LogInfo("Building MyModList");
+            BepinPlugin.Log.LogInfo("Building MyModList");
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             KeyValuePair<string,PluginInfo>[] UnprocessedMods = Chainloader.PluginInfos.ToArray();
@@ -123,8 +123,8 @@ namespace VoidManager.MPModChecks
             MyMPModList = ProcessedMods.Where(Mod => Mod.MPType == MultiplayerType.All).ToArray();
             MyMPUnspecifiedModList = ProcessedMods.Where(Mod => Mod.MPType == MultiplayerType.Unspecified).ToArray();
             stopwatch.Stop();
-            Plugin.Log.LogInfo("Finished Building MyModList, time elapsted: " + stopwatch.ElapsedMilliseconds.ToString() + " ms");
-            Plugin.Log.LogInfo($"MyModList:\n{GetModListAsString(MyModList)}\n");
+            BepinPlugin.Log.LogInfo("Finished Building MyModList, time elapsted: " + stopwatch.ElapsedMilliseconds.ToString() + " ms");
+            BepinPlugin.Log.LogInfo($"MyModList:\n{GetModListAsString(MyModList)}\n");
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace VoidManager.MPModChecks
             }
             catch (Exception ex)
             {
-                Plugin.Log.LogInfo($"Failed to read mod list from Hashless MPUserData, returning null.\n{ex.Message}");
+                BepinPlugin.Log.LogInfo($"Failed to read mod list from Hashless MPUserData, returning null.\n{ex.Message}");
                 memoryStream.Dispose();
                 return null;
             }
@@ -252,7 +252,7 @@ namespace VoidManager.MPModChecks
             }
             catch (Exception ex)
             {
-                Plugin.Log.LogInfo($"Failed to read mod list from Hashfull MPUserData, returning null.\n{ex.Message}");
+                BepinPlugin.Log.LogInfo($"Failed to read mod list from Hashfull MPUserData, returning null.\n{ex.Message}");
                 memoryStream.Dispose();
                 return null;
             }
@@ -287,7 +287,7 @@ namespace VoidManager.MPModChecks
                 }
                 catch
                 {
-                    Plugin.Log.LogError("Failed to Deserialize host mod list.");
+                    BepinPlugin.Log.LogError("Failed to Deserialize host mod list.");
                 }
             }
             return null;
@@ -360,7 +360,7 @@ namespace VoidManager.MPModChecks
         /// <param name="modList"></param>
         public void AddNetworkedPeerMods(Player Player, MPUserDataBlock modList)
         {
-            Plugin.Log.LogMessage($"recieved modlist from user '{Player.NickName}' with the following info:\nVoidManager Version: {modList.VMVersion}\nModList:\n{MPModCheckManager.GetModListAsString(modList.ModData)}\n");
+            BepinPlugin.Log.LogMessage($"recieved modlist from user '{Player.NickName}' with the following info:\nVoidManager Version: {modList.VMVersion}\nModList:\n{MPModCheckManager.GetModListAsString(modList.ModData)}\n");
             if (NetworkedPeersModLists.ContainsKey(Player))
             {
                 NetworkedPeersModLists[Player] = modList;
@@ -408,7 +408,7 @@ namespace VoidManager.MPModChecks
                 }
                 catch
                 {
-                    Plugin.Log.LogError("Failed to Deserialize host mod list. Could be an older version of VoidManager");
+                    BepinPlugin.Log.LogError("Failed to Deserialize host mod list. Could be an older version of VoidManager");
                 }
             }
             return new MPUserDataBlock();
@@ -434,7 +434,7 @@ namespace VoidManager.MPModChecks
 
         internal void SendModListToOthers()
         {
-            Plugin.Log.LogMessage("sending others");
+            BepinPlugin.Log.LogMessage("sending others");
             PhotonNetwork.RaiseEvent(InRoomCallbacks.PlayerMPUserDataEventCode, new object[] { false, SerializeHashlessMPUserData() }, null, SendOptions.SendReliable);
         }
 
@@ -464,7 +464,7 @@ namespace VoidManager.MPModChecks
             if (Instance.HighestLevelOfMPMods == MultiplayerType.All)
             {
                 //Kick player if mod no mod list recieved and there are local MPType.All Mods.
-                Plugin.Log.LogMessage($"Kicked player {JoiningPlayer.NickName} for not having mods.");
+                BepinPlugin.Log.LogMessage($"Kicked player {JoiningPlayer.NickName} for not having mods.");
                 Messaging.Echo($"Kicked player {JoiningPlayer.NickName} for not having mods.", false);
                 PhotonNetwork.CloseConnection(JoiningPlayer);
             }
@@ -474,7 +474,7 @@ namespace VoidManager.MPModChecks
         internal bool ModChecksClientside(Hashtable RoomProperties, bool inRoom = true)
         {
             LastModCheckFailReason = string.Empty;
-            Plugin.Log.LogMessage($"Starting Clientside mod checks for room: {RoomProperties["R_Na"]}");
+            BepinPlugin.Log.LogMessage($"Starting Clientside mod checks for room: {RoomProperties["R_Na"]}");
 
             if (!RoomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))//Host doesn't have mods
             {
@@ -483,7 +483,7 @@ namespace VoidManager.MPModChecks
                     LastModCheckFailReason = "Host has no mods, but client has MPType.All mods." + GetModListAsString(MyMPModList);
                     KickMessagePatches.KickTitle = "Disconnected: Incompatable mod list";
                     KickMessagePatches.KickMessage = LastModCheckFailReason;
-                    Plugin.Log.LogMessage("Mod check failed.\n" + LastModCheckFailReason);
+                    BepinPlugin.Log.LogMessage("Mod check failed.\n" + LastModCheckFailReason);
                     return false; //Case: Host doesn't have mods, but Client has mod(s) which need the host to install.
                 }
                 else if(HighestLevelOfMPMods >= MultiplayerType.Unspecified)
@@ -491,12 +491,12 @@ namespace VoidManager.MPModChecks
                     LastModCheckFailReason = "Host has no mods, but client has MPType.Unspecified mods." + GetModListAsString(MyMPUnspecifiedModList);
                     KickMessagePatches.KickTitle = "Disconnected: Incompatable mod list";
                     KickMessagePatches.KickMessage = LastModCheckFailReason;
-                    Plugin.Log.LogMessage("Mod check failed.\n" + LastModCheckFailReason);
+                    BepinPlugin.Log.LogMessage("Mod check failed.\n" + LastModCheckFailReason);
                     return false; //Case: Host doesn't have mods, but Client has mod(s) which need the host to install.
                 }
                 else
                 {
-                    Plugin.Log.LogMessage("Clientside mod check passed.");
+                    BepinPlugin.Log.LogMessage("Clientside mod check passed.");
                     return true; //Case: Host doesn't have mods, but client doesn't have restrictive mods.
                 }
             }
@@ -507,7 +507,7 @@ namespace VoidManager.MPModChecks
             MPUserDataBlock HostModData = DeserializeHashlessMPUserData((byte[])RoomProperties[InRoomCallbacks.RoomModsPropertyKey]);
             MPModDataBlock[] HostMods = HostModData.ModData.Where(Mod => Mod.MPType == MultiplayerType.All).ToArray();
 
-            Plugin.Log.LogMessage($"Void Manager versions - Host: {HostModData.VMVersion} Client: {MyPluginInfo.PLUGIN_VERSION}");
+            BepinPlugin.Log.LogMessage($"Void Manager versions - Host: {HostModData.VMVersion} Client: {MyPluginInfo.PLUGIN_VERSION}");
 
             List<string> MismatchedVersions = new List<string>();
             List<string> ClientMissing = new List<string>();
@@ -531,7 +531,7 @@ namespace VoidManager.MPModChecks
                         {
                             //Mod versions do not match
                             MismatchedVersions.Add($"Client:{CurrentLocalMod.ModName}-{CurrentLocalMod.Version}, Host:{CurrentHostMod.Version}");
-                            Plugin.Log.LogMessage($"Mismatched mod version - {MismatchedVersions.Last()}. { ((CurrentHostMod.DownloadID != string.Empty) ? $"Download Link: {CurrentHostMod.DownloadID}" : "") }");
+                            BepinPlugin.Log.LogMessage($"Mismatched mod version - {MismatchedVersions.Last()}. { ((CurrentHostMod.DownloadID != string.Empty) ? $"Download Link: {CurrentHostMod.DownloadID}" : "") }");
                         }
                         break;
                     }
@@ -540,7 +540,7 @@ namespace VoidManager.MPModChecks
                 {
                     //Client MPType.All Mod not found in host mods
                     HostMissing.Add(CurrentLocalMod.ModName);
-                    Plugin.Log.LogMessage($"Host is missing the required mod '{CurrentLocalMod.ModName}'");
+                    BepinPlugin.Log.LogMessage($"Host is missing the required mod '{CurrentLocalMod.ModName}'");
                 }
             }
 
@@ -561,7 +561,7 @@ namespace VoidManager.MPModChecks
                 {
                     //Host MPType.All Mod not found in Client mods
                     ClientMissing.Add(CurrentHostMod.ModName);
-                    Plugin.Log.LogMessage($"Client is missing the required mod '{CurrentHostMod.ModName}'");
+                    BepinPlugin.Log.LogMessage($"Client is missing the required mod '{CurrentHostMod.ModName}'");
                 }
             }
 
@@ -608,12 +608,12 @@ namespace VoidManager.MPModChecks
                 }
 
 
-                Plugin.Log.LogMessage("Couldn't join session.\n" + errorMessage);
+                BepinPlugin.Log.LogMessage("Couldn't join session.\n" + errorMessage);
                 return false;
             }
 
             //Mod check passed.
-            Plugin.Log.LogMessage("Clientside mod check passed.");
+            BepinPlugin.Log.LogMessage("Clientside mod check passed.");
             return true;
         }
 
@@ -623,7 +623,7 @@ namespace VoidManager.MPModChecks
             MPModDataBlock[] JoiningClientMPTypeAllMods = JoiningPlayerMPData.ModData.Where(Mod => Mod.MPType == MultiplayerType.All).ToArray();
 
             MPModDataBlock[] HostModListForProcessing;
-            if (!Plugin.Bindings.TrustMPTypeUnspecified.Value)
+            if (!BepinPlugin.Bindings.TrustMPTypeUnspecified.Value)
             {
                 MPModDataBlock[] JoiningClientMPTypeUnspecifiedMods = JoiningPlayerMPData.ModData.Where(Mod => Mod.MPType == MultiplayerType.Unspecified).ToArray();
                 JoiningClientMPTypeAllMods = JoiningClientMPTypeAllMods.Concat(JoiningClientMPTypeUnspecifiedMods).ToArray();
@@ -657,13 +657,13 @@ namespace VoidManager.MPModChecks
                         {
                             //Mod versions do not match
                             MismatchedVersions.Add($"Client:{CurrentLocalMod.ModName}-{CurrentLocalMod.Version}, Host:{CurrentJoiningClientMod.Version}");
-                            Plugin.Log.LogMessage($"Mismatched mod version - {MismatchedVersions.Last()}. {((CurrentLocalMod.DownloadID != string.Empty) ? $"Download Link: {CurrentLocalMod.DownloadID}" : "")}");
+                            BepinPlugin.Log.LogMessage($"Mismatched mod version - {MismatchedVersions.Last()}. {((CurrentLocalMod.DownloadID != string.Empty) ? $"Download Link: {CurrentLocalMod.DownloadID}" : "")}");
                         }
                         else if (Encoding.ASCII.GetString(CurrentLocalMod.Hash) != Encoding.ASCII.GetString(CurrentJoiningClientMod.Hash))
                         {
                             //Mod Hash Mismatch. Log hash, but tell joining client it's a version mismatch.
                             MismatchedVersions.Add($"Client:{ CurrentLocalMod.ModName}-{ CurrentLocalMod.Version}, Host: { CurrentJoiningClientMod.Version}");
-                            Plugin.Log.LogMessage($"Mismatched mod hash - {MismatchedVersions.Last()} - LocalHash: {Encoding.ASCII.GetString(CurrentLocalMod.Hash)} IncomingHash: {Encoding.ASCII.GetString(CurrentJoiningClientMod.Hash)}. {((CurrentLocalMod.DownloadID != string.Empty) ? $"Download Link: {CurrentLocalMod.DownloadID}" : "")}");
+                            BepinPlugin.Log.LogMessage($"Mismatched mod hash - {MismatchedVersions.Last()} - LocalHash: {Encoding.ASCII.GetString(CurrentLocalMod.Hash)} IncomingHash: {Encoding.ASCII.GetString(CurrentJoiningClientMod.Hash)}. {((CurrentLocalMod.DownloadID != string.Empty) ? $"Download Link: {CurrentLocalMod.DownloadID}" : "")}");
                         }
                         break;
                     }
@@ -672,7 +672,7 @@ namespace VoidManager.MPModChecks
                 {
                     //Client MPType.All mod not found in host mods
                     JoiningClientMissing.Add(CurrentLocalMod.ModName);
-                    Plugin.Log.LogMessage($"Client is missing the required mod '{CurrentLocalMod.ModName}'");
+                    BepinPlugin.Log.LogMessage($"Client is missing the required mod '{CurrentLocalMod.ModName}'");
                 }
             }
 
@@ -694,7 +694,7 @@ namespace VoidManager.MPModChecks
                 {
                     //Host MPType.All Mod not found in Joining Client mods
                     LocalClientMissing.Add(CurrentJoiningClientMod.ModName);
-                    Plugin.Log.LogMessage($"Client must uninstall the {CurrentJoiningClientMod.MPType.ToString()} Mod '{CurrentJoiningClientMod.ModName}'");
+                    BepinPlugin.Log.LogMessage($"Client must uninstall the {CurrentJoiningClientMod.MPType.ToString()} Mod '{CurrentJoiningClientMod.ModName}'");
                 }
             }
 
@@ -734,11 +734,11 @@ namespace VoidManager.MPModChecks
                 Messaging.Echo($"Kicking player {joiningPlayer.NickName} from session for incompatable mods.", false);
                 Messaging.KickMessage("Kicked: Incompatable mod list", errorMessage, joiningPlayer);
                 PhotonNetwork.CloseConnection(joiningPlayer);
-                Plugin.Log.LogMessage($"Kicked player {joiningPlayer.NickName} from session for incompatable mods.\n{errorMessage}");
+                BepinPlugin.Log.LogMessage($"Kicked player {joiningPlayer.NickName} from session for incompatable mods.\n{errorMessage}");
             }
             else
             {
-                Plugin.Log.LogMessage("Hostside mod check passed for player " + joiningPlayer.NickName);
+                BepinPlugin.Log.LogMessage("Hostside mod check passed for player " + joiningPlayer.NickName);
                 Events.Instance.CallHostOnClientVerified(joiningPlayer);
             }
         }
