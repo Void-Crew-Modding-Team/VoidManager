@@ -27,7 +27,7 @@ namespace VoidManager
             
             DebugMode = Config.Bind("General", "DebugMode", false, "");
 
-            UnspecifiedModListOverride = Config.Bind("General", "Unspecified Mod Overrides", string.Empty, "Insert mods (not configured for VoidManager) for which you would like to override the MPType. Format: 'ModNameOrGUID:ClientOrAll', delineated by ','. Ex: VoidManager:all,Better Scoop:Client \n ModName/GUID can be gathered from log files.");
+            UnspecifiedModListOverride = Config.Bind("General", "Unspecified Mod Overrides", string.Empty, "Insert mods (not configured for VoidManager) for which you would like to override the MPType. Format: 'ModNameOrGUID:ClientOrAll', delineated by ','. Ex: VoidManager:all,Better Scoop:Client \n ModName/GUID can be gathered from log files and F5 menu.");
 
 
             ModInfoTextAnchor = Config.Bind("Menu", "ModInfoTextAnchor", TextAnchor.UpperLeft, "");
