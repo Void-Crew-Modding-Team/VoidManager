@@ -155,6 +155,7 @@ namespace VoidManager.CustomGUI
                             {
                                 DrawModButton(vp);
                             }
+                            Label("Overall MPType: " + GetTextForOverallMPType(MPModCheckManager.Instance.HighestLevelOfMPMods));
                         }
                         EndScrollView();
                     }
@@ -319,16 +320,46 @@ namespace VoidManager.CustomGUI
             return _cachedSkin;
         }
 
+        static string GetColorTextForMPType(MultiplayerType mptype)
+        {
+            switch (mptype)
+            {
+                //case MultiplayerType.Client:
+                //    return "green";
+                case MultiplayerType.Unspecified:
+                    return "#FFFF99";
+                case MultiplayerType.All:
+                    return "#FF3333";
+                default:
+                    return string.Empty;
+            }
+        }
+
+        static string GetTextForOverallMPType(MultiplayerType mptype)
+        {
+            switch (mptype)
+            {
+                case MultiplayerType.Client:
+                    return "<color=#00CC00>Client</color>";
+                case MultiplayerType.Unspecified:
+                    return "<color=#FFFF99>Unspecified</color>";
+                case MultiplayerType.All:
+                    return "<color=#FF3333>All</color>";
+                default:
+                    return mptype.ToString();
+            }
+        }
+
         static string GetTextForMPType(MultiplayerType mptype)
         {
             switch (mptype)
             {
                 case MultiplayerType.All:
-                    return "All - All Clients will be required to install this mod.";
+                    return "<color=#FF3333>All</color> - All Clients will be required to install this mod.";
                 case MultiplayerType.Client:
-                    return "Client - This mod is client-side, but might have special behavior.";
+                    return "<color=#00CC00>Client</color> - This mod is client-side, but might have special behavior.";
                 case MultiplayerType.Unspecified:
-                    return "Unspecified - This mod has not had it's multiplayer operations specified for VoidManager.\n- If the host has VoidManager and this mod, Connection will be allowed.\n- If the host has VoidManager but not this mod, they can optionally trust Unspecified Mods.\n- If the host does not have VoidManager, Connection will be disallowed.\n- If the local client is hosting, vanilla clients will be allowed to join the session.";
+                    return "<color=#FFFF99>Unspecified</color> - This mod has not had it's multiplayer operations specified for VoidManager.\n- If the host has VoidManager and this mod, Connection will be allowed.\n- If the host has VoidManager but not this mod, they can optionally trust Unspecified Mods.\n- If the host does not have VoidManager, Connection will be disallowed.\n- If the local client is hosting, vanilla clients will be allowed to join the session.";
                 default:
                     return mptype.ToString();
             }
@@ -338,7 +369,7 @@ namespace VoidManager.CustomGUI
         {
             if (voidPlugin.MPType > MPModChecks.MultiplayerType.Client)
             {
-                if (Button($"<color=#FFFF99>{voidPlugin.BepinPlugin.Metadata.Name}</color>"))
+                if (Button($"<color={GetColorTextForMPType(voidPlugin.MPType)}>{voidPlugin.BepinPlugin.Metadata.Name}</color>")) //FFFF99
                     selectedMod = voidPlugin;
             }
             else

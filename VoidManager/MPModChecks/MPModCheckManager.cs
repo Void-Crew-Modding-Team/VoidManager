@@ -26,6 +26,7 @@ namespace VoidManager.MPModChecks
             BuildRoomProperties();
         }
 
+        public MultiplayerType HighestLevelOfMPMods { get; private set; } = MultiplayerType.Hidden;
 
         internal static InRoomCallbacks RoomCallbacksClass;
         private MPModDataBlock[] MyModList = null;
@@ -33,7 +34,6 @@ namespace VoidManager.MPModChecks
         private MPModDataBlock[] MyMPModList = null;
         byte[] RoomProperties;
         internal Dictionary<Player, MPUserDataBlock> NetworkedPeersModLists = new Dictionary<Player, MPUserDataBlock>();
-        private MultiplayerType HighestLevelOfMPMods = MultiplayerType.Hidden;
         public string LastModCheckFailReason;
 
         public static MPModCheckManager Instance { get; internal set; }
