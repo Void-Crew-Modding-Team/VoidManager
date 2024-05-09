@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
-using UnityEngine;
 using VoidManager.Chat.Router;
 using VoidManager.ModMessages;
 using VoidManager.MPModChecks;

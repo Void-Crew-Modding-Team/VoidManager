@@ -1,4 +1,5 @@
-﻿using Photon.Realtime;
+﻿using HarmonyLib;
+using Photon.Realtime;
 using System;
 
 namespace VoidManager
@@ -91,6 +92,26 @@ namespace VoidManager
         internal void OnClientModlistRecieved(Player DataSender)
         {
             ClientModlistRecieved?.Invoke(this, new PlayerEventArgs() { player = DataSender });
+        }
+
+
+        /// <summary>
+        /// Called after after loading a game session (reccurs multiple times in the same PhotonRoom).
+        /// </summary>
+        public event EventHandler HostStartSession;
+
+        internal void OnHostStartSession()
+        {
+            HostStartSession?.Invoke(this, EventArgs.Empty);
+        }
+
+        [HarmonyPatch(typeof(GameSessionManager), "HostGameSession")]
+        class HostStartSessionpatch
+        {
+            static void Postfix()
+            {
+                Instance.OnHostStartSession();
+            }
         }
     }
 }
