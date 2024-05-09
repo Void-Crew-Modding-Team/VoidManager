@@ -3,6 +3,7 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using static VoidManager.BepinPlugin.Bindings;
 
@@ -23,8 +24,13 @@ namespace VoidManager
             Harmony.PatchAll();
             Log.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
 
-            ModInfoTextAnchor = Config.Bind("General", "ModInfoTextAnchor", TextAnchor.UpperLeft, "");
+            
             DebugMode = Config.Bind("General", "DebugMode", false, "");
+
+            UnspecifiedModListOverride = Config.Bind("General", "Unspecified Mod Overrides", string.Empty, "Insert mods (not configured for VoidManager) for which you would like to override the MPType. Format: 'ModNameOrGUID:ClientOrAll', delineated by ','. Ex: VoidManager:all,Better Scoop:Client \n ModName/GUID can be gathered from log files.");
+
+
+            ModInfoTextAnchor = Config.Bind("Menu", "ModInfoTextAnchor", TextAnchor.UpperLeft, "");
 
             MenuHeight = Config.Bind("Menu", "Height", .40f, "");
             MenuWidth = Config.Bind("Menu", "Width", .40f, "");
@@ -34,6 +40,8 @@ namespace VoidManager
             MenuOpenKeybind = Config.Bind("Menu", "Open Keybind", OpenMenu, "");
 
             TrustMPTypeUnspecified = Config.Bind("Multiplayer", "TrustMPTypeUnspecified", false, "");
+
+            
         }
         internal class Bindings
         {
@@ -54,6 +62,35 @@ namespace VoidManager
             internal static KeyboardShortcut OpenMenu = new KeyboardShortcut(KeyCode.F5);
 
             internal static ConfigEntry<bool> TrustMPTypeUnspecified;
+
+            internal static ConfigEntry<string> UnspecifiedModListOverride;
+            internal static Dictionary<string, MPModChecks.MultiplayerType> ModOverrideDictionary;
+            internal static void LoadModListOverride()
+            {
+                ModOverrideDictionary = new Dictionary<string, MPModChecks.MultiplayerType>();
+                if (UnspecifiedModListOverride.Value == string.Empty)
+                    return;
+                string[] inputs = UnspecifiedModListOverride.Value.Split(',');
+                foreach(string value in inputs)
+                {
+                    if(value.EndsWith(":all", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        ModOverrideDictionary.Add(value.Substring(0, value.Length - 4), MPModChecks.MultiplayerType.All);
+                    }
+                    else if(value.EndsWith(":client", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        ModOverrideDictionary.Add(value.Substring(0, value.Length - 7), MPModChecks.MultiplayerType.Client);
+                    }
+                    else if (value.EndsWith(":h", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        ModOverrideDictionary.Add(value.Substring(0, value.Length - 2), MPModChecks.MultiplayerType.Hidden);
+                    }
+                    else
+                    {
+                        Log.LogError($"Unspecified Mod Override - '{value}' is not a valid input.");
+                    }
+                }
+            }
         }
     }
 }

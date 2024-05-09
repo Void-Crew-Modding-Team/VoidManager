@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using VoidManager.MPModChecks;
 using static UnityEngine.GUILayout;
 
 namespace VoidManager.CustomGUI
@@ -19,8 +20,10 @@ namespace VoidManager.CustomGUI
         Rect Window;
         byte Tab = 0;
 
-        List<VoidPlugin> mods = new List<VoidPlugin>();
-        ushort selectedMod = ushort.MaxValue;
+        List<VoidPlugin> mods = new();
+        VoidPlugin selectedMod = null;
+
+        List<VoidPlugin> NonVManMods = new();
 
         Rect ModListArea;
         Vector2 ModListScroll = Vector2.zero;
@@ -30,7 +33,7 @@ namespace VoidManager.CustomGUI
 
         Rect ModSettingsArea;
         Vector2 ModSettingsScroll = Vector2.zero;
-        List<ModSettingsMenu> settings = new List<ModSettingsMenu>();
+        List<ModSettingsMenu> settings = new();
         ushort selectedSettings = ushort.MaxValue;
 
         internal void updateWindowSize()
@@ -48,7 +51,7 @@ namespace VoidManager.CustomGUI
         internal GUIMain()
         {
             Instance = this;
-            MMCanvas = new GameObject("ModManagerCanvas", new Type[] { typeof(Canvas) } );
+            MMCanvas = new GameObject("ModManagerCanvas", new Type[] { typeof(Canvas) });
             Canvas canvasComponent = MMCanvas.GetComponent<Canvas>();
             canvasComponent.renderMode = RenderMode.ScreenSpaceOverlay;
             canvasComponent.sortingOrder = 1000;
@@ -138,36 +141,38 @@ namespace VoidManager.CustomGUI
             {
                 #region ModList and ModInfo
                 case 0:
-                    GUI.skin.label.alignment = BepinPlugin.Bindings.ModInfoTextAnchor.Value;
                     BeginArea(ModListArea);
                     {
                         ModListScroll = BeginScrollView(ModListScroll);
                         {
-                            for (ushort p = 0; p < mods.Count; p++)
+                            foreach (VoidPlugin vp in mods)
                             {
-                                var mod = mods[p];
-                                var name = mods[p].BepinPlugin.Metadata.Name;
-                                if (Button(name))
-                                    selectedMod = p;
+                                DrawModButton(vp);
+                            }
+                            GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+                            Label("<color=yellow>Non-VoidManager Mods</color>");
+                            foreach (VoidPlugin vp in NonVManMods)
+                            {
+                                DrawModButton(vp);
                             }
                         }
                         EndScrollView();
                     }
                     EndArea();
+                    GUI.skin.label.alignment = BepinPlugin.Bindings.ModInfoTextAnchor.Value;
                     BeginArea(ModInfoArea);
                     {
-                        if (selectedMod != ushort.MaxValue)
+                        if (selectedMod != null)
                         {
                             ModInfoScroll = BeginScrollView(ModInfoScroll);
                             {
-                                VoidPlugin mod = mods[selectedMod];
-                                BepInPlugin bepInPlugin = mod.BepinPlugin.Metadata;
-                                Label($"Author: {mod.Author}");
+                                BepInPlugin bepInPlugin = selectedMod.BepinPlugin.Metadata;
+                                Label($"Author: {selectedMod.Author}");
                                 Label($"Name: {bepInPlugin.Name}");
                                 Label($"Version: {bepInPlugin.Version}");
-                                if (mod.Description != string.Empty)
-                                    Label($"Description: {mod.Description}");
-                                Label($"MPRequirement: {((MPModChecks.MultiplayerType)mod.MPType).ToString()}");
+                                if (selectedMod.Description != string.Empty)
+                                    Label($"Description: {selectedMod.Description}");
+                                Label($"MPRequirement: {GetTextForMPType(selectedMod.MPType)}");
                             }
                             EndScrollView();
                         }
@@ -314,6 +319,35 @@ namespace VoidManager.CustomGUI
             return _cachedSkin;
         }
 
+        static string GetTextForMPType(MultiplayerType mptype)
+        {
+            switch (mptype)
+            {
+                case MultiplayerType.All:
+                    return "All - All Clients will be required to install this mod.";
+                case MultiplayerType.Client:
+                    return "Client - This mod is client-side, but might have special behavior.";
+                case MultiplayerType.Unspecified:
+                    return "Unspecified - This mod has not had it's multiplayer operations specified for VoidManager.\n- If the host has VoidManager and this mod, Connection will be allowed.\n- If the host has VoidManager but not this mod, they can optionally trust Unspecified Mods.\n- If the host does not have VoidManager, Connection will be disallowed.\n- If the local client is hosting, vanilla clients will be allowed to join the session.";
+                default:
+                    return mptype.ToString();
+            }
+        }
+
+        void DrawModButton(VoidPlugin voidPlugin)
+        {
+            if (voidPlugin.MPType > MPModChecks.MultiplayerType.Client)
+            {
+                if (Button($"<color=#FFFF99>{voidPlugin.BepinPlugin.Metadata.Name}</color>"))
+                    selectedMod = voidPlugin;
+            }
+            else
+            {
+                if (Button(voidPlugin.BepinPlugin.Metadata.Name))
+                    selectedMod = voidPlugin;
+            }
+        }
+
         Texture2D BuildTexFrom1Color(Color color)
         {
             Texture2D tex = new Texture2D(1, 1);
@@ -349,11 +383,16 @@ namespace VoidManager.CustomGUI
             if (hasSettingsMenu) BepinPlugin.Log.LogInfo($"[{voidPlugin.BepinPlugin.Metadata.Name}] detected settings menu");
         }
 
+        public void DiscoverNonVManMod(VoidPlugin voidPlugin)
+        {
+            NonVManMods.Add(voidPlugin);
+        }
+
         bool ShowingCursor;
 
         void GUIToggleCursor(bool enable)
         {
-            if(!BepinPlugin.Bindings.MenuUnlockCursor.Value && !(!enable && ShowingCursor))
+            if (!BepinPlugin.Bindings.MenuUnlockCursor.Value && !(!enable && ShowingCursor))
             {
                 return; // Stop early if unlocking cursor is disabled, but allow passthrough if cursor is enabled and is getting set to disabled.
             }
