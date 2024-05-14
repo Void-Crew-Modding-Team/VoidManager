@@ -35,6 +35,7 @@ namespace VoidManager
             MenuHeight = Config.Bind("Menu", "Height", .50f, "");
             MenuWidth = Config.Bind("Menu", "Width", .50f, "");
             MenuListWidth = Config.Bind("Menu", "List Width", .30f, "");
+            PlayerListWidth = Config.Bind("Menu", "Player List Width", .30f, "");
             MenuUnlockCursor = Config.Bind("Menu", "Unlock Cursor", true, "");
 
             MenuOpenKeybind = Config.Bind("Menu", "Open Keybind", OpenMenu, "");
@@ -56,6 +57,7 @@ namespace VoidManager
             internal static ConfigEntry<float> MenuHeight;
             internal static ConfigEntry<float> MenuWidth;
             internal static ConfigEntry<float> MenuListWidth;
+            internal static ConfigEntry<float> PlayerListWidth;
             internal static ConfigEntry<bool> MenuUnlockCursor;
 
             internal static ConfigEntry<KeyboardShortcut> MenuOpenKeybind;

@@ -66,7 +66,7 @@ namespace VoidManager.MPModChecks
                 return;
             }
 
-            PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { InRoomCallbacks.RoomModsPropertyKey, RoomProperties } });
+            CurrentRoom.SetCustomProperties(new Hashtable { { InRoomCallbacks.RoomModsPropertyKey, RoomProperties } });
         }
 
         private void UpdateHighestLevelOfMPMods(MultiplayerType MT)
@@ -91,7 +91,6 @@ namespace VoidManager.MPModChecks
 
         private void UpdateMyModList()
         {
-            VoidPlugin voidPlugin;
             BepinPlugin.Log.LogInfo("Building MyModList");
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -105,7 +104,7 @@ namespace VoidManager.MPModChecks
                 {
                     continue;
                 }
-                else if (PluginHandler.ActiveVoidPlugins.TryGetValue(GUID, out voidPlugin) || PluginHandler.GeneratedVoidPlugins.TryGetValue(GUID, out voidPlugin)) //Check for metadata for MPType. If metadata doesn't exist, default to MPType.all
+                else if (PluginHandler.ActiveVoidPlugins.TryGetValue(GUID, out VoidPlugin voidPlugin) || PluginHandler.GeneratedVoidPlugins.TryGetValue(GUID, out voidPlugin)) //Check for metadata for MPType. If metadata doesn't exist, default to MPType.all
                 {
                     if (voidPlugin.MPType != MultiplayerType.Hidden) //Do nothing if marked as hidden.
                     {
@@ -385,10 +384,10 @@ namespace VoidManager.MPModChecks
         }
 
         /// <summary>
-        /// Checks NetworkedPeersModLists 
+        /// Checks if player has a mod list in NetworkedPeersModLists 
         /// </summary>
         /// <param name="Player"></param>
-        /// <returns></returns>
+        /// <returns>existance of player key in dictionary</returns>
         public bool GetNetworkedPeerModlistExists(Player Player)
         {
             return NetworkedPeersModLists.ContainsKey(Player);

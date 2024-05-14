@@ -14,6 +14,7 @@ namespace VoidManager.CustomGUI
         string SizeX = string.Empty;
         string SizeY = string.Empty;
         string ModListSizeX = string.Empty;
+        string PlayerListSizeX = string.Empty;
         string SizeErrString = string.Empty;
 
         public override void OnOpen()
@@ -21,6 +22,7 @@ namespace VoidManager.CustomGUI
             SizeX = MenuWidth.Value.ToString();
             SizeY = MenuHeight.Value.ToString();
             ModListSizeX = MenuListWidth.Value.ToString();
+            PlayerListSizeX = PlayerListWidth.Value.ToString();
         }
 
 
@@ -69,6 +71,10 @@ namespace VoidManager.CustomGUI
             Label("Modlist Scrollbar Width:");
             ModListSizeX = TextField(ModListSizeX);
             EndHorizontal();
+            BeginHorizontal();
+            Label("Playerlist Scrollbar Width:");
+            PlayerListSizeX = TextField(PlayerListSizeX);
+            EndHorizontal();
 
             UnityEngine.GUI.skin.label.alignment = TextAnchor.MiddleCenter;
 
@@ -79,7 +85,7 @@ namespace VoidManager.CustomGUI
 
             if (Button("Apply Size"))
             {
-                if (!float.TryParse(SizeX, out float X) || !float.TryParse(SizeY, out float Y) || !float.TryParse(ModListSizeX, out float MLx))
+                if (!float.TryParse(SizeX, out float X) || !float.TryParse(SizeY, out float Y) || !float.TryParse(ModListSizeX, out float MLx) || !float.TryParse(PlayerListSizeX, out float PLx))
                 {
                     SizeErrString = "Size values are not numbers";
                 }
@@ -97,11 +103,16 @@ namespace VoidManager.CustomGUI
                     {
                         SizeErrString = "Modlist Scrollbar Width value canot be smaller than .1";
                     }
+                    else if (PLx < .1)
+                    {
+                        SizeErrString = "Modlist Scrollbar Width value canot be smaller than .1";
+                    }
                     else
                     {
                         MenuHeight.Value = Y;
                         MenuWidth.Value = X;
                         MenuListWidth.Value = MLx;
+                        PlayerListWidth.Value = PLx;
                         SizeErrString = string.Empty;
                         GUIMain.Instance.updateWindowSize();
                     }

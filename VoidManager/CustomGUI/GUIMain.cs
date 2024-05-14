@@ -1,5 +1,7 @@
 ﻿using BepInEx;
 using CG.Input;
+using Photon.Pun;
+using Photon.Realtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +33,14 @@ namespace VoidManager.CustomGUI
         Rect ModInfoArea;
         Vector2 ModInfoScroll = Vector2.zero;
 
+        Rect PlayerListArea;
+        Vector2 PlayerListScroll = Vector2.zero;
+        Player selectedPlayer;
+
+        Rect PlayerModInfoArea;
+        Vector2 PlayerModInfoScroll = Vector2.zero;
+        
+
         Rect ModSettingsArea;
         Vector2 ModSettingsScroll = Vector2.zero;
         List<ModSettingsMenu> settings = new();
@@ -41,10 +51,13 @@ namespace VoidManager.CustomGUI
             float Height = BepinPlugin.Bindings.MenuHeight.Value;
             float Width = BepinPlugin.Bindings.MenuWidth.Value;
             float ModlistWidth = BepinPlugin.Bindings.MenuListWidth.Value;
+            float PlayerlistWidth = BepinPlugin.Bindings.PlayerListWidth.Value;
 
             Window = new Rect((Screen.width * .5f - ((Screen.width * Width) / 2)), Screen.height * .5f - ((Screen.height * Height) / 2), Screen.width * Width, Screen.height * Height);
             ModListArea = new Rect(6, 43, Window.width * ModlistWidth, Screen.height * Height - 45);
             ModInfoArea = new Rect(ModListArea.width + 15, 43, (Screen.width * Width - (ModListArea.width + 11)) - 10, Screen.height * Height - 45);
+            PlayerListArea = new Rect(6, 43, Window.width * PlayerlistWidth, Screen.height * Height - 45);
+            PlayerModInfoArea = new Rect(PlayerListArea.width + 15, 43, (Screen.width * Width - (PlayerListArea.width + 11)) - 10, Screen.height * Height - 45);
             ModSettingsArea = new Rect(6, 43, Screen.width * Width - 12, Screen.height * Height - 45);
         }
 
@@ -133,8 +146,10 @@ namespace VoidManager.CustomGUI
                     Tab = 0;
                 if (Button("Mod Settings"))
                     Tab = 1;
-                if (Button("About"))
+                if (Button("Player List"))
                     Tab = 2;
+                if (Button("About"))
+                    Tab = 3;
             }
             EndHorizontal(); // TAB End
             switch (Tab)
@@ -155,7 +170,7 @@ namespace VoidManager.CustomGUI
                             {
                                 DrawModButton(vp);
                             }
-                            Label("Overall MPType: " + GetTextForOverallMPType(MPModCheckManager.Instance.HighestLevelOfMPMods));
+                            Label("Overall MPType: " + GetColoredMPTypeText(MPModCheckManager.Instance.HighestLevelOfMPMods));
                         }
                         EndScrollView();
                     }
@@ -218,8 +233,45 @@ namespace VoidManager.CustomGUI
                     EndArea();
                     break;
                 #endregion
-                #region About
+                #region Player List
                 case 2:
+                    BeginArea(PlayerListArea);
+                    {
+                        PlayerListScroll = BeginScrollView(PlayerListScroll);
+                        {
+                            foreach (Player player in PhotonNetwork.PlayerList)
+                            {
+                                if (player.IsLocal)
+                                {
+                                    continue;
+                                }
+                                if (Button(player.NickName))
+                                {
+                                    selectedPlayer = player;
+                                }
+                            }
+                        }
+                        EndScrollView();
+                    }
+                    EndArea();
+                    BeginArea(PlayerModInfoArea);
+                    {
+                        PlayerModInfoScroll = BeginScrollView(PlayerModInfoScroll);
+                        {
+                            if(selectedPlayer != null)
+                            {
+                                Label($"Player: {selectedPlayer.NickName} {(selectedPlayer.IsMasterClient ? "(Host)" : string.Empty)}");
+
+                                DrawPlayerModList(selectedPlayer);
+                            }
+                        }
+                        EndScrollView();
+                    }
+                    EndArea();
+                    break;
+                #endregion
+                #region About
+                case 3:
                     GUI.skin.label.alignment = TextAnchor.MiddleCenter;
                     Label($"VoidManager - BepInEx Plugin Manager for Void Crew.");
                     Label($"Version: {MyPluginInfo.PLUGIN_VERSION}");
@@ -335,7 +387,7 @@ namespace VoidManager.CustomGUI
             }
         }
 
-        static string GetTextForOverallMPType(MultiplayerType mptype)
+        static string GetColoredMPTypeText(MultiplayerType mptype)
         {
             switch (mptype)
             {
@@ -376,6 +428,32 @@ namespace VoidManager.CustomGUI
             {
                 if (Button(voidPlugin.BepinPlugin.Metadata.Name))
                     selectedMod = voidPlugin;
+            }
+        }
+
+        void DrawPlayerModList(Player player)
+        {
+            MPUserDataBlock userData = MPModCheckManager.Instance.GetNetworkedPeerMods(player);
+            if (userData != null)
+            {
+                Label($"User VoidManager version: {userData.VMVersion}");
+                Label("ModList:");
+                string ModListText = string.Empty;
+                bool first = true;
+                foreach (MPModDataBlock modData in userData.ModData)
+                {
+                    if (first)
+                        first = false;
+                    else
+                        ModListText += "\n";
+
+                    ModListText += $"- {modData.ModName} v{modData.Version}, MPType: {GetColoredMPTypeText(modData.MPType)}";
+                }
+                Label(ModListText);
+            }
+            else
+            {
+                Label("No Mod data.");
             }
         }
 
