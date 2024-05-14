@@ -39,7 +39,7 @@ namespace VoidManager.CustomGUI
 
         Rect PlayerModInfoArea;
         Vector2 PlayerModInfoScroll = Vector2.zero;
-        
+
 
         Rect ModSettingsArea;
         Vector2 ModSettingsScroll = Vector2.zero;
@@ -148,8 +148,6 @@ namespace VoidManager.CustomGUI
                     Tab = 1;
                 if (Button("Player List"))
                     Tab = 2;
-                if (Button("About"))
-                    Tab = 3;
             }
             EndHorizontal(); // TAB End
             switch (Tab)
@@ -160,6 +158,10 @@ namespace VoidManager.CustomGUI
                     {
                         ModListScroll = BeginScrollView(ModListScroll);
                         {
+                            if (Button("VoidManager"))
+                            {
+                                selectedMod = null;
+                            }
                             foreach (VoidPlugin vp in mods)
                             {
                                 DrawModButton(vp);
@@ -178,9 +180,9 @@ namespace VoidManager.CustomGUI
                     GUI.skin.label.alignment = BepinPlugin.Bindings.ModInfoTextAnchor.Value;
                     BeginArea(ModInfoArea);
                     {
-                        if (selectedMod != null)
+                        ModInfoScroll = BeginScrollView(ModInfoScroll);
                         {
-                            ModInfoScroll = BeginScrollView(ModInfoScroll);
+                            if (selectedMod != null)
                             {
                                 BepInPlugin bepInPlugin = selectedMod.BepinPlugin.Metadata;
                                 Label($"Author: {selectedMod.Author}");
@@ -190,8 +192,26 @@ namespace VoidManager.CustomGUI
                                     Label($"Description: {selectedMod.Description}");
                                 Label($"MPRequirement: {GetTextForMPType(selectedMod.MPType)}");
                             }
-                            EndScrollView();
+                            else
+                            {
+                                //VoidManager about page when no mod selected.
+                                GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+                                Label($"VoidManager - BepInEx Plugin Manager for Void Crew.");
+                                Label("Provides APIs to developers and multiplayer mod management.");
+                                Label($"Version: {MyPluginInfo.PLUGIN_VERSION}");
+                                Label($"\n\nDeveloped by Mest and Dragon");
+                                Label($"Based on the 'Pulsar Mod Loader' developed by Tom Ritcher");
+                                BeginHorizontal();
+                                FlexibleSpace();
+                                if (Button("Github"))
+                                    Application.OpenURL("https://github.com/Void-Crew-Modding-Team/VoidManager");
+                                if (Button("Discord"))
+                                    Application.OpenURL("https://discord.gg/4QhRRBWsJz");
+                                FlexibleSpace();
+                                EndHorizontal();
+                            }
                         }
+                        EndScrollView();
                     }
                     EndArea();
                     break;
@@ -258,7 +278,7 @@ namespace VoidManager.CustomGUI
                     {
                         PlayerModInfoScroll = BeginScrollView(PlayerModInfoScroll);
                         {
-                            if(selectedPlayer != null)
+                            if (selectedPlayer != null)
                             {
                                 Label($"Player: {selectedPlayer.NickName} {(selectedPlayer.IsMasterClient ? "(Host)" : string.Empty)}");
 
@@ -268,21 +288,6 @@ namespace VoidManager.CustomGUI
                         EndScrollView();
                     }
                     EndArea();
-                    break;
-                #endregion
-                #region About
-                case 3:
-                    GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-                    Label($"VoidManager - BepInEx Plugin Manager for Void Crew.");
-                    Label($"Version: {MyPluginInfo.PLUGIN_VERSION}");
-                    Label($"\n\nDeveloped by Mest and Dragon");
-                    Label($"Based on the 'Pulsar Mod Loader' developed by Tom Ritcher");
-                    BeginHorizontal();
-                    if (Button("Github"))
-                        Application.OpenURL("https://github.com/Void-Crew-Modding-Team/VoidManager");
-                    if (Button("Discord"))
-                        Application.OpenURL("https://discord.gg/4QhRRBWsJz");
-                    EndHorizontal();
                     break;
                     #endregion
             }
