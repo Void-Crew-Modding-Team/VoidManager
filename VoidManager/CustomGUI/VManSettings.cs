@@ -85,9 +85,17 @@ namespace VoidManager.CustomGUI
                 }
                 else
                 {
-                    if (X < .3 || Y < .3 || MLx < .2)
+                    if (X < .3)
                     {
-                        SizeErrString = "Size Values cannot be smaller than .3, .3, and .2";
+                        SizeErrString = "Width value cannot be smaller than .3";
+                    }
+                    else if(Y < .3)
+                    {
+                        SizeErrString = "Hight value cannot be smaller than .3";
+                    }
+                    else if(MLx < .1)
+                    {
+                        SizeErrString = "Modlist Scrollbar Width value canot be smaller than .1";
                     }
                     else
                     {

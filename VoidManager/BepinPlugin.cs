@@ -32,8 +32,8 @@ namespace VoidManager
 
             ModInfoTextAnchor = Config.Bind("Menu", "ModInfoTextAnchor", TextAnchor.UpperLeft, "");
 
-            MenuHeight = Config.Bind("Menu", "Height", .40f, "");
-            MenuWidth = Config.Bind("Menu", "Width", .40f, "");
+            MenuHeight = Config.Bind("Menu", "Height", .50f, "");
+            MenuWidth = Config.Bind("Menu", "Width", .50f, "");
             MenuListWidth = Config.Bind("Menu", "List Width", .30f, "");
             MenuUnlockCursor = Config.Bind("Menu", "Unlock Cursor", true, "");
 
