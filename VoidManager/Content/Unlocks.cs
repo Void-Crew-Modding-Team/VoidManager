@@ -12,7 +12,7 @@ namespace VoidManager.Content
         public static Unlocks Instance { get; internal set; }
 
         static FieldInfo UnlockOptionsFI = AccessTools.Field(typeof(UnlockItemDef), "unlockOptions");
-        private Dictionary<GUIDUnion, UnlockOptions> ModifiedUnlockOptions = new();
+        private Dictionary<GUIDUnion, Tuple<string, UnlockOptions>> ModifiedUnlockOptions = new();
 
         /// <summary>
         /// Sets UnlockOptions for GUID if previously-existing UnlockOptions exists.
@@ -20,7 +20,7 @@ namespace VoidManager.Content
         /// <param name="GUID"></param>
         /// <param name="UnlockOptions"></param>
         /// <exception cref="ArgumentException">An asset with the provided GUID does not exist.</exception>
-        public void SetUnlockOptions(GUIDUnion GUID, UnlockOptions unlockOptions)
+        public void SetUnlockOptions(GUIDUnion GUID, string CallerID, UnlockOptions unlockOptions)
         {
             if (ModifiedUnlockOptions.ContainsKey(GUID))
             {
@@ -32,19 +32,19 @@ namespace VoidManager.Content
             }
             else
             {
-                ModifiedUnlockOptions.Add(GUID, (UnlockOptions)UnlockOptionsFI.GetValue(asset));;
+                ModifiedUnlockOptions.Add(GUID, new Tuple<string, UnlockOptions>(CallerID, (UnlockOptions)UnlockOptionsFI.GetValue(asset)));
                 UnlockOptionsFI.SetValue(asset, unlockOptions);
             }
         }
 
-        public void SetUnlockOptions(string GUID, UnlockOptions unlockOptions)
+        public void SetUnlockOptions(string GUID, string CallerID, UnlockOptions unlockOptions)
         {
-            SetUnlockOptions(new GUIDUnion(GUID), unlockOptions);
+            SetUnlockOptions(new GUIDUnion(GUID), CallerID, unlockOptions);
         }
 
-        public void SetUnlockOptions(int[] GUID, UnlockOptions unlockOptions)
+        public void SetUnlockOptions(int[] GUID, string CallerID, UnlockOptions unlockOptions)
         {
-            SetUnlockOptions(new GUIDUnion(GUID), unlockOptions);
+            SetUnlockOptions(new GUIDUnion(GUID), CallerID, unlockOptions);
         }
 
 
@@ -52,23 +52,27 @@ namespace VoidManager.Content
         /// Undoes recipe modification for the provided GUID
         /// </summary>
         /// <param name="GUID"></param>
-        public void ResetUnlockOptions(GUIDUnion GUID)
+        public void ResetUnlockOptions(GUIDUnion GUID, string CallerID)
         {
-            if (ModifiedUnlockOptions.TryGetValue(GUID, out UnlockOptions value))
+            if (ModifiedUnlockOptions.TryGetValue(GUID, out Tuple<string, UnlockOptions> value))
             {
-                UnlockOptionsFI.SetValue(ResourceAssetContainer<UnlockContainer, UnityEngine.Object, UnlockItemDef>.Instance.GetAssetDefById(GUID), value);
+                if (value.Item1 != CallerID)
+                {
+                    throw new ArgumentException("CallerID must match Assignment CallerID. Maybe another mod changed the same UnlockOptions?", "CallerID");
+                }
+                UnlockOptionsFI.SetValue(ResourceAssetContainer<UnlockContainer, UnityEngine.Object, UnlockItemDef>.Instance.GetAssetDefById(GUID), value.Item2);
                 ModifiedUnlockOptions.Remove(GUID);
             }
         }
 
-        public void ResetUnlockOptions(string GUID)
+        public void ResetUnlockOptions(string GUID, string CallerID)
         {
-            ResetUnlockOptions(new GUIDUnion(GUID));
+            ResetUnlockOptions(new GUIDUnion(GUID), CallerID);
         }
 
-        public void ResetUnlockOptions(int[] GUID)
+        public void ResetUnlockOptions(int[] GUID, string CallerID)
         {
-            ResetUnlockOptions(new GUIDUnion(GUID));
+            ResetUnlockOptions(new GUIDUnion(GUID), CallerID);
         }
 
 
