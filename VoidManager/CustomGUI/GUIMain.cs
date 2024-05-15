@@ -218,7 +218,7 @@ namespace VoidManager.CustomGUI
                 #endregion
                 #region ModSettings
                 case 1:
-                    GUI.skin.label.alignment = TextAnchor.UpperLeft;
+                    GUI.skin.label.alignment = BepinPlugin.Bindings.ModInfoTextAnchor.Value;
                     BeginArea(ModSettingsArea);
                     {
                         ModSettingsScroll = BeginScrollView(ModSettingsScroll);
@@ -255,6 +255,7 @@ namespace VoidManager.CustomGUI
                 #endregion
                 #region Player List
                 case 2:
+                    GUI.skin.label.alignment = TextAnchor.MiddleLeft;
                     BeginArea(PlayerListArea);
                     {
                         PlayerListScroll = BeginScrollView(PlayerListScroll);
