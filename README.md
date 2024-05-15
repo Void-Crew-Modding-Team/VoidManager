@@ -18,9 +18,11 @@ Notes on Multiplayer mod checks: By default, any given mod must be installed by 
 - Handling for mods requiring installation by all users
 - Restrictions for unspecified mods
 - Manual configuration of unspecified mods
+- Listing of other players' mod lists
 - Client side chat commands
 - Public chat commands
 - Mod to mod messages (including between different clients)
+- API for recipe and unlock modifications
 - Marked Void Manager rooms
 - Mod settings UI
 
