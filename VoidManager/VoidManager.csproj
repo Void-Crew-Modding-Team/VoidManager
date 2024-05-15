@@ -49,6 +49,10 @@
       <HintPath>Files\com.rlabrecque.steamworks.net.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Files\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Photon3Unity3D">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Void Crew\Void Crew_Data\Managed\Photon3Unity3D.dll</HintPath>
       <Private>False</Private>
@@ -59,6 +63,10 @@
     </Reference>
     <Reference Include="PhotonUnityNetworking">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Void Crew\Void Crew_Data\Managed\PhotonUnityNetworking.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ResourceAssets">
+      <HintPath>Files\ResourceAssets.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Services.Vivox">

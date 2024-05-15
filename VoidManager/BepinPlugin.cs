@@ -22,6 +22,9 @@ namespace VoidManager
             Log = Logger;
 
             Harmony.PatchAll();
+            Content.Craftables.Instance = new();
+            Content.Unlocks.Instance = new();
+
             Log.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
 
             
