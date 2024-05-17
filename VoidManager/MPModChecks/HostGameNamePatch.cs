@@ -1,17 +1,16 @@
 ﻿using HarmonyLib;
-using Photon.Realtime;
 
 namespace VoidManager.MPModChecks
 {
-    [HarmonyPatch(typeof(LoadBalancingClient), "OpCreateRoom")]
+    [HarmonyPatch(typeof(PhotonService), "SetCurrentRoomName")]
     internal class HostGameNamePatch
     {
-        static void Prefix(EnterRoomParams enterRoomParams)
+        static void Prefix(ref string name)
         {
-            string name = enterRoomParams.RoomName.ToLower();
-            if (!name.StartsWith("[modded]") && !name.StartsWith("modded"))
+            if (!name.StartsWith("[Modded]", System.StringComparison.CurrentCultureIgnoreCase) &&
+                !name.StartsWith("modded", System.StringComparison.CurrentCultureIgnoreCase))
             {
-                enterRoomParams.RoomName = "[Modded] " + enterRoomParams.RoomName;
+                name = "[Modded] " + name;
             }
         }
     }
