@@ -16,6 +16,10 @@ namespace VoidManager.MPModChecks
         {
             if(pRoom.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))
             {
+                if (__result.RoomName.StartsWith("[Modded] "))
+                {
+                    __result.RoomName = __result.RoomName.Remove(0, 9);
+                }
                 __result.RoomName = "<color=yellow>[M]</color> " + __result.RoomName;
             }
         }
