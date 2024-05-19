@@ -20,36 +20,47 @@ namespace VoidManager.Content
         /// <param name="GUID"></param>
         /// <param name="UnlockOptions"></param>
         /// <exception cref="ArgumentException">An asset with the provided GUID does not exist.</exception>
-        public void SetUnlockOptions(GUIDUnion GUID, string CallerID, UnlockOptions unlockOptions)
+        /// <returns>UnlockOptions succesfully modified</returns>
+        public bool SetUnlockOptions(GUIDUnion GUID, string CallerID, UnlockOptions unlockOptions)
         {
-            if (ModifiedUnlockOptions.ContainsKey(GUID))
-            {
-                BepinPlugin.Log.LogError($"Attempted to modify recipe for object at GUID: {GUID}, however it has already been modified.");
-            }
-            else if (!ResourceAssetContainer<UnlockContainer, UnityEngine.Object, UnlockItemDef>.Instance.TryGetByGuid(GUID, out UnlockItemDef asset))
+            if (!ResourceAssetContainer<UnlockContainer, UnityEngine.Object, UnlockItemDef>.Instance.TryGetByGuid(GUID, out UnlockItemDef asset))
             {
                 throw new ArgumentException("An asset with the provided GUID does not exist.");
+            }
+            else if (ModifiedUnlockOptions.TryGetValue(GUID, out var value))
+            {
+                if (value.Item1 != CallerID)
+                {
+                    BepinPlugin.Log.LogError($"Attempted to modify recipe for object at GUID: {GUID}, however it has already been modified by another mod.");
+                    return false;
+                }
+                else //Mod that set GUID is overwriting value.
+                {
+                    UnlockOptionsFI.SetValue(asset, unlockOptions);
+                    return true;
+                }
             }
             else
             {
                 ModifiedUnlockOptions.Add(GUID, new Tuple<string, UnlockOptions>(CallerID, (UnlockOptions)UnlockOptionsFI.GetValue(asset)));
                 UnlockOptionsFI.SetValue(asset, unlockOptions);
+                return true;
             }
         }
 
-        public void SetUnlockOptions(string GUID, string CallerID, UnlockOptions unlockOptions)
+        public bool SetUnlockOptions(string GUID, string CallerID, UnlockOptions unlockOptions)
         {
-            SetUnlockOptions(new GUIDUnion(GUID), CallerID, unlockOptions);
+            return SetUnlockOptions(new GUIDUnion(GUID), CallerID, unlockOptions);
         }
 
-        public void SetUnlockOptions(int[] GUID, string CallerID, UnlockOptions unlockOptions)
+        public bool SetUnlockOptions(int[] GUID, string CallerID, UnlockOptions unlockOptions)
         {
-            SetUnlockOptions(new GUIDUnion(GUID), CallerID, unlockOptions);
+            return SetUnlockOptions(new GUIDUnion(GUID), CallerID, unlockOptions);
         }
 
 
         /// <summary>
-        /// Undoes recipe modification for the provided GUID
+        /// Undoes UnlockOptions modification for the provided GUID
         /// </summary>
         /// <param name="GUID"></param>
         public void ResetUnlockOptions(GUIDUnion GUID, string CallerID)
@@ -77,10 +88,10 @@ namespace VoidManager.Content
 
 
         /// <summary>
-        /// Returns the recipe for the given GUID.
+        /// Returns the current UnlockOptions for the given GUID.
         /// </summary>
         /// <param name="GUID"></param>
-        /// <returns>UnlockOptions for recipe of GUID</returns>
+        /// <returns>UnlockOptions for GUID</returns>
         public UnlockOptions GetUnlockOptions(GUIDUnion GUID)
         {
             return (UnlockOptions)UnlockOptionsFI.GetValue(ResourceAssetContainer<UnlockContainer, UnityEngine.Object, UnlockItemDef>.Instance.GetAssetDefById(GUID));
@@ -94,6 +105,26 @@ namespace VoidManager.Content
         public UnlockOptions GetUnlockOptions(int[] GUID)
         {
             return GetUnlockOptions(new GUIDUnion(GUID));
+        }
+
+        /// <summary>
+        /// Returns whether the given GUID UnlockOptions was modified.
+        /// </summary>
+        /// <param name="GUID"></param>
+        /// <returns>UnlockOptions modified</returns>
+        public bool UnlockOptionsModified(GUIDUnion GUID)
+        {
+            return ModifiedUnlockOptions.ContainsKey(GUID);
+        }
+
+        public bool UnlockOptionsModified(string GUID)
+        {
+            return UnlockOptionsModified(new GUIDUnion(GUID));
+        }
+
+        public bool UnlockOptionsModified(int[] GUID)
+        {
+            return UnlockOptionsModified(new GUIDUnion(GUID));
         }
     }
 }
