@@ -22,7 +22,7 @@ namespace VoidManager.MPModChecks
                     BepinPlugin.Log.LogInfo("Roomlist");
                 }
                 BepinPlugin.Log.LogInfo("Attempted to join room, VoidManager LobbyCallbacks instance, Active Terminal, or RoomList not found");
-                ___failPopup.Show("VoidManager could not find the room. Please wait a moment then try again. Could also be bugged.");
+                ___failPopup.Show("VoidManager could not find the room. Please close the terminal then try again.");
                 return false;
             }
 

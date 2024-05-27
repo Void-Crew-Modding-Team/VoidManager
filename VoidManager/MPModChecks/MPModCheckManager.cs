@@ -31,7 +31,7 @@ namespace VoidManager.MPModChecks
         internal static InRoomCallbacks RoomCallbacksClass;
         private MPModDataBlock[] MyModList = null;
         private MPModDataBlock[] MyMPUnspecifiedModList = null;
-        private MPModDataBlock[] MyMPModList = null;
+        private MPModDataBlock[] MyMPAllModList = null;
         byte[] RoomProperties;
         internal Dictionary<Player, MPUserDataBlock> NetworkedPeersModLists = new Dictionary<Player, MPUserDataBlock>();
         public string LastModCheckFailReason;
@@ -71,21 +71,11 @@ namespace VoidManager.MPModChecks
 
         private void UpdateHighestLevelOfMPMods(MultiplayerType MT)
         {
-            //Tiers: Hidden < Client < Unspecified < All
-            if (HighestLevelOfMPMods == MultiplayerType.Hidden && MT != MultiplayerType.Hidden)
+            //Tiers: Hidden < Client < Host < Unspecified < All
+            if(MT > HighestLevelOfMPMods)
             {
                 HighestLevelOfMPMods = MT;
                 BepinPlugin.Log.LogInfo("Incrementing HighestLevelOfMPMods to " + MT.ToString());
-            }
-            else if (HighestLevelOfMPMods == MultiplayerType.Client && MT > MultiplayerType.Client)
-            {
-                HighestLevelOfMPMods = MT;
-                BepinPlugin.Log.LogInfo("Incrementing HighestLevelOfMPMods to " + MT.ToString());
-            }
-            else if (HighestLevelOfMPMods == MultiplayerType.Unspecified && MT > MultiplayerType.Unspecified)
-            {
-                HighestLevelOfMPMods = MultiplayerType.All;
-                BepinPlugin.Log.LogInfo("Incrementing HighestLevelOfMPMods to MPType.All");
             }
         }
 
@@ -115,7 +105,7 @@ namespace VoidManager.MPModChecks
             }
             ProcessedMods = ProcessedMods.Where(mod => mod != null).ToArray();
             MyModList = ProcessedMods;
-            MyMPModList = ProcessedMods.Where(Mod => Mod.MPType == MultiplayerType.All).ToArray();
+            MyMPAllModList = ProcessedMods.Where(Mod => Mod.MPType == MultiplayerType.All).ToArray();
             MyMPUnspecifiedModList = ProcessedMods.Where(Mod => Mod.MPType == MultiplayerType.Unspecified).ToArray();
             stopwatch.Stop();
             BepinPlugin.Log.LogInfo("Finished Building MyModList, time elapsted: " + stopwatch.ElapsedMilliseconds.ToString() + " ms");
@@ -473,16 +463,12 @@ namespace VoidManager.MPModChecks
 
             if (!RoomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))//Host doesn't have mods
             {
-                if (HighestLevelOfMPMods == MultiplayerType.All)
+                if (HighestLevelOfMPMods >= MultiplayerType.Unspecified)
                 {
-                    LastModCheckFailReason = "Host has no mods, but client has MPType.All mods." + GetModListAsString(MyMPModList);
-                    KickMessagePatches.KickTitle = "Disconnected: Incompatable mod list";
-                    KickMessagePatches.KickMessage = LastModCheckFailReason;
-                    BepinPlugin.Log.LogMessage("Mod check failed.\n" + LastModCheckFailReason);
-                    return false; //Case: Host doesn't have mods, but Client has mod(s) which need the host to install.
-                }
-                else if(HighestLevelOfMPMods >= MultiplayerType.Unspecified)
-                {
+                    if (HighestLevelOfMPMods == MultiplayerType.All)
+                    {
+                        LastModCheckFailReason = "Host has no mods, but client has MPType.All mods." + GetModListAsString(MyMPAllModList);
+                    }
                     LastModCheckFailReason = "Host has no mods, but client has MPType.Unspecified mods." + GetModListAsString(MyMPUnspecifiedModList);
                     KickMessagePatches.KickTitle = "Disconnected: Incompatable mod list";
                     KickMessagePatches.KickMessage = LastModCheckFailReason;
@@ -512,9 +498,9 @@ namespace VoidManager.MPModChecks
             int i;
             int x;
             MPModDataBlock CurrentHostMod;
-            for (i = 0; i < MyMPModList.Length; i++)
+            for (i = 0; i < MyMPAllModList.Length; i++)
             {
-                MPModDataBlock CurrentLocalMod = MyMPModList[i];
+                MPModDataBlock CurrentLocalMod = MyMPAllModList[i];
                 bool found = false;
                 for (x = 0; x < HostMods.Length; x++)
                 {
@@ -544,9 +530,9 @@ namespace VoidManager.MPModChecks
             {
                 CurrentHostMod = HostMods[i];
                 bool found = false;
-                for (x = 0; x < MyMPModList.Length; x++)
+                for (x = 0; x < MyMPAllModList.Length; x++)
                 {
-                    if (CurrentHostMod.ModGUID == MyMPModList[x].ModGUID)
+                    if (CurrentHostMod.ModGUID == MyMPAllModList[x].ModGUID)
                     {
                         found = true;
                         break;
@@ -643,9 +629,9 @@ namespace VoidManager.MPModChecks
             int i;
             int x;
             MPModDataBlock CurrentJoiningClientMod;
-            for (i = 0; i < MyMPModList.Length; i++)
+            for (i = 0; i < MyMPAllModList.Length; i++)
             {
-                MPModDataBlock CurrentLocalMod = MyMPModList[i];
+                MPModDataBlock CurrentLocalMod = MyMPAllModList[i];
                 bool found = false;
                 for (x = 0; x < JoiningClientMPTypeAllMods.Length; x++)
                 {
@@ -682,9 +668,9 @@ namespace VoidManager.MPModChecks
             {
                 CurrentJoiningClientMod = JoiningClientMPTypeAllMods[i];
                 bool found = false;
-                for (x = 0; x < MyMPModList.Length; x++)
+                for (x = 0; x < MyMPAllModList.Length; x++)
                 {
-                    if (CurrentJoiningClientMod.ModGUID == MyMPModList[x].ModGUID)
+                    if (CurrentJoiningClientMod.ModGUID == MyMPAllModList[x].ModGUID)
                     {
                         found = true;
                         break;
