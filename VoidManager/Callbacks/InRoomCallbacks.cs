@@ -77,12 +77,13 @@ namespace VoidManager.Callbacks
             }
             else if (photonEvent.Code == KickMessageEventCode)
             {
+                BepinPlugin.Log.LogMessage("Recieved Kick Message.");
                 try
                 {
                     Player sender = PhotonNetwork.CurrentRoom.GetPlayer(photonEvent.Sender);//Not sure why others are using Networking client. If this ends up working right, the others should be replaced. TestMe
                     if (sender.IsMasterClient)
                     {
-                        BepinPlugin.Log.LogInfo("Recieved Kick Message from non-host. Sender: ");
+                        BepinPlugin.Log.LogInfo("Recieved Kick Message from non-host. Sender: " + sender.NickName);
                         return;
                     }
                     object[] EventData = (object[])photonEvent.CustomData;

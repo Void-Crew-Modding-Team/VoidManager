@@ -614,6 +614,11 @@ namespace VoidManager.MPModChecks
 
         internal void ModChecksHostOnClientJoin(Player joiningPlayer)
         {
+            if(!PhotonNetwork.IsMasterClient)
+            {
+                return;
+            }
+
             MPUserDataBlock JoiningPlayerMPData = GetNetworkedPeerMods(joiningPlayer);
             MPModDataBlock[] JoiningClientMPTypeAllMods = JoiningPlayerMPData.ModData.Where(Mod => Mod.MPType == MultiplayerType.All).ToArray();
 
