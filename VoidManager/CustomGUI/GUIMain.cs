@@ -44,7 +44,7 @@ namespace VoidManager.CustomGUI
         Rect ModSettingsArea;
         Vector2 ModSettingsScroll = Vector2.zero;
         List<ModSettingsMenu> settings = new();
-        ushort selectedSettings = ushort.MaxValue;
+        ModSettingsMenu selectedSettings;
 
         internal void updateWindowSize()
         {
@@ -106,9 +106,9 @@ namespace VoidManager.CustomGUI
 
         void GUIOpen()
         {
-            if (selectedSettings != ushort.MaxValue) //Menu Opening and MM selected
+            if (selectedSettings != null) //Menu Opening and MM selected
             {
-                settings[selectedSettings].OnOpen();
+                selectedSettings.OnOpen();
             }
             GUIToggleCursor(true);
             Background.SetActive(true);
@@ -116,9 +116,9 @@ namespace VoidManager.CustomGUI
 
         void GUIClose()
         {
-            if (selectedSettings != ushort.MaxValue) //Menu Closing and MM Selected
+            if (selectedSettings != null) //Menu Closing and MM Selected
             {
-                settings[selectedSettings].OnClose();
+                selectedSettings.OnClose();
             }
             GUIToggleCursor(false);
             Background.SetActive(false);
@@ -209,6 +209,10 @@ namespace VoidManager.CustomGUI
                                     Application.OpenURL("https://discord.gg/4QhRRBWsJz");
                                 FlexibleSpace();
                                 EndHorizontal();
+                                if(Button("VoidManager Settings"))
+                                {
+                                    OpenSettingsMenu(settings[0]);
+                                }
                             }
                         }
                         EndScrollView();
@@ -223,14 +227,14 @@ namespace VoidManager.CustomGUI
                     {
                         ModSettingsScroll = BeginScrollView(ModSettingsScroll);
                         {
-                            if (selectedSettings == ushort.MaxValue)
+                            if (selectedSettings == null)
                             {
-                                for (ushort msm = 0; msm < settings.Count; msm++)
+                                foreach (ModSettingsMenu menu in settings)
                                 {
-                                    if (Button(settings[msm].Name()))
+                                    if (Button(menu.Name()))
                                     {
-                                        settings[msm].OnOpen();
-                                        selectedSettings = msm;
+                                        menu.OnOpen();
+                                        selectedSettings = menu;
                                         break;
                                     }
                                 }
@@ -239,12 +243,12 @@ namespace VoidManager.CustomGUI
                             {
                                 if (Button("Back"))
                                 {
-                                    settings[selectedSettings].OnClose();
-                                    selectedSettings = ushort.MaxValue;
+                                    selectedSettings.OnClose();
+                                    selectedSettings = null;
                                 }
                                 else
                                 {
-                                    settings[selectedSettings].Draw();
+                                    selectedSettings.Draw();
                                 }
                             }
                         }
@@ -399,6 +403,8 @@ namespace VoidManager.CustomGUI
             {
                 case MultiplayerType.Client:
                     return "<color=#00CC00>Client</color>";
+                case MultiplayerType.Host:
+                    return "<color=#00CC00>Host</color>";
                 case MultiplayerType.Unspecified:
                     return "<color=#FFFF99>Unspecified</color>";
                 case MultiplayerType.All:
@@ -416,8 +422,14 @@ namespace VoidManager.CustomGUI
                     return "<color=#FF3333>All</color> - All Clients will be required to install this mod.";
                 case MultiplayerType.Client:
                     return "<color=#00CC00>Client</color> - This mod is client-side, but might have special behavior.";
+                case MultiplayerType.Host:
+                    return "<color=#00CC00>Host</color> - The host must have this mod for functionality, but it won't prevent joining a vanilla client's game.";
                 case MultiplayerType.Unspecified:
-                    return "<color=#FFFF99>Unspecified</color> - This mod has not had it's multiplayer operations specified for VoidManager.\n- If the host has VoidManager and this mod, Connection will be allowed.\n- If the host has VoidManager but not this mod, they can optionally trust Unspecified Mods.\n- If the host does not have VoidManager, Connection will be disallowed.\n- If the local client is hosting, vanilla clients will be allowed to join the session.";
+                    return "<color=#FFFF99>Unspecified</color> - This mod has not had it's multiplayer operations specified for VoidManager.\n" +
+                        "- If the host has VoidManager and this mod, Connection will be allowed.\n" +
+                        "- If the host has VoidManager but not this mod, they can optionally trust Unspecified Mods.\n" +
+                        "- If the host does not have VoidManager, Connection will be disallowed.\n" +
+                        "- If the local client is hosting, vanilla clients will be allowed to join the session.";
                 default:
                     return mptype.ToString();
             }
@@ -425,7 +437,7 @@ namespace VoidManager.CustomGUI
 
         void DrawModButton(VoidPlugin voidPlugin)
         {
-            if (voidPlugin.MPType > MPModChecks.MultiplayerType.Client)
+            if (voidPlugin.MPType > MPModChecks.MultiplayerType.Host)
             {
                 if (Button($"<color={GetColorTextForMPType(voidPlugin.MPType)}>{voidPlugin.BepinPlugin.Metadata.Name}</color>")) //FFFF99
                     selectedMod = voidPlugin;
@@ -461,6 +473,13 @@ namespace VoidManager.CustomGUI
             {
                 Label("No Mod data.");
             }
+        }
+
+        public void OpenSettingsMenu(ModSettingsMenu menu)
+        {
+            Tab = 1;
+            menu.OnOpen();
+            selectedSettings = menu;
         }
 
         Texture2D BuildTexFrom1Color(Color color)
