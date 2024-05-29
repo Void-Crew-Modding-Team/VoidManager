@@ -22,7 +22,7 @@ namespace VoidManager.CustomGUI
         Rect Window;
         byte Tab = 0;
 
-        List<VoidPlugin> mods = new();
+        internal List<VoidPlugin> mods = new();
         VoidPlugin selectedMod = null;
 
         List<VoidPlugin> NonVManMods = new();
