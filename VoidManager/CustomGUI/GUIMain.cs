@@ -209,7 +209,7 @@ namespace VoidManager.CustomGUI
                                     Application.OpenURL("https://discord.gg/4QhRRBWsJz");
                                 FlexibleSpace();
                                 EndHorizontal();
-                                if(Button("VoidManager Settings"))
+                                if (Button("VoidManager Settings"))
                                 {
                                     OpenSettingsMenu(settings[0]);
                                 }
@@ -536,13 +536,11 @@ namespace VoidManager.CustomGUI
 
             if (ShowingCursor)
             {
-                InputActionMapRequests.AddOrChangeRequestAllMaps(this, false);
-                InputActionMapRequests.AddOrChangeRequest(this, "GlobalBindings", true);
-                InputActionMapRequests.AddOrChangeRequest(this, "Debug", true);
+                InputActionMapRequests.AddOrChangeRequest(this, InputStateRequestType.UI);
             }
             else
             {
-                InputActionMapRequests.RemoveRequestAllMaps(this);
+                InputActionMapRequests.RemoveRequest(this);
             }
         }
     }

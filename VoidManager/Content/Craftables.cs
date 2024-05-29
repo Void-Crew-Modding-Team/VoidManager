@@ -1,12 +1,16 @@
-﻿using ResourceAssets;
+﻿using HarmonyLib;
+using ResourceAssets;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace VoidManager.Content
 {
     public class Craftables
     {
         public static Craftables Instance { get; internal set; }
+
+        static FieldInfo CraftingRulesFI = AccessTools.Field(typeof(UnlockItemDef), "crafting");
 
         //private List<GUIDUnion> AddedRecipes;
         private Dictionary<GUIDUnion, Tuple<string, CraftingRules>> ModifiedRecipes = new();
@@ -43,14 +47,14 @@ namespace VoidManager.Content
                 }
                 else
                 {
-                    asset.crafting = craftingRules;
+                    CraftingRulesFI.SetValue(asset, craftingRules);
                     return true;
                 }
             }
             else
             {
-                ModifiedRecipes.Add(GUID, new Tuple<string, CraftingRules>(CallerID, asset.crafting));
-                asset.crafting = craftingRules;
+                ModifiedRecipes.Add(GUID, new Tuple<string, CraftingRules>(CallerID, asset.CraftingRules));
+                CraftingRulesFI.SetValue(asset, craftingRules);
                 return true;
             }
         }
@@ -79,7 +83,7 @@ namespace VoidManager.Content
                     //BepinPlugin.Log.LogError("CallerID must match Assignment CallerID. Maybe another mod changed the same recipe?");
                     throw new ArgumentException("CallerID must match Assignment CallerID. Maybe another mod changed the same recipe?", "CallerID");
                 }
-                ResourceAssetContainer<CraftingDataContainer, UnityEngine.Object, CraftableItemDef>.Instance.GetAssetDefById(GUID).crafting = value.Item2;
+                CraftingRulesFI.SetValue(ResourceAssetContainer<CraftingDataContainer, UnityEngine.Object, CraftableItemDef>.Instance.GetAssetDefById(GUID), value.Item2);
                 ModifiedRecipes.Remove(GUID);
             }
         }
@@ -102,7 +106,7 @@ namespace VoidManager.Content
         /// <returns>CraftingRules for recipe of GUID</returns>
         public CraftingRules GetRecipe(GUIDUnion GUID)
         {
-            return ResourceAssetContainer<CraftingDataContainer, UnityEngine.Object, CraftableItemDef>.Instance.GetAssetDefById(GUID).crafting;
+            return ResourceAssetContainer<CraftingDataContainer, UnityEngine.Object, CraftableItemDef>.Instance.GetAssetDefById(GUID).CraftingRules;
         }
 
         public CraftingRules GetRecipe(string GUID)

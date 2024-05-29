@@ -1,5 +1,6 @@
 ﻿using Gameplay.Chat;
 using HarmonyLib;
+using Photon.Pun;
 using System.Linq;
 using UI.Chat;
 using VoidManager.Utilities;
@@ -26,8 +27,9 @@ namespace VoidManager.Chat.Router
     { // Other player chat command
         [HarmonyPostfix]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Method Declaration", "Harmony003:Harmony non-ref patch parameters modified", Justification = "Not relevant")]
-        public static void DiscoverPublicCommand(Photon.Realtime.Player p, string channelTextMessage)
+        public static void DiscoverPublicCommand(string cloudID, string channelTextMessage)
         {
+            Photon.Realtime.Player p = VoipService.CloudIDToPlayer(cloudID);
             if (!channelTextMessage.StartsWith("!")) return;
             channelTextMessage = channelTextMessage.Substring(1);
             string alias = channelTextMessage.Split(' ')[0];

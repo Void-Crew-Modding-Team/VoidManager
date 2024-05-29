@@ -28,7 +28,7 @@ namespace VoidManager.Utilities
             if (local) TextChat.Instance.AddLog(new Log($"", message));//fixme
             else
             {
-                VivoxVoiceManager.Instance.SendTextMessage($"[Mod Manager]: {message}", VivoxVoiceManager.Instance.TextChannel, null, null);
+                VoipService.Instance.SendTextMessage($"[Mod Manager]: {message}");
             }
         }
 
