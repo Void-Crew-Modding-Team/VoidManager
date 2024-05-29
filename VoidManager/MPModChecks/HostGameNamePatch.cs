@@ -7,10 +7,23 @@ namespace VoidManager.MPModChecks
     {
         static void Prefix(ref string name)
         {
-            if (!name.StartsWith("[Modded]", System.StringComparison.CurrentCultureIgnoreCase) &&
-                !name.StartsWith("modded", System.StringComparison.CurrentCultureIgnoreCase))
+            switch (MPModCheckManager.Instance.HighestLevelOfMPMods)
             {
-                name = "[Modded] " + name;
+                case MultiplayerType.Host:
+                case MultiplayerType.Unspecified:
+                    if (!name.StartsWith("[Modded", System.StringComparison.CurrentCultureIgnoreCase) &&
+                        !name.StartsWith("Modded", System.StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        name = "[Modded] " + name;
+                    }
+                    break;
+                case MultiplayerType.All:
+                    if (!name.StartsWith("[Mods Required", System.StringComparison.CurrentCultureIgnoreCase) &&
+                        !name.StartsWith("Mods Required", System.StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        name = "[Mods Required] " + name;
+                    }
+                    break;
             }
         }
     }
