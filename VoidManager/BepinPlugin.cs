@@ -30,7 +30,7 @@ namespace VoidManager
             
             DebugMode = Config.Bind("General", "DebugMode", false, "");
 
-            UnspecifiedModListOverride = Config.Bind("General", "Unspecified Mod Overrides", string.Empty, "Insert mods (not configured for VoidManager) for which you would like to override the MPType. Format: 'ModNameOrGUID:ClientOrAll', delineated by ','. Ex: VoidManager:all,Better Scoop:Client \n ModName/GUID can be gathered from log files and F5 menu.");
+            UnspecifiedModListOverride = Config.Bind("General", "Unspecified Mod Overrides", string.Empty, "Insert mods (not configured for VoidManager) for which you would like to override the MPType. \nAvailable MPTypes: client,host,all \nFormat: 'ModNameOrGUID:MPType', delineated by ','. \nEx: VoidManager:all,Better Scoop:Host \n ModName/GUID can be gathered from log files and F5 menu.");
 
 
             ModInfoTextAnchor = Config.Bind("Menu", "ModInfoTextAnchor", TextAnchor.UpperLeft, "");
@@ -85,6 +85,10 @@ namespace VoidManager
                     else if(value.EndsWith(":client", StringComparison.CurrentCultureIgnoreCase))
                     {
                         ModOverrideDictionary.Add(value.Substring(0, value.Length - 7), MPModChecks.MultiplayerType.Client);
+                    }
+                    else if (value.EndsWith(":host", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        ModOverrideDictionary.Add(value.Substring(0, value.Length - 5), MPModChecks.MultiplayerType.Host);
                     }
                     else if (value.EndsWith(":h", StringComparison.CurrentCultureIgnoreCase))
                     {
