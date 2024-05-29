@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Security.Cryptography;
 using VoidManager.Chat.Router;
@@ -44,37 +45,44 @@ namespace VoidManager
                     ModMessageHandler.DiscoverModMessages(assembly, CurrentBepinPlugin);
                     continue;
                 }
-                var voidPluginInstances = assembly.GetTypes().Where(t => typeof(VoidPlugin).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
-                if (voidPluginInstances.Any())
+                try
                 {
-                    voidPlugin = (VoidPlugin)Activator.CreateInstance(voidPluginInstances.First());
-                    voidPlugin.VersionInfo = FileVersionInfo.GetVersionInfo(CurrentBepinPlugin.Location);
-                    voidPlugin.ModHash = GetFileHash(CurrentBepinPlugin.Location);
-                    voidPlugin.BepinPlugin = CurrentBepinPlugin;
-                    CommandHandler.DiscoverCommands(assembly, BPluginName);
-                    CommandHandler.DiscoverPublicCommands(assembly, BPluginName);
-                    ModMessageHandler.DiscoverModMessages(assembly, CurrentBepinPlugin);
-                    CustomGUI.GUIMain.Instance.DiscoverGUIMenus(assembly, voidPlugin);
-                    ActiveVoidPlugins.Add(CurrentBepinPlugin.Metadata.GUID, voidPlugin);
-                }
-                else
-                {
-                    MultiplayerType MPType;
-                    if (OverridenMods.TryGetValue(BPluginGUID, out MPType) || OverridenMods.TryGetValue(BPluginName, out MPType)) //Overrides unspecified type mods with input from config.
+                    var voidPluginInstances = assembly.GetTypes().Where(t => typeof(VoidPlugin).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+                    if (voidPluginInstances.Any())
                     {
-                        voidPlugin = new DefaultVoidPlugin(MPType);
-                        BepinPlugin.Log.LogInfo($"Discovered MPType override for {BPluginName}. Setting MPType to {MPType}");
+                        voidPlugin = (VoidPlugin)Activator.CreateInstance(voidPluginInstances.First());
+                        voidPlugin.VersionInfo = FileVersionInfo.GetVersionInfo(CurrentBepinPlugin.Location);
+                        voidPlugin.ModHash = GetFileHash(CurrentBepinPlugin.Location);
+                        voidPlugin.BepinPlugin = CurrentBepinPlugin;
+                        CommandHandler.DiscoverCommands(assembly, BPluginName);
+                        CommandHandler.DiscoverPublicCommands(assembly, BPluginName);
+                        ModMessageHandler.DiscoverModMessages(assembly, CurrentBepinPlugin);
+                        CustomGUI.GUIMain.Instance.DiscoverGUIMenus(assembly, voidPlugin);
+                        ActiveVoidPlugins.Add(CurrentBepinPlugin.Metadata.GUID, voidPlugin);
                     }
                     else
                     {
-                        voidPlugin = new DefaultVoidPlugin(MultiplayerType.Unspecified);
-                    }
+                        MultiplayerType MPType;
+                        if (OverridenMods.TryGetValue(BPluginGUID, out MPType) || OverridenMods.TryGetValue(BPluginName, out MPType)) //Overrides unspecified type mods with input from config.
+                        {
+                            voidPlugin = new DefaultVoidPlugin(MPType);
+                            BepinPlugin.Log.LogInfo($"Discovered MPType override for {BPluginName}. Setting MPType to {MPType}");
+                        }
+                        else
+                        {
+                            voidPlugin = new DefaultVoidPlugin(MultiplayerType.Unspecified);
+                        }
 
-                    voidPlugin.VersionInfo = FileVersionInfo.GetVersionInfo(CurrentBepinPlugin.Location);
-                    voidPlugin.ModHash = GetFileHash(CurrentBepinPlugin.Location);
-                    voidPlugin.BepinPlugin = CurrentBepinPlugin;
-                    CustomGUI.GUIMain.Instance.DiscoverNonVManMod(voidPlugin);
-                    GeneratedVoidPlugins.Add(BPluginGUID, voidPlugin);
+                        voidPlugin.VersionInfo = FileVersionInfo.GetVersionInfo(CurrentBepinPlugin.Location);
+                        voidPlugin.ModHash = GetFileHash(CurrentBepinPlugin.Location);
+                        voidPlugin.BepinPlugin = CurrentBepinPlugin;
+                        CustomGUI.GUIMain.Instance.DiscoverNonVManMod(voidPlugin);
+                        GeneratedVoidPlugins.Add(BPluginGUID, voidPlugin);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    BepinPlugin.Log.LogError($"Error loading mod '{BPluginName}'\n{ex}");
                 }
             }
             BepinPlugin.Log.LogInfo($"Loaded {CommandHandler.chatCommandCount} local command(s) and {CommandHandler.publicCommandCount} public command(s)");
