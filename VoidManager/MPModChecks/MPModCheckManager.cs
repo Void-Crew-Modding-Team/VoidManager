@@ -474,7 +474,7 @@ namespace VoidManager.MPModChecks
             {
                 //Kick player if mod no mod list recieved and there are local MPType.All Mods.
                 BepinPlugin.Log.LogMessage($"Kicked player {JoiningPlayer.NickName} for not having mods.");
-                Messaging.Echo($"Kicked player {JoiningPlayer.NickName} for not having mods.\n{GetModListAsString(Instance.MyMPAllModList)}", false);
+                Messaging.Echo($"Kicked player {JoiningPlayer.NickName} for not having mods.\n{GetModListAsStringForChat(Instance.MyMPAllModList)}", false);
                 PhotonNetwork.CloseConnection(JoiningPlayer);
             }
             Events.Instance.CallHostOnClientVerified(JoiningPlayer);
