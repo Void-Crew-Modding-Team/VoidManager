@@ -244,7 +244,7 @@ namespace VoidManager.MPModChecks
         }
 
         /// <summary>
-        /// Converts a ModDataBlock array to a string list, usually for logging purposes. Starts with a new line
+        /// Converts a ModDataBlock array to a string list, usually for logging purposes. Starts with a new line.
         /// </summary>
         /// <param name="ModDatas"></param>
         /// <returns>Converts ModDataBLocks to a string list.</returns>
@@ -254,6 +254,30 @@ namespace VoidManager.MPModChecks
             foreach (MPModDataBlock DataBlock in ModDatas)
             {
                 ModList += $"\n - {DataBlock.ModName} {DataBlock.Version}";
+            }
+            return ModList;
+        }
+
+        /// <summary>
+        /// Converts a ModDataBlock array to a string list for echo chat purposes.
+        /// </summary>
+        /// <param name="ModDatas"></param>
+        /// <returns>Converts ModDataBLocks to a string list.</returns>
+        public static string GetModListAsStringForChat(MPModDataBlock[] ModDatas)
+        {
+            string ModList = string.Empty;
+            bool first = true;
+            foreach (MPModDataBlock DataBlock in ModDatas)
+            {
+                if (first)
+                {
+                    first = false;
+                    ModList += $" - {DataBlock.ModName} {DataBlock.Version}";
+                }
+                else
+                {
+                    ModList += $"\n - {DataBlock.ModName} {DataBlock.Version}";
+                }
             }
             return ModList;
         }
@@ -450,7 +474,7 @@ namespace VoidManager.MPModChecks
             {
                 //Kick player if mod no mod list recieved and there are local MPType.All Mods.
                 BepinPlugin.Log.LogMessage($"Kicked player {JoiningPlayer.NickName} for not having mods.");
-                Messaging.Echo($"Kicked player {JoiningPlayer.NickName} for not having mods.", false);
+                Messaging.Echo($"Kicked player {JoiningPlayer.NickName} for not having mods.\n{GetModListAsString(Instance.MyMPAllModList)}", false);
                 PhotonNetwork.CloseConnection(JoiningPlayer);
             }
             Events.Instance.CallHostOnClientVerified(JoiningPlayer);
@@ -717,7 +741,7 @@ namespace VoidManager.MPModChecks
             if (errorMessage != string.Empty)
             {
                 //Send message to joining client.
-                Messaging.Echo($"Kicking player {joiningPlayer.NickName} from session for incompatable mods.", false);
+                Messaging.Echo($"Kicking player {joiningPlayer.NickName} from session for incompatable mods.\n{errorMessage}", false);
                 Messaging.KickMessage("Kicked: Incompatable mod list", errorMessage, joiningPlayer);
                 PhotonNetwork.CloseConnection(joiningPlayer);
                 BepinPlugin.Log.LogMessage($"Kicked player {joiningPlayer.NickName} from session for incompatable mods.\n{errorMessage}");
