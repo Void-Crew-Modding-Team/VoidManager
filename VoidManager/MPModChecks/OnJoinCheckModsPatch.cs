@@ -45,7 +45,7 @@ namespace VoidManager.MPModChecks
 
 
             BepinPlugin.Log.LogInfo("Attempted to join room, VoidManager could not find the room.");
-            ___failPopup.Show("VoidManager could not find the room. Please wait a moment then try again. Could also be bugged.");
+            ___failPopup.Show("VoidManager could not find the room. Please close the terminal then try again.");
             return false;
         }
     }
