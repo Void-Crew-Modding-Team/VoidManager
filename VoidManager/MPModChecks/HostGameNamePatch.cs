@@ -1,11 +1,35 @@
 ﻿using HarmonyLib;
+using System.Collections.Generic;
+using System.Reflection.Emit;
+using VoidManager.Utilities;
 
 namespace VoidManager.MPModChecks
 {
-    [HarmonyPatch(typeof(PhotonService), "SetCurrentRoomName")]
+    [HarmonyPatch(typeof(PhotonService))]
     internal class HostGameNamePatch
     {
+        [HarmonyPatch("SetCurrentRoomName")]
         static void Prefix(ref string name)
+        {
+            name = SetGameName(name);
+        }
+
+        [HarmonyPatch("PhotonCreateRoom")]
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            List<CodeInstruction> targetSequence = new()
+            {
+                new CodeInstruction(OpCodes.Ldstr, " Room")
+            };
+            List<CodeInstruction> patchSequence = new()
+            {
+                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(HostGameNamePatch), nameof(SetGameName)))
+            };
+
+            return HarmonyHelpers.PatchBySequence(instructions, targetSequence, patchSequence, HarmonyHelpers.PatchMode.BEFORE, HarmonyHelpers.CheckMode.ALWAYS);
+        }
+
+        public static string SetGameName(string name)
         {
             switch (MPModCheckManager.Instance.HighestLevelOfMPMods)
             {
@@ -14,17 +38,18 @@ namespace VoidManager.MPModChecks
                     if (!name.StartsWith("[Modded", System.StringComparison.CurrentCultureIgnoreCase) &&
                         !name.StartsWith("Modded", System.StringComparison.CurrentCultureIgnoreCase))
                     {
-                        name = "[Modded] " + name;
+                        return "[Modded] " + name;
                     }
                     break;
                 case MultiplayerType.All:
                     if (!name.StartsWith("[Mods Required", System.StringComparison.CurrentCultureIgnoreCase) &&
                         !name.StartsWith("Mods Required", System.StringComparison.CurrentCultureIgnoreCase))
                     {
-                        name = "[Mods Required] " + name;
+                        return "[Mods Required] " + name;
                     }
                     break;
             }
+            return name;
         }
     }
 }
