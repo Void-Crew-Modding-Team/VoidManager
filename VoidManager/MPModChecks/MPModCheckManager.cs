@@ -687,14 +687,14 @@ namespace VoidManager.MPModChecks
             }
 
 
-            //Compare local mods against joining client mods
+            //Check if joining client MPType.All mods exist for host.
             for (i = 0; i < JoiningClientMPTypeAllMods.Length; i++)
             {
                 CurrentJoiningClientMod = JoiningClientMPTypeAllMods[i];
                 bool found = false;
-                for (x = 0; x < MyMPAllModList.Length; x++)
+                for (x = 0; x < HostModListForProcessing.Length; x++)
                 {
-                    if (CurrentJoiningClientMod.ModGUID == MyMPAllModList[x].ModGUID)
+                    if (CurrentJoiningClientMod.ModGUID == HostModListForProcessing[x].ModGUID)
                     {
                         found = true;
                         break;
@@ -704,7 +704,7 @@ namespace VoidManager.MPModChecks
                 {
                     //Host MPType.All Mod not found in Joining Client mods
                     LocalClientMissing.Add(CurrentJoiningClientMod.ModName);
-                    BepinPlugin.Log.LogMessage($"Client must uninstall the {CurrentJoiningClientMod.MPType.ToString()} Mod '{CurrentJoiningClientMod.ModName}'");
+                    BepinPlugin.Log.LogMessage($"Client must uninstall the {CurrentJoiningClientMod.MPType} Mod '{CurrentJoiningClientMod.ModName}'");
                 }
             }
 
