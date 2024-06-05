@@ -43,7 +43,7 @@ namespace VoidManager
 
             MenuOpenKeybind = Config.Bind("Menu", "Open Keybind", OpenMenu, "");
 
-            TrustMPTypeUnspecified = Config.Bind("Multiplayer", "TrustMPTypeUnspecified", false, "");
+            TrustMPTypeUnspecified = Config.Bind("Multiplayer", "TrustMPTypeUnspecified", true, "");
 
             
         }
