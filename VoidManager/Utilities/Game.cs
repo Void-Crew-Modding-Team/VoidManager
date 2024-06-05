@@ -1,5 +1,6 @@
 ﻿using CG.Game;
-using Photon.Pun;
+using Gameplay.Quests;
+using ResourceAssets;
 using System;
 using System.Collections.Generic;
 
@@ -93,7 +94,38 @@ namespace VoidManager.Utilities
                 return  CG.Game.Player.LocalPlayer.Instance;
             }
         }
+
+        /// <summary>
+        /// Safely attempts to get QuestAsset from GUID
+        /// </summary>
+        /// <param name="QuestGUID"></param>
+        /// <param name="QuestAsset"></param>
+        /// <returns>QuestAsset</returns>
+        public static bool TryGetQuestAsset(GUIDUnion QuestGUID, out QuestAsset QuestAsset)
+        {
+            if (ResourceAssetContainer<QuestAssetContainer, QuestAsset, QuestAssetDef>.Instance.TryGetByGuid(QuestGUID, out QuestAssetDef questAssetDef))
+            {
+                QuestAsset = questAssetDef.Asset;
+                return true;
             }
+            BepinPlugin.Log.LogError("Provided QuestGUID did not exist");
+            QuestAsset = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Gets QuestAsset from GUID
+        /// </summary>
+        /// <param name="QuestGUID"></param>
+        /// <returns>QuestAsset</returns>
+        /// <exception cref="ArgumentException">Targeted GUID did not exist</exception>
+        public static QuestAsset GetQuestAsset(GUIDUnion QuestGUID)
+        {
+            if (ResourceAssetContainer<QuestAssetContainer, QuestAsset, QuestAssetDef>.Instance.TryGetByGuid(QuestGUID, out QuestAssetDef questAssetDef))
+            {
+                return questAssetDef.Asset;
+            }
+            throw new ArgumentException("Provided QuestGUID did not exist");
         }
     }
 }
