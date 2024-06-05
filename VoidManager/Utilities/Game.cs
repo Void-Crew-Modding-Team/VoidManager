@@ -25,7 +25,8 @@ namespace VoidManager.Utilities
         {
             get
             {
-                return Instance == null ? false : true;
+                //Equivelant to Instance == null ? false : true
+                return Instance != null;
             }
         }
 
@@ -84,6 +85,7 @@ namespace VoidManager.Utilities
         /// <summary>
         /// Returns the Local player
         /// </summary>
+        [Obsolete("Please switch to CG.Game.Player.LocalPlayer.Instance")]
         public static CG.Game.Player.Player LocalPlayer
         {
             get
