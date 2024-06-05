@@ -19,6 +19,7 @@ namespace VoidManager.Content
         /// <summary>
         /// CraftingRules
         /// </summary>
+        static FieldInfo CraftingRulesFI = AccessTools.Field(typeof(CraftableItemDef), "crafting");
 
         //private List<GUIDUnion> AddedRecipes;
         private Dictionary<GUIDUnion, Tuple<string, CraftingRules>> ModifiedRecipes = new();
