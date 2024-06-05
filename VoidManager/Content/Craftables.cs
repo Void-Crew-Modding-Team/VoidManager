@@ -69,11 +69,13 @@ namespace VoidManager.Content
         }
 
         #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+        [Obsolete("Please use SetRecipe(GUIDUnion)")]
         public bool SetRecipe(string GUID, string CallerID, CraftingRules craftingRules)
         {
             return SetRecipe(new GUIDUnion(GUID), CallerID, craftingRules);
         }
 
+        [Obsolete("Please use SetRecipe(GUIDUnion)")]
         public bool SetRecipe(int[] GUID, string CallerID, CraftingRules craftingRules)
         {
             return SetRecipe(new GUIDUnion(GUID), CallerID, craftingRules);
@@ -101,11 +103,13 @@ namespace VoidManager.Content
         }
 
         #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+        [Obsolete("Please Use ResetRecipe(GUIDUnion)")]
         public void ResetRecipe(string GUID, string CallerID)
         {
             ResetRecipe(new GUIDUnion(GUID), CallerID);
         }
 
+        [Obsolete("Please Use ResetRecipe(GUIDUnion)")]
         public void ResetRecipe(int[] GUID, string CallerID)
         {
             ResetRecipe(new GUIDUnion(GUID), CallerID);
@@ -131,6 +135,7 @@ namespace VoidManager.Content
             return GetRecipe(new GUIDUnion(GUID));
         }
 
+        [Obsolete("Please Use GetRecipe(GUIDUnion)")]
         public CraftingRules GetRecipe(int[] GUID)
         {
             return GetRecipe(new GUIDUnion(GUID));
@@ -153,11 +158,13 @@ namespace VoidManager.Content
         }
 
         #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+        [Obsolete("Please Use RecipeModified(GUIDUnion)")]
         public bool RecipeModified(string GUID)
         {
             return RecipeModified(new GUIDUnion(GUID));
         }
 
+        [Obsolete("Please Use RecipeModified(GUIDUnion)")]
         public bool RecipeModified(int[] GUID)
         {
             return RecipeModified(new GUIDUnion(GUID));
