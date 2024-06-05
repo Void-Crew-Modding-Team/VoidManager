@@ -16,6 +16,8 @@ namespace VoidManager.Chat.Router
         /// </summary>
         /// <param name="alias">Potential chat command alias</param>
         /// <param name="arguments">Arguments to use with command</param>
+        /// <param name="publicCommand">Should Execute Public Commands</param>
+        /// <param name="playerId">PlayerID of message sender (public commands)</param>
         internal static void ExecuteCommandFromAlias(string alias, string arguments, bool publicCommand = false, int playerId = -1)
         {
             alias = alias.ToLower();

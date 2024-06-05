@@ -6,11 +6,19 @@ using System.Reflection;
 
 namespace VoidManager.Content
 {
+    /// <summary>
+    /// API for modifying CraftingRules of recipes.
+    /// </summary>
     public class Craftables
     {
+        /// <summary>
+        /// Static instance of Craftables class.
+        /// </summary>
         public static Craftables Instance { get; internal set; }
 
-        static FieldInfo CraftingRulesFI = AccessTools.Field(typeof(UnlockItemDef), "crafting");
+        /// <summary>
+        /// CraftingRules
+        /// </summary>
 
         //private List<GUIDUnion> AddedRecipes;
         private Dictionary<GUIDUnion, Tuple<string, CraftingRules>> ModifiedRecipes = new();
@@ -59,6 +67,7 @@ namespace VoidManager.Content
             }
         }
 
+        #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public bool SetRecipe(string GUID, string CallerID, CraftingRules craftingRules)
         {
             return SetRecipe(new GUIDUnion(GUID), CallerID, craftingRules);
@@ -68,17 +77,19 @@ namespace VoidManager.Content
         {
             return SetRecipe(new GUIDUnion(GUID), CallerID, craftingRules);
         }
+        #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 
         /// <summary>
         /// Undoes recipe modification for the provided GUID
         /// </summary>
         /// <param name="GUID"></param>
+        /// <param name="CallerID"></param>
         public void ResetRecipe(GUIDUnion GUID, string CallerID)
         {
             if (ModifiedRecipes.TryGetValue(GUID, out var value))
             {
-                if(value.Item1 != CallerID)
+                if (value.Item1 != CallerID)
                 {
                     //BepinPlugin.Log.LogError("CallerID must match Assignment CallerID. Maybe another mod changed the same recipe?");
                     throw new ArgumentException("CallerID must match Assignment CallerID. Maybe another mod changed the same recipe?", "CallerID");
@@ -88,6 +99,7 @@ namespace VoidManager.Content
             }
         }
 
+        #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public void ResetRecipe(string GUID, string CallerID)
         {
             ResetRecipe(new GUIDUnion(GUID), CallerID);
@@ -97,6 +109,7 @@ namespace VoidManager.Content
         {
             ResetRecipe(new GUIDUnion(GUID), CallerID);
         }
+        #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 
         /// <summary>
@@ -109,6 +122,9 @@ namespace VoidManager.Content
             return ResourceAssetContainer<CraftingDataContainer, UnityEngine.Object, CraftableItemDef>.Instance.GetAssetDefById(GUID).CraftingRules;
         }
 
+
+        #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+        [Obsolete("Please Use GetRecipe(GUIDUnion)")]
         public CraftingRules GetRecipe(string GUID)
         {
             return GetRecipe(new GUIDUnion(GUID));
@@ -118,6 +134,11 @@ namespace VoidManager.Content
         {
             return GetRecipe(new GUIDUnion(GUID));
         }
+        #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+
+
+
+
 
 
         /// <summary>
@@ -130,6 +151,7 @@ namespace VoidManager.Content
             return ModifiedRecipes.ContainsKey(GUID);
         }
 
+        #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public bool RecipeModified(string GUID)
         {
             return RecipeModified(new GUIDUnion(GUID));
@@ -139,5 +161,6 @@ namespace VoidManager.Content
         {
             return RecipeModified(new GUIDUnion(GUID));
         }
+        #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     }
 }

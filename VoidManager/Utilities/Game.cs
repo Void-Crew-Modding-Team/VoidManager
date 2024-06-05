@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 namespace VoidManager.Utilities
 {
+    /// <summary>
+    /// Contains ultility methods for the game.
+    /// </summary>
     public class Game
     {
         /// <summary>
@@ -85,7 +88,9 @@ namespace VoidManager.Utilities
         {
             get
             {
-                return GetPlayerFromID(PhotonNetwork.LocalPlayer.ActorNumber);
+                return  CG.Game.Player.LocalPlayer.Instance;
+            }
+        }
             }
         }
     }

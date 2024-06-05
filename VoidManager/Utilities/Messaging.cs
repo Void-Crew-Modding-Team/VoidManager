@@ -23,6 +23,7 @@ namespace VoidManager.Utilities
         /// Inserts a line to text chat.
         /// </summary>
         /// <param name="message"></param>
+        /// <param name="local"></param>
         public static void Echo(string message, bool local = true)
         {
             if (local) TextChat.Instance.AddLog(new Log($"", message));//fixme

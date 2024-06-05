@@ -42,7 +42,7 @@ namespace VoidManager.Callbacks
         }
     }
 
-    [HarmonyPatch(typeof(MatchmakingTerminal), "PanelActiveChange")]
+    [HarmonyPatch(typeof(MatchmakingTerminal), "PanelActiveChange")] //ActiveTerminal Somehow doesn't get updated. Reproduce?: join game via terminal, go back to lobby and join via different terminal?
     class TerminalEnablePatch
     {
         [HarmonyPostfix]

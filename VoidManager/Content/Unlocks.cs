@@ -7,8 +7,14 @@ using System.Reflection;
 
 namespace VoidManager.Content
 {
+    /// <summary>
+    /// API for modifying UnlockOptions of recipes.
+    /// </summary>
     public class Unlocks
     {
+        /// <summary>
+        /// Static instance of Unlocks class.
+        /// </summary>
         public static Unlocks Instance { get; internal set; }
 
         static FieldInfo UnlockOptionsFI = AccessTools.Field(typeof(UnlockItemDef), "unlockOptions");
@@ -18,10 +24,11 @@ namespace VoidManager.Content
         /// Sets UnlockOptions for GUID if previously-existing UnlockOptions exists.
         /// </summary>
         /// <param name="GUID"></param>
+        /// <param name="CallerID"></param>
         /// <param name="UnlockOptions"></param>
         /// <exception cref="ArgumentException">An asset with the provided GUID does not exist.</exception>
         /// <returns>UnlockOptions succesfully modified</returns>
-        public bool SetUnlockOptions(GUIDUnion GUID, string CallerID, UnlockOptions unlockOptions)
+        public bool SetUnlockOptions(GUIDUnion GUID, string CallerID, UnlockOptions UnlockOptions)
         {
             if (!ResourceAssetContainer<UnlockContainer, UnityEngine.Object, UnlockItemDef>.Instance.TryGetByGuid(GUID, out UnlockItemDef asset))
             {
@@ -36,18 +43,20 @@ namespace VoidManager.Content
                 }
                 else //Mod that set GUID is overwriting value.
                 {
-                    UnlockOptionsFI.SetValue(asset, unlockOptions);
+                    UnlockOptionsFI.SetValue(asset, UnlockOptions);
                     return true;
                 }
             }
             else
             {
                 ModifiedUnlockOptions.Add(GUID, new Tuple<string, UnlockOptions>(CallerID, (UnlockOptions)UnlockOptionsFI.GetValue(asset)));
-                UnlockOptionsFI.SetValue(asset, unlockOptions);
+                UnlockOptionsFI.SetValue(asset, UnlockOptions);
                 return true;
             }
         }
 
+        #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+        [Obsolete("Please use SetUnlockOptions(GUIDUnion, string, UnlockOptions)")]
         public bool SetUnlockOptions(string GUID, string CallerID, UnlockOptions unlockOptions)
         {
             return SetUnlockOptions(new GUIDUnion(GUID), CallerID, unlockOptions);
@@ -57,12 +66,14 @@ namespace VoidManager.Content
         {
             return SetUnlockOptions(new GUIDUnion(GUID), CallerID, unlockOptions);
         }
+        #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 
         /// <summary>
         /// Undoes UnlockOptions modification for the provided GUID
         /// </summary>
         /// <param name="GUID"></param>
+        /// <param name="CallerID"></param>
         public void ResetUnlockOptions(GUIDUnion GUID, string CallerID)
         {
             if (ModifiedUnlockOptions.TryGetValue(GUID, out Tuple<string, UnlockOptions> value))
@@ -76,6 +87,7 @@ namespace VoidManager.Content
             }
         }
 
+        #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public void ResetUnlockOptions(string GUID, string CallerID)
         {
             ResetUnlockOptions(new GUIDUnion(GUID), CallerID);
@@ -85,6 +97,7 @@ namespace VoidManager.Content
         {
             ResetUnlockOptions(new GUIDUnion(GUID), CallerID);
         }
+        #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
 
         /// <summary>
@@ -97,6 +110,7 @@ namespace VoidManager.Content
             return (UnlockOptions)UnlockOptionsFI.GetValue(ResourceAssetContainer<UnlockContainer, UnityEngine.Object, UnlockItemDef>.Instance.GetAssetDefById(GUID));
         }
 
+        #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public UnlockOptions GetUnlockOptions(string GUID)
         {
             return GetUnlockOptions(new GUIDUnion(GUID));
@@ -106,6 +120,7 @@ namespace VoidManager.Content
         {
             return GetUnlockOptions(new GUIDUnion(GUID));
         }
+        #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 
         /// <summary>
         /// Returns whether the given GUID UnlockOptions was modified.
@@ -117,6 +132,8 @@ namespace VoidManager.Content
             return ModifiedUnlockOptions.ContainsKey(GUID);
         }
 
+
+        #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public bool UnlockOptionsModified(string GUID)
         {
             return UnlockOptionsModified(new GUIDUnion(GUID));
@@ -126,5 +143,6 @@ namespace VoidManager.Content
         {
             return UnlockOptionsModified(new GUIDUnion(GUID));
         }
+        #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     }
 }
