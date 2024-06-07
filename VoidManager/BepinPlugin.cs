@@ -9,6 +9,7 @@ using static VoidManager.BepinPlugin.Bindings;
 
 namespace VoidManager
 {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
     [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
     [BepInProcess("Void Crew.exe")]
     public class BepinPlugin : BaseUnityPlugin
@@ -103,3 +104,4 @@ namespace VoidManager
         }
     }
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
