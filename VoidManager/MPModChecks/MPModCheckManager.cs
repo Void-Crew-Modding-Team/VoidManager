@@ -489,11 +489,8 @@ namespace VoidManager.MPModChecks
             {
                 if (HighestLevelOfMPMods >= MultiplayerType.Unspecified)
                 {
-                    if (HighestLevelOfMPMods == MultiplayerType.All)
-                    {
-                        LastModCheckFailReason = "Host has no mods, but client has MPType.All mods." + GetModListAsString(MyMPAllModList);
-                    }
-                    LastModCheckFailReason = "Host has no mods, but client has MPType.Unspecified mods." + GetModListAsString(MyMPUnspecifiedModList);
+                    LastModCheckFailReason = $"Host has no mods, but client has unspecified or higher mods.{GetModListAsString(MyMPAllModList)}{GetModListAsString(MyMPUnspecifiedModList)}";
+
                     KickMessagePatches.KickTitle = "Disconnected: Incompatable mod list";
                     KickMessagePatches.KickMessage = LastModCheckFailReason;
                     BepinPlugin.Log.LogMessage("Mod check failed.\n" + LastModCheckFailReason);
