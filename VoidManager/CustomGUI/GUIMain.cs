@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using CG.Input;
+using Client.Utils;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -17,7 +18,7 @@ namespace VoidManager.CustomGUI
         public static GUIMain Instance { get; internal set; }
         GameObject Background;
         GameObject MMCanvas;
-        UnityEngine.UI.Image Image;
+        Image Image;
         public bool GUIActive = false;
         Rect Window;
         byte Tab = 0;
@@ -158,19 +159,19 @@ namespace VoidManager.CustomGUI
                     {
                         ModListScroll = BeginScrollView(ModListScroll);
                         {
-                            if (Button("VoidManager"))
+                            if (DrawButtonSelected("VoidManager", selectedMod == null))
                             {
                                 selectedMod = null;
                             }
                             foreach (VoidPlugin vp in mods)
                             {
-                                DrawModButton(vp);
+                                DrawModListModButton(vp);
                             }
                             GUI.skin.label.alignment = TextAnchor.MiddleCenter;
                             Label("<color=yellow>Non-VoidManager Mods</color>");
                             foreach (VoidPlugin vp in NonVManMods)
                             {
-                                DrawModButton(vp);
+                                DrawModListModButton(vp);
                             }
                             Label("Overall MPType: " + GetColoredMPTypeText(MPModCheckManager.Instance.HighestLevelOfMPMods));
                         }
@@ -191,6 +192,13 @@ namespace VoidManager.CustomGUI
                                 if (selectedMod.Description != string.Empty)
                                     Label($"Description: {selectedMod.Description}");
                                 Label($"MPRequirement: {GetTextForMPType(selectedMod.MPType)}");
+                                foreach(ModSettingsMenu MSM in settings)
+                                {
+                                    if(MSM.MyVoidPlugin == selectedMod && Button(MSM.Name()))
+                                    {
+                                        OpenSettingsMenu(MSM);
+                                    }
+                                }
                             }
                             else
                             {
@@ -233,9 +241,7 @@ namespace VoidManager.CustomGUI
                                 {
                                     if (Button(menu.Name()))
                                     {
-                                        menu.OnOpen();
-                                        selectedSettings = menu;
-                                        break;
+                                        OpenSettingsMenu(menu);
                                     }
                                 }
                             }
@@ -267,13 +273,9 @@ namespace VoidManager.CustomGUI
                             foreach (Player player in PhotonNetwork.PlayerList)
                             {
                                 if (player.IsLocal)
-                                {
                                     continue;
-                                }
-                                if (Button(player.NickName))
-                                {
+                                if (DrawButtonSelected(player.NickName, selectedPlayer == player))
                                     selectedPlayer = player;
-                                }
                             }
                         }
                         EndScrollView();
@@ -300,6 +302,8 @@ namespace VoidManager.CustomGUI
         }
 
         internal static GUISkin _cachedSkin;
+        internal static Texture2D _buttonBackground;
+        internal static Texture2D _hbuttonBackground;
         private static readonly Color32 _classicMenuBackground = new Color32(32, 32, 32, 255);
         private static readonly Color32 _classicButtonBackground = new Color32(40, 40, 40, 255);
         private static readonly Color32 _hoverButtonFromMenu = new Color32(18, 79, 179, 255);
@@ -321,18 +325,18 @@ namespace VoidManager.CustomGUI
                 _cachedSkin.window.hover.textColor = Color.white;
                 _cachedSkin.window.onHover.textColor = Color.white;
 
-                Color32 hoverbutton = new Color32(255, 255, 0, 255);
+                Color32 hoverbutton = new Color32(64, 64, 64, 255);
 
-                Texture2D buttonBackground = BuildTexFrom1Color(_classicButtonBackground);
-                Texture2D hbuttonBackground = BuildTexFrom1Color(hoverbutton);
-                _cachedSkin.button.active.background = buttonBackground;
-                _cachedSkin.button.onActive.background = buttonBackground;
-                _cachedSkin.button.focused.background = buttonBackground;
-                _cachedSkin.button.onFocused.background = buttonBackground;
-                _cachedSkin.button.hover.background = hbuttonBackground;
-                _cachedSkin.button.onHover.background = hbuttonBackground;
-                _cachedSkin.button.normal.background = buttonBackground;
-                _cachedSkin.button.onNormal.background = buttonBackground;
+                _buttonBackground = BuildTexFrom1Color(_classicButtonBackground);
+                _hbuttonBackground = BuildTexFrom1Color(hoverbutton);
+                _cachedSkin.button.active.background = _buttonBackground;
+                _cachedSkin.button.onActive.background = _buttonBackground;
+                _cachedSkin.button.focused.background = _buttonBackground;
+                _cachedSkin.button.onFocused.background = _buttonBackground;
+                _cachedSkin.button.hover.background = _hbuttonBackground;
+                _cachedSkin.button.onHover.background = _hbuttonBackground;
+                _cachedSkin.button.normal.background = _buttonBackground;
+                _cachedSkin.button.onNormal.background = _buttonBackground;
 
 
                 Texture2D sliderBackground = BuildTexFrom1Color(new Color32(47, 79, 79, 255));
@@ -372,8 +376,8 @@ namespace VoidManager.CustomGUI
                 _cachedSkin.textField.onHover.textColor = hoverbutton;
 
                 UnityEngine.Object.DontDestroyOnLoad(windowBackground);
-                UnityEngine.Object.DontDestroyOnLoad(buttonBackground);
-                UnityEngine.Object.DontDestroyOnLoad(hbuttonBackground);
+                UnityEngine.Object.DontDestroyOnLoad(_buttonBackground);
+                UnityEngine.Object.DontDestroyOnLoad(_hbuttonBackground);
                 UnityEngine.Object.DontDestroyOnLoad(textfield);
                 UnityEngine.Object.DontDestroyOnLoad(_cachedSkin);
                 // TODO: Add custom skin for Toggle and other items
@@ -435,17 +439,44 @@ namespace VoidManager.CustomGUI
             }
         }
 
-        void DrawModButton(VoidPlugin voidPlugin)
+        void DrawModListModButton(VoidPlugin voidPlugin)
         {
+            
             if (voidPlugin.MPType > MPModChecks.MultiplayerType.Host)
             {
-                if (Button($"<color={GetColorTextForMPType(voidPlugin.MPType)}>{voidPlugin.BepinPlugin.Metadata.Name}</color>")) //FFFF99
+                if (DrawButtonSelected($"<color={GetColorTextForMPType(voidPlugin.MPType)}>{voidPlugin.BepinPlugin.Metadata.Name}</color>", selectedMod == voidPlugin)) //FFFF99
                     selectedMod = voidPlugin;
             }
             else
             {
-                if (Button(voidPlugin.BepinPlugin.Metadata.Name))
+                if (DrawButtonSelected(voidPlugin.BepinPlugin.Metadata.Name, selectedMod == voidPlugin))
                     selectedMod = voidPlugin;
+            }
+        }
+
+        public static bool DrawButtonSelected(string text, bool selected)
+        {
+            if (selected)
+            {
+                //Tried something similar like making a deepcopy of the GUIStyle, but deepcopy wasn't deep. The options were to completely rebuild the GUIStyle or do this. Rebuilding will probably be better for performance.
+                _cachedSkin.button.active.background = _hbuttonBackground;
+                _cachedSkin.button.onActive.background = _hbuttonBackground;
+                _cachedSkin.button.focused.background = _hbuttonBackground;
+                _cachedSkin.button.onFocused.background = _hbuttonBackground;
+                _cachedSkin.button.normal.background = _hbuttonBackground;
+                _cachedSkin.button.onNormal.background = _hbuttonBackground;
+                bool returnvalue = Button(text);
+                _cachedSkin.button.active.background = _buttonBackground;
+                _cachedSkin.button.onActive.background = _buttonBackground;
+                _cachedSkin.button.focused.background = _buttonBackground;
+                _cachedSkin.button.onFocused.background = _buttonBackground;
+                _cachedSkin.button.normal.background = _buttonBackground;
+                _cachedSkin.button.onNormal.background = _buttonBackground;
+                return returnvalue;
+            }
+            else
+            {
+                return Button(text);
             }
         }
 
@@ -477,7 +508,11 @@ namespace VoidManager.CustomGUI
 
         public void OpenSettingsMenu(ModSettingsMenu menu)
         {
-            Tab = 1;
+            if (Tab != 1)
+                Tab = 1;
+            else if (selectedSettings != null)
+                selectedSettings.OnClose();
+
             menu.OnOpen();
             selectedSettings = menu;
         }
@@ -510,11 +545,12 @@ namespace VoidManager.CustomGUI
             bool hasSettingsMenu = false;
             foreach (var modType in chatCommandInstances)
             { // Iterates through each discovered gui menu
-                ModSettingsMenu modInstance = (ModSettingsMenu)Activator.CreateInstance(modType);
-                settings.Add(modInstance);
+                ModSettingsMenu MSMInstance = (ModSettingsMenu)Activator.CreateInstance(modType);
+                MSMInstance.MyVoidPlugin = voidPlugin;
+                settings.Add(MSMInstance);
                 hasSettingsMenu = true;
             }
-            if (hasSettingsMenu) BepinPlugin.Log.LogInfo($"[{voidPlugin.BepinPlugin.Metadata.Name}] detected settings menu");
+            if (hasSettingsMenu) BepinPlugin.Log.LogInfo($"[{voidPlugin.BepinPlugin.Metadata.Name}] detected settings menu(s)");
         }
 
         public void DiscoverNonVManMod(VoidPlugin voidPlugin)
