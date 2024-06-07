@@ -55,21 +55,6 @@ namespace VoidManager.Content
             }
         }
 
-        #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-        [Obsolete("Please use SetUnlockOptions(GUIDUnion, string, UnlockOptions)")]
-        public bool SetUnlockOptions(string GUID, string CallerID, UnlockOptions unlockOptions)
-        {
-            return SetUnlockOptions(new GUIDUnion(GUID), CallerID, unlockOptions);
-        }
-
-        [Obsolete("Please use SetUnlockOptions(GUIDUnion, string, UnlockOptions)")]
-        public bool SetUnlockOptions(int[] GUID, string CallerID, UnlockOptions unlockOptions)
-        {
-            return SetUnlockOptions(new GUIDUnion(GUID), CallerID, unlockOptions);
-        }
-        #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
-
-
         /// <summary>
         /// Undoes UnlockOptions modification for the provided GUID
         /// </summary>
@@ -88,21 +73,6 @@ namespace VoidManager.Content
             }
         }
 
-        #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-        [Obsolete("Please use ResetUnlockOptions(GUIDUnion, string)")]
-        public void ResetUnlockOptions(string GUID, string CallerID)
-        {
-            ResetUnlockOptions(new GUIDUnion(GUID), CallerID);
-        }
-
-        [Obsolete("Please use ResetUnlockOptions(GUIDUnion, string)")]
-        public void ResetUnlockOptions(int[] GUID, string CallerID)
-        {
-            ResetUnlockOptions(new GUIDUnion(GUID), CallerID);
-        }
-        #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
-
-
         /// <summary>
         /// Returns the current UnlockOptions for the given GUID.
         /// </summary>
@@ -113,20 +83,6 @@ namespace VoidManager.Content
             return (UnlockOptions)UnlockOptionsFI.GetValue(ResourceAssetContainer<UnlockContainer, UnityEngine.Object, UnlockItemDef>.Instance.GetAssetDefById(GUID));
         }
 
-        #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-        [Obsolete("Please use GetUnlockOptions(GUIDUnion)")]
-        public UnlockOptions GetUnlockOptions(string GUID)
-        {
-            return GetUnlockOptions(new GUIDUnion(GUID));
-        }
-
-        [Obsolete("Please use GetUnlockOptions(GUIDUnion)")]
-        public UnlockOptions GetUnlockOptions(int[] GUID)
-        {
-            return GetUnlockOptions(new GUIDUnion(GUID));
-        }
-        #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
-
         /// <summary>
         /// Returns whether the given GUID UnlockOptions was modified.
         /// </summary>
@@ -136,20 +92,5 @@ namespace VoidManager.Content
         {
             return ModifiedUnlockOptions.ContainsKey(GUID);
         }
-
-
-        #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-        [Obsolete("Please Use UnlockOptionsModified(GUIDUnion)")]
-        public bool UnlockOptionsModified(string GUID)
-        {
-            return UnlockOptionsModified(new GUIDUnion(GUID));
-        }
-
-        [Obsolete("Please Use UnlockOptionsModified(GUIDUnion)")]
-        public bool UnlockOptionsModified(int[] GUID)
-        {
-            return UnlockOptionsModified(new GUIDUnion(GUID));
-        }
-        #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     }
 }
