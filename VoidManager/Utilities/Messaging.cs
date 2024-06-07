@@ -7,6 +7,9 @@ using VoidManager.Callbacks;
 
 namespace VoidManager.Utilities
 {
+    /// <summary>
+    /// Provides access to dislaying messages through various means
+    /// </summary>
     public class Messaging
     {
         /// <summary>
@@ -33,6 +36,12 @@ namespace VoidManager.Utilities
             }
         }
 
+        /// <summary>
+        /// Sends a message to a given client before kicking. Message should pop up for player after they reappear in the main menu
+        /// </summary>
+        /// <param name="title">Header</param>
+        /// <param name="body">Message body</param>
+        /// <param name="player">Target Player</param>
         public static void KickMessage(string title, string body, Player player)
         {
             if (PhotonNetwork.IsMasterClient)
