@@ -118,14 +118,9 @@ namespace VoidManager.Utilities
         /// </summary>
         /// <param name="QuestGUID"></param>
         /// <returns>QuestAsset</returns>
-        /// <exception cref="ArgumentException">Targeted GUID did not exist</exception>
         public static QuestAsset GetQuestAsset(GUIDUnion QuestGUID)
         {
-            if (ResourceAssetContainer<QuestAssetContainer, QuestAsset, QuestAssetDef>.Instance.TryGetByGuid(QuestGUID, out QuestAssetDef questAssetDef))
-            {
-                return questAssetDef.Asset;
-            }
-            throw new ArgumentException("Provided QuestGUID did not exist");
+            return ResourceAssetContainer<QuestAssetContainer, QuestAsset, QuestAssetDef>.Instance.GetAssetDefById(QuestGUID).Asset;
         }
     }
 }
