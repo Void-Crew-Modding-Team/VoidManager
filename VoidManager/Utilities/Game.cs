@@ -95,6 +95,31 @@ namespace VoidManager.Utilities
             }
         }
 
+
+        private static GUIDUnion _EndlessQuestGUID = new GUIDUnion("57ff22b0dae09944b9fa81fe5c37c470");
+
+        /// <summary>
+        /// GUID of Endless Pilgrimage
+        /// </summary>
+        public static GUIDUnion EndlessQuestGUID
+        {
+            get
+            {
+                return _EndlessQuestGUID;
+            }
+        }
+
+        /// <summary>
+        /// QuestAsset of Endless Pilgrimage
+        /// </summary>
+        public static QuestAsset EndlessQuestAsset
+        {
+            get
+            {
+                return GetQuestAsset(EndlessQuestGUID);
+            }
+        }
+
         /// <summary>
         /// Safely attempts to get QuestAsset from GUID
         /// </summary>
