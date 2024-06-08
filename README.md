@@ -19,12 +19,11 @@ Notes on Multiplayer mod checks: By default, any given mod must be installed by 
 - Restrictions for unspecified mods
 - Manual configuration of unspecified mods
 - Listing of other players' mod lists
-- Client side chat commands
-- Public chat commands
+- API for local and public chat commands
 - Mod to mod messages (including between different clients)
 - API for recipe and unlock modifications
-- VoidManager rooms marked with yellow [M]
-- '[Modded]' now added to modded session names, with '[Mods Required]' added to applicable sessions.
+- VoidManager rooms marked with yellow [M], and red [M] when session has all or higher mods.
+- '[Modded]' added to modded session names, with '[Mods Required]' added to applicable sessions.
 - Mod settings UI
 
 ### 🎮 Client Usage
