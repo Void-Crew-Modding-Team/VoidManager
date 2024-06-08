@@ -129,7 +129,7 @@ namespace VoidManager.CustomGUI
 
             //MPModChecks trust MPType.Unspecified
             HorizontalSlider(0, 100, 100);
-            if (Button($"Trust MPType.Unspecified mods: {(TrustMPTypeUnspecified.Value ? "Trusted" : "Not Trusted")}"))
+            if (Button($"Trust Unspecified mods: {(TrustMPTypeUnspecified.Value ? "Trusted" : "Not Trusted")}"))
             {
                 TrustMPTypeUnspecified.Value = !TrustMPTypeUnspecified.Value;
             }
