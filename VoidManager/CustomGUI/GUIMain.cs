@@ -143,11 +143,11 @@ namespace VoidManager.CustomGUI
 
             BeginHorizontal(); // TAB Start
             {
-                if (Button("Mod Info"))
+                if (DrawButtonSelected("Mod Info", Tab == 0))
                     Tab = 0;
-                if (Button("Mod Settings"))
+                if (DrawButtonSelected("Mod Settings", Tab == 1))
                     Tab = 1;
-                if (Button("Player List"))
+                if (DrawButtonSelected("Player List", Tab == 2))
                     Tab = 2;
             }
             EndHorizontal(); // TAB End
@@ -192,6 +192,7 @@ namespace VoidManager.CustomGUI
                                 if (selectedMod.Description != string.Empty)
                                     Label($"Description: {selectedMod.Description}");
                                 Label($"MPRequirement: {GetTextForMPType(selectedMod.MPType)}");
+                                Label("\nSettings menus:");
                                 foreach(ModSettingsMenu MSM in settings)
                                 {
                                     if(MSM.MyVoidPlugin == selectedMod && Button(MSM.Name()))
@@ -302,6 +303,7 @@ namespace VoidManager.CustomGUI
         }
 
         internal static GUISkin _cachedSkin;
+        internal static GUIStyle _SelectedButtonStyle;
         internal static Texture2D _buttonBackground;
         internal static Texture2D _hbuttonBackground;
         private static readonly Color32 _classicMenuBackground = new Color32(32, 32, 32, 255);
@@ -325,18 +327,33 @@ namespace VoidManager.CustomGUI
                 _cachedSkin.window.hover.textColor = Color.white;
                 _cachedSkin.window.onHover.textColor = Color.white;
 
-                Color32 hoverbutton = new Color32(64, 64, 64, 255);
+                Color32 hoverbutton = new Color32(60, 60, 60, 255);
 
                 _buttonBackground = BuildTexFrom1Color(_classicButtonBackground);
                 _hbuttonBackground = BuildTexFrom1Color(hoverbutton);
                 _cachedSkin.button.active.background = _buttonBackground;
-                _cachedSkin.button.onActive.background = _buttonBackground;
                 _cachedSkin.button.focused.background = _buttonBackground;
-                _cachedSkin.button.onFocused.background = _buttonBackground;
                 _cachedSkin.button.hover.background = _hbuttonBackground;
-                _cachedSkin.button.onHover.background = _hbuttonBackground;
                 _cachedSkin.button.normal.background = _buttonBackground;
-                _cachedSkin.button.onNormal.background = _buttonBackground;
+                //_cachedSkin.button.onActive.background = _buttonBackground;
+                //_cachedSkin.button.onFocused.background = _buttonBackground;
+                //_cachedSkin.button.onHover.background = _hbuttonBackground;
+                //_cachedSkin.button.onNormal.background = _buttonBackground;
+
+                _SelectedButtonStyle = new GUIStyle();
+                _SelectedButtonStyle.active.background = _hbuttonBackground;
+                _SelectedButtonStyle.focused.background = _hbuttonBackground;
+                _SelectedButtonStyle.hover.background = _hbuttonBackground;
+                _SelectedButtonStyle.normal.background = _hbuttonBackground;
+                _SelectedButtonStyle.font = _cachedSkin.button.font;
+                _SelectedButtonStyle.alignment = _cachedSkin.button.alignment;
+                _SelectedButtonStyle.border = _cachedSkin.button.border;
+                _SelectedButtonStyle.margin = _cachedSkin.button.margin;
+                _SelectedButtonStyle.active.textColor = Color.white;
+                _SelectedButtonStyle.focused.textColor = Color.white;
+                _SelectedButtonStyle.hover.textColor = Color.white;
+                _SelectedButtonStyle.normal.textColor = Color.white;
+                _SelectedButtonStyle.padding = _cachedSkin.button.padding;
 
 
                 Texture2D sliderBackground = BuildTexFrom1Color(new Color32(47, 79, 79, 255));
@@ -459,19 +476,7 @@ namespace VoidManager.CustomGUI
             if (selected)
             {
                 //Tried something similar like making a deepcopy of the GUIStyle, but deepcopy wasn't deep. The options were to completely rebuild the GUIStyle or do this. Rebuilding will probably be better for performance.
-                _cachedSkin.button.active.background = _hbuttonBackground;
-                _cachedSkin.button.onActive.background = _hbuttonBackground;
-                _cachedSkin.button.focused.background = _hbuttonBackground;
-                _cachedSkin.button.onFocused.background = _hbuttonBackground;
-                _cachedSkin.button.normal.background = _hbuttonBackground;
-                _cachedSkin.button.onNormal.background = _hbuttonBackground;
-                bool returnvalue = Button(text);
-                _cachedSkin.button.active.background = _buttonBackground;
-                _cachedSkin.button.onActive.background = _buttonBackground;
-                _cachedSkin.button.focused.background = _buttonBackground;
-                _cachedSkin.button.onFocused.background = _buttonBackground;
-                _cachedSkin.button.normal.background = _buttonBackground;
-                _cachedSkin.button.onNormal.background = _buttonBackground;
+                bool returnvalue = Button(text, _SelectedButtonStyle);
                 return returnvalue;
             }
             else
