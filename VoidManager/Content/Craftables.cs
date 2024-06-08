@@ -426,7 +426,7 @@ namespace VoidManager.Content
         {
             CraftableItem CI = new();
 
-            CI.craftItemRef = (CraftableItemRef)GetCraftableItemDef(RecipeGUID).Ref;
+            CI.craftItemRef = new CraftableItemRef(RecipeGUID, GetCraftableItemDef(RecipeGUID).Ref.Filename);
             CraftableItemCRFI.SetValue(CI, CraftingRules);
             CraftableItemOverrideFI.SetValue(CI, OverrideDefaultRecipe);
 
@@ -442,7 +442,7 @@ namespace VoidManager.Content
         {
             CraftableItem CI = new();
 
-            CI.craftItemRef = (CraftableItemRef)GetCraftableItemDef(RecipeGUID).Ref;
+            CI.craftItemRef = new CraftableItemRef(RecipeGUID, GetCraftableItemDef(RecipeGUID).Ref.Filename);
             CraftableItemOverrideFI.SetValue(CI, false);
 
             return CI;
