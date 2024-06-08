@@ -43,11 +43,13 @@
         }
 
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public string ModGUID { get; }
         public string ModName { get; }
         public string Version { get; }
         public MultiplayerType MPType { get; }
         public byte[] Hash { get; }
         public string DownloadID { get; }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     }
 }

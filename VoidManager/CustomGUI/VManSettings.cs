@@ -114,7 +114,7 @@ namespace VoidManager.CustomGUI
                         MenuListWidth.Value = MLx;
                         PlayerListWidth.Value = PLx;
                         SizeErrString = string.Empty;
-                        GUIMain.Instance.updateWindowSize();
+                        GUIMain.Instance.UpdateWindowSize();
                     }
                 }
             }

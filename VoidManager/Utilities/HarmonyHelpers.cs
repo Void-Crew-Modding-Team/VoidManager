@@ -112,7 +112,8 @@ namespace VoidManager.Utilities
         {
             List<CodeInstruction> Instructions = instructions.ToList();
 
-            CodeInstruction targetStart = targetSequence.ElementAt(0);
+            //Might not have a reason to exist. Delete later if found.
+            //CodeInstruction targetStart = targetSequence.ElementAt(0);
             int targetSize = targetSequence.Count();
 
             for (int i = 0; i < Instructions.Count; i++)
@@ -170,6 +171,9 @@ namespace VoidManager.Utilities
         }
 
 
+        /// <summary>
+        /// Find/PatchBySequence CheckMode
+        /// </summary>
         public enum CheckMode
         {
             /// <summary>
@@ -186,6 +190,9 @@ namespace VoidManager.Utilities
             NEVER
         }
 
+        /// <summary>
+        /// PatchBySequence PatchMode
+        /// </summary>
         public enum PatchMode
         {
             /// <summary>
@@ -214,7 +221,7 @@ namespace VoidManager.Utilities
             sb.AppendLine(label);
             foreach (object c in sequence)
             {
-                sb.AppendLine($"\t{c.ToString()}");
+                sb.AppendLine($"\t{c}");
             }
 
             BepinPlugin.Log.LogInfo(sb.ToString());

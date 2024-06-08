@@ -5,13 +5,17 @@ using System.Linq;
 
 namespace VoidManager.ModMessages
 {
-    public class ModMessageHandler
+    /// <summary>
+    /// Handles RPCs between modded clients.
+    /// </summary>
+    internal class ModMessageHandler
     {
-        public static Dictionary<string, ModMessage> modMessageHandlers = new Dictionary<string, ModMessage>();
+        internal static Dictionary<string, ModMessage> modMessageHandlers = new Dictionary<string, ModMessage>();
+
         /// <summary>
         /// Scans the given assembly for ModMessage classes.
         /// </summary>
-        public static void DiscoverModMessages(System.Reflection.Assembly assembly, PluginInfo bepinPlugin)
+        internal static void DiscoverModMessages(System.Reflection.Assembly assembly, PluginInfo bepinPlugin)
         {
             Type[] types = assembly.GetTypes();
 

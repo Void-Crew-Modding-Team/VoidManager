@@ -14,7 +14,7 @@ namespace VoidManager.MPModChecks
     {
         static RoomOptions PatchMethod(RoomOptions RoomOptions)
         {
-            RoomOptions.CustomRoomProperties.Add(InRoomCallbacks.RoomModsPropertyKey, MPModCheckManager.Instance.GetRoomProperties());
+            RoomOptions.CustomRoomProperties.Add(InRoomCallbacks.RoomModsPropertyKey, MPModCheckManager.Instance.RoomProperties);
 
 
             //Rebuild CRPFL array with new value. Litterally adding an index to an array.

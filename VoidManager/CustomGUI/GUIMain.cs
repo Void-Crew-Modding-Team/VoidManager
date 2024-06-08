@@ -47,7 +47,7 @@ namespace VoidManager.CustomGUI
         List<ModSettingsMenu> settings = new();
         ModSettingsMenu selectedSettings;
 
-        internal void updateWindowSize()
+        internal void UpdateWindowSize()
         {
             float Height = BepinPlugin.Bindings.MenuHeight.Value;
             float Width = BepinPlugin.Bindings.MenuWidth.Value;
@@ -72,7 +72,7 @@ namespace VoidManager.CustomGUI
             canvasComponent.transform.SetAsLastSibling();
             DontDestroyOnLoad(MMCanvas);
 
-            updateWindowSize();
+            UpdateWindowSize();
             settings.Add(new VManSettings());
 
             //Background image to block mouse clicks passing IMGUI
@@ -107,20 +107,16 @@ namespace VoidManager.CustomGUI
 
         void GUIOpen()
         {
-            if (selectedSettings != null) //Menu Opening and MM selected
-            {
-                selectedSettings.OnOpen();
-            }
+            selectedSettings?.OnOpen(); //Menu Opening and MM selected
+
             GUIToggleCursor(true);
             Background.SetActive(true);
         }
 
         void GUIClose()
         {
-            if (selectedSettings != null) //Menu Closing and MM Selected
-            {
-                selectedSettings.OnClose();
-            }
+            selectedSettings?.OnClose(); //Menu Closing and MM Selected
+
             GUIToggleCursor(false);
             Background.SetActive(false);
         }
@@ -308,7 +304,7 @@ namespace VoidManager.CustomGUI
         internal static Texture2D _hbuttonBackground;
         private static readonly Color32 _classicMenuBackground = new Color32(32, 32, 32, 255);
         private static readonly Color32 _classicButtonBackground = new Color32(40, 40, 40, 255);
-        private static readonly Color32 _hoverButtonFromMenu = new Color32(18, 79, 179, 255);
+        //private static readonly Color32 _hoverButtonFromMenu = new Color32(18, 79, 179, 255);
         GUISkin ChangeSkin()
         {
             if (_cachedSkin is null || _cachedSkin.window.active.background is null)
@@ -515,8 +511,7 @@ namespace VoidManager.CustomGUI
         {
             if (Tab != 1)
                 Tab = 1;
-            else if (selectedSettings != null)
-                selectedSettings.OnClose();
+            else selectedSettings?.OnClose();
 
             menu.OnOpen();
             selectedSettings = menu;

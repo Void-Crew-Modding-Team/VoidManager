@@ -18,6 +18,9 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace VoidManager.MPModChecks
 {
+    /// <summary>
+    /// Manages multiplayer mod checking and user mod caching.
+    /// </summary>
     public class MPModCheckManager
     {
         internal MPModCheckManager()
@@ -26,29 +29,30 @@ namespace VoidManager.MPModChecks
             BuildRoomProperties();
         }
 
+        /// <summary>
+        /// Highest level of mods MPType. Does as says
+        /// </summary>
         public MultiplayerType HighestLevelOfMPMods { get; private set; } = MultiplayerType.Hidden;
 
         internal static InRoomCallbacks RoomCallbacksClass;
         private MPModDataBlock[] MyModList = null;
         private MPModDataBlock[] MyMPUnspecifiedModList = null;
         private MPModDataBlock[] MyMPAllModList = null;
-        byte[] RoomProperties;
+        internal byte[] RoomProperties { get; private set; }
         internal Dictionary<Player, MPUserDataBlock> NetworkedPeersModLists = new Dictionary<Player, MPUserDataBlock>();
-        public string LastModCheckFailReason;
+        internal string LastModCheckFailReason;
 
+        /// <summary>
+        /// The static instance of MPModCheckManager
+        /// </summary>
         public static MPModCheckManager Instance { get; internal set; }
 
-        public byte[] GetRoomProperties()
-        {
-            return RoomProperties;
-        }
-
-        public void BuildRoomProperties()
+        internal void BuildRoomProperties()
         {
             RoomProperties = SerializeHashlessMPUserData();
         }
 
-        public void UpdateLobbyProperties()
+        internal void UpdateLobbyProperties()
         {
             if(!PhotonNetwork.IsMasterClient) //Only MC should update the lobby properties.
             {
@@ -459,7 +463,7 @@ namespace VoidManager.MPModChecks
             }
         }
 
-        public static IEnumerator PlayerJoinedChecks(Player JoiningPlayer)
+        internal static IEnumerator PlayerJoinedChecks(Player JoiningPlayer)
         {
             for (int i = 0; i < 50; i++)
             {

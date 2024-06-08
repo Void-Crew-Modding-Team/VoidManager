@@ -1,6 +1,8 @@
 ﻿namespace VoidManager.MPModChecks
 {
-    //MultiplayerType
+    /// <summary>
+    /// MultiplayerType Enum
+    /// </summary>
     public enum MultiplayerType : byte
     {
         /// <summary>

@@ -4,6 +4,9 @@ using System;
 
 namespace VoidManager
 {
+    /// <summary>
+    /// Provides EventHandlers for subscription.
+    /// </summary>
     public class Events
     {
         /// <summary>
@@ -11,9 +14,14 @@ namespace VoidManager
         /// </summary>
         public static Events Instance { get; internal set; }
 
-
+        /// <summary>
+        /// Used by VoidManager.Events to pass the Photon Player as an argument
+        /// </summary>
         public class PlayerEventArgs : EventArgs
         {
+            /// <summary>
+            /// player argument
+            /// </summary>
             public Player player;
         }
 
