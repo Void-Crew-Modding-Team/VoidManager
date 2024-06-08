@@ -285,8 +285,8 @@ namespace VoidManager.MPModChecks
         /// <summary>
         /// Provides the host MPUserDataBlock from room properties.
         /// </summary>
-        /// <returns></returns>
-        internal MPUserDataBlock GetHostModList()
+        /// <returns>Host's MPUserDataBlock</returns>
+        public MPUserDataBlock GetHostModList()
         {
             if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))
             {

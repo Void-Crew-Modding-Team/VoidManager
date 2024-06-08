@@ -6,5 +6,7 @@
         public abstract void Draw();
         public virtual void OnOpen() { }
         public virtual void OnClose() { }
+
+        internal VoidPlugin MyVoidPlugin;
     }
 }

@@ -25,14 +25,12 @@ namespace VoidManager
             Harmony.PatchAll();
             Content.Craftables.Instance = new();
             Content.Unlocks.Instance = new();
-
-            Log.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
+            Events.Instance = new();
 
             
             DebugMode = Config.Bind("General", "DebugMode", false, "");
 
             UnspecifiedModListOverride = Config.Bind("General", "Unspecified Mod Overrides", string.Empty, "Insert mods (not configured for VoidManager) for which you would like to override the MPType. \nAvailable MPTypes: client,host,all \nFormat: 'ModNameOrGUID:MPType', delineated by ','. \nEx: VoidManager:all,Better Scoop:Host \n ModName/GUID can be gathered from log files and F5 menu.");
-
 
             ModInfoTextAnchor = Config.Bind("Menu", "ModInfoTextAnchor", TextAnchor.UpperLeft, "");
 
@@ -46,7 +44,7 @@ namespace VoidManager
 
             TrustMPTypeUnspecified = Config.Bind("Multiplayer", "TrustMPTypeUnspecified", true, "");
 
-            
+            Log.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
         }
         internal class Bindings
         {

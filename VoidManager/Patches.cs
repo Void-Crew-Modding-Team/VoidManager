@@ -14,7 +14,6 @@ namespace VoidManager
         public static void PostAwakeInit()
         {
             BepinPlugin.Log.LogInfo($"- - - Void Manager Initialization - - -");
-            Events.Instance = new Events();
 
             new GameObject("ModManager", typeof(CustomGUI.GUIMain)) { hideFlags = HideFlags.HideAndDontSave };
             
