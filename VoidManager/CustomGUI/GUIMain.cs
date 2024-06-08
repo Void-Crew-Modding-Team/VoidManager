@@ -336,20 +336,11 @@ namespace VoidManager.CustomGUI
                 //_cachedSkin.button.onHover.background = _hbuttonBackground;
                 //_cachedSkin.button.onNormal.background = _buttonBackground;
 
-                _SelectedButtonStyle = new GUIStyle();
+                //Remember to check out https://forum.unity.com/threads/focusing-gui-controls.20511/ and potentially replace this with better code.
+                _SelectedButtonStyle = new GUIStyle(_cachedSkin.button);
                 _SelectedButtonStyle.active.background = _hbuttonBackground;
                 _SelectedButtonStyle.focused.background = _hbuttonBackground;
-                _SelectedButtonStyle.hover.background = _hbuttonBackground;
                 _SelectedButtonStyle.normal.background = _hbuttonBackground;
-                _SelectedButtonStyle.font = _cachedSkin.button.font;
-                _SelectedButtonStyle.alignment = _cachedSkin.button.alignment;
-                _SelectedButtonStyle.border = _cachedSkin.button.border;
-                _SelectedButtonStyle.margin = _cachedSkin.button.margin;
-                _SelectedButtonStyle.active.textColor = Color.white;
-                _SelectedButtonStyle.focused.textColor = Color.white;
-                _SelectedButtonStyle.hover.textColor = Color.white;
-                _SelectedButtonStyle.normal.textColor = Color.white;
-                _SelectedButtonStyle.padding = _cachedSkin.button.padding;
 
 
                 Texture2D sliderBackground = BuildTexFrom1Color(new Color32(47, 79, 79, 255));
