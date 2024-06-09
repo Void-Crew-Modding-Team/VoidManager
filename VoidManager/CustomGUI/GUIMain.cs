@@ -462,7 +462,6 @@ namespace VoidManager.CustomGUI
         {
             if (selected)
             {
-                //Tried something similar like making a deepcopy of the GUIStyle, but deepcopy wasn't deep. The options were to completely rebuild the GUIStyle or do this. Rebuilding will probably be better for performance.
                 bool returnvalue = Button(text, _SelectedButtonStyle);
                 return returnvalue;
             }
