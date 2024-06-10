@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using static UnityEngine.GUILayout;
 
-namespace VoidManager.CustomGUI
+namespace VoidManager.Utilities
 {
     //Consider changing name and location of IMGUIPrefabs class. This might not be the ideal place for it, or it might be better with a different name so we can fit more things such as the public methods in GUIMain
 
