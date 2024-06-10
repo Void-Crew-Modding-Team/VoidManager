@@ -15,7 +15,7 @@ namespace VoidManager.CustomGUI
         /// <summary>
         /// GUIStyle to make buttons take as little space as possible.
         /// </summary>
-        public static readonly GUIStyle ButtonMinSizeStyle;
+        public static GUIStyle ButtonMinSizeStyle;
 
         /// <summary>
         /// A Label, textfield, and apply button

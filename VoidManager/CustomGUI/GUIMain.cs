@@ -342,6 +342,8 @@ namespace VoidManager.CustomGUI
                 _SelectedButtonStyle.focused.background = _hbuttonBackground;
                 _SelectedButtonStyle.normal.background = _hbuttonBackground;
 
+                IMGUIPrefabs.ButtonMinSizeStyle = new GUIStyle(_cachedSkin.button);
+                IMGUIPrefabs.ButtonMinSizeStyle.stretchWidth = false;
 
                 Texture2D sliderBackground = BuildTexFrom1Color(new Color32(47, 79, 79, 255));
                 _cachedSkin.horizontalSlider.active.background = sliderBackground;
