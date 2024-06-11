@@ -17,6 +17,8 @@ namespace VoidManager.CustomGUI
         /// </summary>
         public static GUIStyle ButtonMinSizeStyle;
 
+        private static string keybindToChange = string.Empty;
+
         /// <summary>
         /// A Label, textfield, and apply button
         /// </summary>
@@ -33,6 +35,46 @@ namespace VoidManager.CustomGUI
                 ApplyFunc?.Invoke();
             }
             EndHorizontal();
+        }
+
+        /// <summary>
+        /// Creates a button that when pressed allows the user to enter a new keybind. Returns true when a keybind is set.
+        /// </summary>
+        /// <param name="buttonName"></param>
+        /// <param name="keybind"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static bool ChangeKeybindButton(string buttonName, ref KeyCode keybind)
+        {
+            if (string.IsNullOrEmpty(buttonName)) throw new ArgumentException("buttonName must not be null or empty");
+
+            bool keybindChanged = false;
+            bool changeKeybind = keybindToChange == buttonName;
+            if (changeKeybind)
+            {
+                Event e = Event.current;
+                if (e.isKey)
+                {
+                    if (e.keyCode == KeyCode.Escape)
+                    {
+                        keybind = KeyCode.None;
+                        keybindChanged = true;
+                        keybindToChange = string.Empty;
+                    }
+                    else
+                    {
+                        keybind = e.keyCode;
+                        keybindChanged = true;
+                        keybindToChange = string.Empty;
+                    }
+                }
+            }
+
+            if (Button(changeKeybind ? $"{buttonName}: ..... Press ESC to remove" : $"{buttonName}: ({keybind})"))
+            {
+                keybindToChange = buttonName;
+            }
+            return keybindChanged;
         }
     }
 }
