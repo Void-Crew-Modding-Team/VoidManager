@@ -1,6 +1,7 @@
 ﻿using Photon.Pun;
 using System;
 using UnityEngine;
+using VoidManager.CustomGUI;
 using static UnityEngine.GUILayout;
 
 namespace VoidManager.Utilities
@@ -15,7 +16,7 @@ namespace VoidManager.Utilities
         /// </summary>
         public static GUIStyle ButtonMinSizeStyle;
 
-        internal static string keybindToChange = string.Empty;
+        internal static string keybindToChange = null;
 
         /// <summary>
         /// A Label, textfield, and apply button
@@ -57,13 +58,13 @@ namespace VoidManager.Utilities
                     {
                         keybind = KeyCode.None;
                         keybindChanged = true;
-                        keybindToChange = string.Empty;
+                        keybindToChange = null;
                     }
                     else
                     {
                         keybind = e.keyCode;
                         keybindChanged = true;
-                        keybindToChange = string.Empty;
+                        keybindToChange = null;
                     }
                 }
             }
@@ -73,6 +74,25 @@ namespace VoidManager.Utilities
                 keybindToChange = buttonName;
             }
             return keybindChanged;
+        }
+
+        /// <summary>
+        /// Draws a button with selected highlight when 'selected' is true.
+        /// </summary>
+        /// <param name="text">Button text</param>
+        /// <param name="selected">Selected Highlight</param>
+        /// <returns></returns>
+        public static bool DrawButtonSelected(string text, bool selected)
+        {
+            if (selected)
+            {
+                bool returnvalue = Button(text, GUIMain._SelectedButtonStyle);
+                return returnvalue;
+            }
+            else
+            {
+                return Button(text);
+            }
         }
     }
 }

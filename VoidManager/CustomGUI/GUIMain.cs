@@ -115,7 +115,7 @@ namespace VoidManager.CustomGUI
 
         void GUIClose()
         {
-            selectedSettings?.OnClose(); //Menu Closing and MM Selected
+            LeaveSettingsMenu();
 
             GUIToggleCursor(false);
             Background.SetActive(false);
@@ -139,12 +139,12 @@ namespace VoidManager.CustomGUI
 
             BeginHorizontal(); // TAB Start
             {
-                if (DrawButtonSelected("Mod Info", Tab == 0))
-                    Tab = 0;
-                if (DrawButtonSelected("Mod Settings", Tab == 1))
-                    Tab = 1;
-                if (DrawButtonSelected("Player List", Tab == 2))
-                    Tab = 2;
+                if (GUITools.DrawButtonSelected("Mod Info", Tab == 0))
+                    ChangeTab(0);
+                if (GUITools.DrawButtonSelected("Mod Settings", Tab == 1))
+                    ChangeTab(1);
+                if (GUITools.DrawButtonSelected("Player List", Tab == 2))
+                    ChangeTab(2);
             }
             EndHorizontal(); // TAB End
             switch (Tab)
@@ -155,7 +155,7 @@ namespace VoidManager.CustomGUI
                     {
                         ModListScroll = BeginScrollView(ModListScroll);
                         {
-                            if (DrawButtonSelected("VoidManager", selectedMod == null))
+                            if (GUITools.DrawButtonSelected("VoidManager", selectedMod == null))
                             {
                                 selectedMod = null;
                             }
@@ -246,7 +246,7 @@ namespace VoidManager.CustomGUI
                             {
                                 if (Button("Back"))
                                 {
-                                    selectedSettings.OnClose();
+                                    LeaveSettingsMenu();
                                     selectedSettings = null;
                                 }
                                 else
@@ -271,7 +271,7 @@ namespace VoidManager.CustomGUI
                             {
                                 if (player.IsLocal)
                                     continue;
-                                if (DrawButtonSelected(player.NickName, selectedPlayer == player))
+                                if (GUITools.DrawButtonSelected(player.NickName, selectedPlayer == player))
                                     selectedPlayer = player;
                             }
                         }
@@ -450,26 +450,13 @@ namespace VoidManager.CustomGUI
             
             if (voidPlugin.MPType > MPModChecks.MultiplayerType.Host)
             {
-                if (DrawButtonSelected($"<color={GetColorTextForMPType(voidPlugin.MPType)}>{voidPlugin.BepinPlugin.Metadata.Name}</color>", selectedMod == voidPlugin)) //FFFF99
+                if (GUITools.DrawButtonSelected($"<color={GetColorTextForMPType(voidPlugin.MPType)}>{voidPlugin.BepinPlugin.Metadata.Name}</color>", selectedMod == voidPlugin)) //FFFF99
                     selectedMod = voidPlugin;
             }
             else
             {
-                if (DrawButtonSelected(voidPlugin.BepinPlugin.Metadata.Name, selectedMod == voidPlugin))
+                if (GUITools.DrawButtonSelected(voidPlugin.BepinPlugin.Metadata.Name, selectedMod == voidPlugin))
                     selectedMod = voidPlugin;
-            }
-        }
-
-        public static bool DrawButtonSelected(string text, bool selected)
-        {
-            if (selected)
-            {
-                bool returnvalue = Button(text, _SelectedButtonStyle);
-                return returnvalue;
-            }
-            else
-            {
-                return Button(text);
             }
         }
 
@@ -503,10 +490,26 @@ namespace VoidManager.CustomGUI
         {
             if (Tab != 1)
                 Tab = 1;
-            else selectedSettings?.OnClose();
+            else LeaveSettingsMenu();
 
-            menu.OnOpen();
             selectedSettings = menu;
+            menu.OnOpen();
+        }
+
+        public void LeaveSettingsMenu()
+        {
+            selectedSettings?.OnClose();
+            GUITools.keybindToChange = null;
+        }
+
+        public void ChangeTab(byte tab)
+        {
+            if(Tab == 1 && tab != 1)
+            {
+                LeaveSettingsMenu();
+            }
+
+            Tab = tab;
         }
 
         Texture2D BuildTexFrom1Color(Color color)
