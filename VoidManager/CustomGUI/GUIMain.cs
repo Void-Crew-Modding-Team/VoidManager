@@ -1,6 +1,5 @@
 ﻿using BepInEx;
 using CG.Input;
-using Client.Utils;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -343,8 +342,8 @@ namespace VoidManager.CustomGUI
                 _SelectedButtonStyle.focused.background = _hbuttonBackground;
                 _SelectedButtonStyle.normal.background = _hbuttonBackground;
 
-                IMGUIPrefabs.ButtonMinSizeStyle = new GUIStyle(_cachedSkin.button);
-                IMGUIPrefabs.ButtonMinSizeStyle.stretchWidth = false;
+                GUITools.ButtonMinSizeStyle = new GUIStyle(_cachedSkin.button);
+                GUITools.ButtonMinSizeStyle.stretchWidth = false;
 
                 Texture2D sliderBackground = BuildTexFrom1Color(new Color32(47, 79, 79, 255));
                 _cachedSkin.horizontalSlider.active.background = sliderBackground;

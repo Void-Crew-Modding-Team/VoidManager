@@ -1,7 +1,7 @@
 ﻿namespace VoidManager.CustomGUI
 {
     /// <summary>
-    /// ModSettingsMenu, called by VoidManager's ModManager (F5 menu). VoidManager automatically finds all classes inheriting from ModSettingsMenu.
+    /// ModSettingsMenu, called by VoidManager's ModManager (F5 menu). VoidManager automatically finds and instatiates all classes inheriting from ModSettingsMenu.
     /// </summary>
     public abstract class ModSettingsMenu
     {
