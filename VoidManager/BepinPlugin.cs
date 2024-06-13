@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
@@ -43,6 +44,9 @@ namespace VoidManager
             MenuOpenKeybind = Config.Bind("Menu", "Open Keybind", OpenMenu, "");
 
             TrustMPTypeUnspecified = Config.Bind("Multiplayer", "TrustMPTypeUnspecified", true, "");
+
+            //Fix chainloader getting deleted by GC?
+            Chainloader.ManagerObject.hideFlags = HideFlags.HideAndDontSave;
 
             Log.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
         }
