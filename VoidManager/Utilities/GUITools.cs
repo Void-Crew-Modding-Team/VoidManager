@@ -113,12 +113,12 @@ namespace VoidManager.Utilities
         }
 
         /// <summary>
-        /// 
+        /// Draws a box with a label, sliders to set the color, a color preview, and the rgba values
         /// </summary>
-        /// <param name="rect"></param>
+        /// <param name="rect">The location and size of the box. (8, 58, 480, 160) is a good start</param>
         /// <param name="label"></param>
         /// <param name="color"></param>
-        /// <param name="showAlpha"></param>
+        /// <param name="showAlpha">Should the alpha channel be shown</param>
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
@@ -159,7 +159,7 @@ namespace VoidManager.Utilities
             BeginVertical("Box", new GUILayoutOption[] { Width(44), Height(44) });
             Color temp = GUI.color;
             float scale = Mathf.Max(color.maxColorComponent, 1);
-            GUI.color = new Color(color.r / scale, color.g / scale, color.b / scale, color.a);
+            GUI.color = new Color(color.r / scale, color.g / scale, color.b / scale, showAlpha ? color.a : 1);
             Label(new Texture2D(60, 40));
             GUI.color = temp;
             EndVertical();
