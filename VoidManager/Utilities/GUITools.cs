@@ -37,13 +37,13 @@ namespace VoidManager.Utilities
         }
 
         /// <summary>
-        /// Creates a button that when pressed allows the user to enter a new keybind. Returns true when a keybind is set.
+        /// Creates a button that when pressed allows the user to enter a new keybind.
         /// </summary>
         /// <param name="buttonName"></param>
         /// <param name="keybind"></param>
-        /// <returns></returns>
+        /// <returns>true when a keybind is set, false otherwise</returns>
         /// <exception cref="ArgumentException"></exception>
-        public static bool ChangeKeybindButton(string buttonName, ref KeyCode keybind)
+        public static bool DrawChangeKeybindButton(string buttonName, ref KeyCode keybind)
         {
             if (string.IsNullOrEmpty(buttonName)) throw new ArgumentException("buttonName must not be null or empty");
 
@@ -93,6 +93,79 @@ namespace VoidManager.Utilities
             {
                 return Button(text);
             }
+        }
+
+        /// <summary>
+        /// Creates a checkbox with a label to the right
+        /// </summary>
+        /// <param name="label"></param>
+        /// <param name="isOn"></param>
+        /// <returns>true if the value is changed, false otherwise</returns>
+        public static bool DrawCheckbox(string label, ref bool isOn)
+        {
+            bool result = Toggle(isOn, label);
+            if (result != isOn)
+            {
+                isOn = result;
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name="label"></param>
+        /// <param name="color"></param>
+        /// <param name="showAlpha"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        public static void DrawColorPicker(Rect rect, string label, ref Color color, bool showAlpha = true, float min = 0, float max = 20)
+        {
+            BeginArea(rect, "", "Box");
+            BeginHorizontal();
+            Label(label);
+            EndHorizontal();
+            BeginHorizontal();
+            BeginVertical("Box");
+
+            BeginHorizontal();
+            Label("R", Width(10));
+            float r = HorizontalSlider(color.r, min, max);
+            EndHorizontal();
+
+            BeginHorizontal();
+            Label("G", Width(10));
+            float g = HorizontalSlider(color.g, min, max);
+            EndHorizontal();
+
+            BeginHorizontal();
+            Label("B", Width(10));
+            float b = HorizontalSlider(color.b, min, max);
+            EndHorizontal();
+
+            float a = color.a;
+            if (showAlpha)
+            {
+                BeginHorizontal();
+                Label("A", Width(10));
+                a = HorizontalSlider(color.a, min, Mathf.Min(max, 1));
+                EndHorizontal();
+            }
+
+            EndVertical();
+            BeginVertical("Box", new GUILayoutOption[] { Width(44), Height(44) });
+            Color temp = GUI.color;
+            float scale = Mathf.Max(color.maxColorComponent, 1);
+            GUI.color = new Color(color.r / scale, color.g / scale, color.b / scale, color.a);
+            Label(new Texture2D(60, 40));
+            GUI.color = temp;
+            EndVertical();
+            EndHorizontal();
+            Label($"{color.r:0.00}, {color.g:0.00}, {color.b:0.00}" + (showAlpha ? $", {color.a:0.00}" : ""));
+            EndArea();
         }
     }
 }
