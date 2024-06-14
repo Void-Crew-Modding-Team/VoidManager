@@ -43,7 +43,7 @@ namespace VoidManager.Chat.Router
         /// <returns>Examples of how to use the command including what arguments are valid</returns>
         public virtual string[] UsageExamples()
         {
-            return new string[] { $"/{CommandAliases()[0]}" };
+            return new string[] { $"!{CommandAliases()[0]}" };
         }
 
         /// <summary>
