@@ -89,7 +89,7 @@ namespace VoidManager.Content
         /// <param name="GUID"></param>
         public void ResetRecipe(GUIDUnion GUID)
         {
-            if (ModifiedRecipes.TryGetValue(GUID, out var value))
+            if (ModifiedRecipes.TryGetValue(GUID, out CraftingRules value))
             {
                 CraftingRulesFI.SetValue(GetCraftableItemDef(GUID), value);
                 ModifiedRecipes.Remove(GUID);

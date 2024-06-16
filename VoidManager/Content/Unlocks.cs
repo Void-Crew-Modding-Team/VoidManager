@@ -34,7 +34,7 @@ namespace VoidManager.Content
             {
                 throw new ArgumentException("An asset with the provided GUID does not exist.");
             }
-            else if (ModifiedUnlockOptions.TryGetValue(GUID, out var value))
+            else if (ModifiedUnlockOptions.TryGetValue(GUID, out Tuple<string, UnlockOptions> value))
             {
                 if (value.Item1 != CallerID)
                 {
