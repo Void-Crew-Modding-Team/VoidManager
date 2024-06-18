@@ -1,4 +1,5 @@
-﻿using Gameplay.Chat;
+﻿using CG.Input;
+using Gameplay.Chat;
 using HarmonyLib;
 using System.Linq;
 using UI.Chat;
@@ -6,11 +7,12 @@ using VoidManager.Utilities;
 
 namespace VoidManager.Chat.Router
 {
-    [HarmonyPatch(typeof(TextChatVE), "GetMessage")]
+    [HarmonyPatch(typeof(TextChatVE))]
     internal class ChatCommandDetectPatch
     { // Local player chat command
         [HarmonyPostfix]
-        public static void DiscoverChatCommand(ref string __result)
+        [HarmonyPatch("GetMessage")]
+        static void DiscoverChatCommand(ref string __result)
         {
             if (!__result.StartsWith("/")) return;
             __result = __result.Substring(1);
@@ -19,14 +21,27 @@ namespace VoidManager.Chat.Router
             CommandHandler.ExecuteCommandFromAlias(alias, arguments);
             __result = "";
         }
+
+        [HarmonyPostfix]
+        [HarmonyPatch("ShowInput")]
+        static void ShowChatWindow()
+        {
+            CursorUtility.ShowCursor(ChatCursorSource.Instance, true);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch("HideInput")]
+        static void HideChatWindow()
+        {
+            CursorUtility.ShowCursor(ChatCursorSource.Instance, false);
+        }
     }
 
     [HarmonyPatch(typeof(TextChat), "IncomingMessage")]
     internal class PublicCommandDetectPatch
     { // Other player chat command
         [HarmonyPostfix]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Method Declaration", "Harmony003:Harmony non-ref patch parameters modified", Justification = "Not relevant")]
-        public static void DiscoverPublicCommand(string cloudID, string channelTextMessage)
+        static void DiscoverPublicCommand(string cloudID, string channelTextMessage)
         {
             Photon.Realtime.Player p = VoipService.CloudIDToPlayer(cloudID);
             if (!channelTextMessage.StartsWith("!")) return;
@@ -37,5 +52,11 @@ namespace VoidManager.Chat.Router
             BepinPlugin.Log.LogInfo($"'!{alias} {arguments}' attempted by {p.NickName}");
             CommandHandler.ExecuteCommandFromAlias(alias, arguments, true, Game.GetIDFromPlayer(Player));
         }
+    }
+
+    internal class ChatCursorSource : IShowCursorSource
+    {
+        internal static readonly ChatCursorSource Instance = new();
+        private ChatCursorSource() { }
     }
 }
