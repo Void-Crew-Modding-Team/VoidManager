@@ -6,7 +6,7 @@ using VoidManager.Utilities;
 
 namespace VoidManager.Chat
 {
-    class ListPlayers : ChatCommand
+    class ListPlayersCommand : ChatCommand
     {
         public override string[] CommandAliases()
             => new string[] { "listplayers", "players", "list" };
@@ -20,7 +20,7 @@ namespace VoidManager.Chat
         public override void Execute(string arguments)
         {
             if (!PhotonNetwork.InRoom) return;
-            StringBuilder stringBuilder= new StringBuilder();
+            StringBuilder stringBuilder = new();
             stringBuilder.AppendLine("[Player List]");
             foreach (Player photonPlayer in PhotonNetwork.PlayerList)
             {
