@@ -56,7 +56,7 @@ namespace VoidManager.Chat
                 stringBuilder.AppendLine("<color=green>Command List:</color> :");
                 foreach (ChatCommand command in commands)
                 {
-                    stringBuilder.AppendLine($"/{command.CommandAliases()[0]} - {command.Description()}");
+                    stringBuilder.AppendLine($"<color=#3f7fff>/{command.CommandAliases()[0]}</color> - {command.Description()}");
 
                 }
                 stringBuilder.AppendLine("Use <color=green>/help <command></color> for details about a specific command");
