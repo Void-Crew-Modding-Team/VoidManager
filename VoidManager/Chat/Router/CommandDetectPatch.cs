@@ -1,5 +1,4 @@
-﻿using CG.Input;
-using Gameplay.Chat;
+﻿using Gameplay.Chat;
 using HarmonyLib;
 using System.Linq;
 using UI.Chat;
@@ -7,33 +6,20 @@ using VoidManager.Utilities;
 
 namespace VoidManager.Chat.Router
 {
-    [HarmonyPatch(typeof(TextChatVE))]
+    [HarmonyPatch(typeof(TextChatVE), "GetMessage")]
     internal class ChatCommandDetectPatch
     { // Local player chat command
         [HarmonyPostfix]
-        [HarmonyPatch("GetMessage")]
         static void DiscoverChatCommand(ref string __result)
         {
+            ChatHistory.AddToHistory(__result);
+
             if (!__result.StartsWith("/")) return;
             __result = __result.Substring(1);
             string alias = __result.Split(' ')[0];
             string arguments = __result.Substring(alias.Length + (__result.Split(' ').Count() == 1 ? 0 : 1));
             CommandHandler.ExecuteCommandFromAlias(alias, arguments);
             __result = "";
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch("ShowInput")]
-        static void ShowChatWindow()
-        {
-            CursorUtility.ShowCursor(ChatCursorSource.Instance, true);
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch("HideInput")]
-        static void HideChatWindow()
-        {
-            CursorUtility.ShowCursor(ChatCursorSource.Instance, false);
         }
     }
 
@@ -52,11 +38,5 @@ namespace VoidManager.Chat.Router
             BepinPlugin.Log.LogInfo($"'!{alias} {arguments}' attempted by {p.NickName}");
             CommandHandler.ExecuteCommandFromAlias(alias, arguments, true, Game.GetIDFromPlayer(Player));
         }
-    }
-
-    internal class ChatCursorSource : IShowCursorSource
-    {
-        internal static readonly ChatCursorSource Instance = new();
-        private ChatCursorSource() { }
     }
 }

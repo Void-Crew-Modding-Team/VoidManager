@@ -6,6 +6,7 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using VoidManager.Chat.Router;
 using static VoidManager.BepinPlugin.Bindings;
 
 namespace VoidManager
@@ -47,6 +48,11 @@ namespace VoidManager
 
             //Fix chainloader getting deleted by GC?
             Chainloader.ManagerObject.hideFlags = HideFlags.HideAndDontSave;
+
+            Events.Instance.ChatWindowOpened += ChatHistory.OnChatOpened;
+            Events.Instance.ChatWindowClosed += ChatHistory.OnChatClosed;
+            Events.Instance.ChatWindowOpened += CursorUnlock.OnChatOpened;
+            Events.Instance.ChatWindowClosed += CursorUnlock.OnChatClosed;
 
             Log.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
         }
