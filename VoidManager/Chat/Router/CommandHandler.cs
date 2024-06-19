@@ -78,11 +78,11 @@ namespace VoidManager.Chat.Router
         /// </summary>
         public static void DiscoverCommands(System.Reflection.Assembly assembly, string ModName = "")
         {
-            var types = assembly.GetTypes();
+            Type[] types = assembly.GetTypes();
             // Finds ChatCommand implementations from all the Assemblies in the same file location.
-            var chatCommandInstances = types.Where(t => typeof(ChatCommand).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+            IEnumerable<Type> chatCommandInstances = types.Where(t => typeof(ChatCommand).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
             int commandCount = 0;
-            foreach (var modType in chatCommandInstances)
+            foreach (Type modType in chatCommandInstances)
             { // Iterates through each discovered ChatCommand
                 ChatCommand modInstance = (ChatCommand)Activator.CreateInstance(modType);
                 foreach (string commandAlias in Array.ConvertAll(modInstance.CommandAliases(), d => d.ToLower()))
@@ -109,11 +109,11 @@ namespace VoidManager.Chat.Router
         /// </summary>
         public static void DiscoverPublicCommands(System.Reflection.Assembly assembly, string ModName = "")
         {
-            var types = assembly.GetTypes();
+            Type[] types = assembly.GetTypes();
             // Finds PublicCommand implementations from all the Assemblies in the same file location.
-            var publicCommandInstances = types.Where(t => typeof(PublicCommand).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+            IEnumerable<Type> publicCommandInstances = types.Where(t => typeof(PublicCommand).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
             int commandCount = 0;
-            foreach (var modType in publicCommandInstances)
+            foreach (Type modType in publicCommandInstances)
             { // Iterates through each discovered PublicCommand
                 PublicCommand modInstance = (PublicCommand)Activator.CreateInstance(modType);
                 foreach (string commandAlias in Array.ConvertAll(modInstance.CommandAliases(), d => d.ToLower()))

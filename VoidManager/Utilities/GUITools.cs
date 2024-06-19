@@ -113,12 +113,12 @@ namespace VoidManager.Utilities
         }
 
         /// <summary>
-        /// Draws a box with a label, sliders to set the color, a color preview, and the rgba values
+        /// 
         /// </summary>
-        /// <param name="rect">The location and size of the box. (8, 58, 480, 160) is a good start</param>
+        /// <param name="rect"></param>
         /// <param name="label"></param>
         /// <param name="color"></param>
-        /// <param name="showAlpha">Should the alpha channel be shown</param>
+        /// <param name="showAlpha"></param>
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
@@ -133,25 +133,24 @@ namespace VoidManager.Utilities
 
             BeginHorizontal();
             Label("R", Width(10));
-            float r = HorizontalSlider(color.r, min, max);
+            HorizontalSlider(color.r, min, max);
             EndHorizontal();
 
             BeginHorizontal();
             Label("G", Width(10));
-            float g = HorizontalSlider(color.g, min, max);
+            HorizontalSlider(color.g, min, max);
             EndHorizontal();
 
             BeginHorizontal();
             Label("B", Width(10));
-            float b = HorizontalSlider(color.b, min, max);
+            HorizontalSlider(color.b, min, max);
             EndHorizontal();
 
-            float a = color.a;
             if (showAlpha)
             {
                 BeginHorizontal();
                 Label("A", Width(10));
-                a = HorizontalSlider(color.a, min, Mathf.Min(max, 1));
+                HorizontalSlider(color.a, min, Mathf.Min(max, 1));
                 EndHorizontal();
             }
 
@@ -159,7 +158,7 @@ namespace VoidManager.Utilities
             BeginVertical("Box", new GUILayoutOption[] { Width(44), Height(44) });
             Color temp = GUI.color;
             float scale = Mathf.Max(color.maxColorComponent, 1);
-            GUI.color = new Color(color.r / scale, color.g / scale, color.b / scale, showAlpha ? color.a : 1);
+            GUI.color = new Color(color.r / scale, color.g / scale, color.b / scale, color.a);
             Label(new Texture2D(60, 40));
             GUI.color = temp;
             EndVertical();

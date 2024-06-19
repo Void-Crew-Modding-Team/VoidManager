@@ -20,9 +20,9 @@ namespace VoidManager.ModMessages
             Type[] types = assembly.GetTypes();
 
             // Finds ModMessage implementations from all the Assemblies in the same file location.
-            var modMessageInstances = types.Where(t => typeof(ModMessage).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+            IEnumerable<Type> modMessageInstances = types.Where(t => typeof(ModMessage).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
             int modMessageCount = 0;
-            foreach (var modType in modMessageInstances)
+            foreach (Type modType in modMessageInstances)
             { // Iterates through each discovered ModMessage
                 ModMessage modMessageHandler = (ModMessage)Activator.CreateInstance(modType);
                 modMessageHandlers.Add(bepinPlugin.Metadata.GUID + "#" + modMessageHandler.GetIdentifier(), modMessageHandler);

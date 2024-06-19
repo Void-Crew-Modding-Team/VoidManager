@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Security.Cryptography;
 using VoidManager.Chat.Router;
@@ -27,7 +28,7 @@ namespace VoidManager
             VoidPlugin voidPlugin;
 
             BepinPlugin.Bindings.LoadModListOverride();
-            var OverridenMods = BepinPlugin.Bindings.ModOverrideDictionary;
+            Dictionary<string, MultiplayerType> OverridenMods = BepinPlugin.Bindings.ModOverrideDictionary;
 
             ActiveVoidPlugins = new();
             GeneratedVoidPlugins = new();
@@ -46,7 +47,7 @@ namespace VoidManager
                 }
                 try
                 {
-                    var voidPluginInstances = assembly.GetTypes().Where(t => typeof(VoidPlugin).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+                    IEnumerable<Type> voidPluginInstances = assembly.GetTypes().Where(t => typeof(VoidPlugin).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
                     if (voidPluginInstances.Any())
                     {
                         voidPlugin = (VoidPlugin)Activator.CreateInstance(voidPluginInstances.First());

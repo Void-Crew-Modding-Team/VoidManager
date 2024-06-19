@@ -10,8 +10,10 @@ namespace VoidManager.Chat.Router
     internal class ChatCommandDetectPatch
     { // Local player chat command
         [HarmonyPostfix]
-        public static void DiscoverChatCommand(ref string __result)
+        static void DiscoverChatCommand(ref string __result)
         {
+            ChatHistory.AddToHistory(__result);
+
             if (!__result.StartsWith("/")) return;
             __result = __result.Substring(1);
             string alias = __result.Split(' ')[0];
@@ -25,8 +27,7 @@ namespace VoidManager.Chat.Router
     internal class PublicCommandDetectPatch
     { // Other player chat command
         [HarmonyPostfix]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Method Declaration", "Harmony003:Harmony non-ref patch parameters modified", Justification = "Not relevant")]
-        public static void DiscoverPublicCommand(string cloudID, string channelTextMessage)
+        static void DiscoverPublicCommand(string cloudID, string channelTextMessage)
         {
             Photon.Realtime.Player p = VoipService.CloudIDToPlayer(cloudID);
             if (!channelTextMessage.StartsWith("!")) return;

@@ -534,11 +534,11 @@ namespace VoidManager.CustomGUI
         public void DiscoverGUIMenus(System.Reflection.Assembly assembly, VoidPlugin voidPlugin)
         {
             mods.Add(voidPlugin);
-            var types = assembly.GetTypes();
+            Type[] types = assembly.GetTypes();
             // Finds gui menu implementations from all the Assemblies in the same file location.
-            var chatCommandInstances = types.Where(t => typeof(ModSettingsMenu).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+            IEnumerable<Type> chatCommandInstances = types.Where(t => typeof(ModSettingsMenu).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
             bool hasSettingsMenu = false;
-            foreach (var modType in chatCommandInstances)
+            foreach (Type modType in chatCommandInstances)
             { // Iterates through each discovered gui menu
                 ModSettingsMenu MSMInstance = (ModSettingsMenu)Activator.CreateInstance(modType);
                 MSMInstance.MyVoidPlugin = voidPlugin;

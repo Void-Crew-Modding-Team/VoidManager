@@ -32,7 +32,7 @@ namespace VoidManager.Utilities
             if (local) TextChat.Instance.AddLog(new Log($"", message));//fixme
             else
             {
-                VoipService.Instance.SendTextMessage($"[Mod Manager]: {message}");
+                VoipService.Instance.SendTextMessage($"[Void Manager]: {message}");
             }
         }
 

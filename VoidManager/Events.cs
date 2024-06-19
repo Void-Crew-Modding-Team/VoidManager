@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using Photon.Realtime;
 using System;
+using UI.Chat;
 
 namespace VoidManager
 {
@@ -119,6 +120,34 @@ namespace VoidManager
             static void Postfix()
             {
                 Instance.OnHostStartSession();
+            }
+        }
+
+        /// <summary>
+        /// Called when the player opens the chat window ("Enter" by default)
+        /// </summary>
+        public event EventHandler ChatWindowOpened;
+
+        /// <summary>
+        /// Called when the player closes the chat window, by sending a message or cancelling
+        /// </summary>
+        public event EventHandler ChatWindowClosed;
+
+        [HarmonyPatch(typeof(TextChatVE))]
+        class TextChatVEPatch
+        {
+            [HarmonyPostfix]
+            [HarmonyPatch("ShowInput")]
+            static void ShowChatWindow()
+            {
+                Instance.ChatWindowOpened.Invoke(Instance, EventArgs.Empty);
+            }
+
+            [HarmonyPostfix]
+            [HarmonyPatch("HideInput")]
+            static void HideChatWindow()
+            {
+                Instance.ChatWindowClosed.Invoke(Instance, EventArgs.Empty);
             }
         }
     }
