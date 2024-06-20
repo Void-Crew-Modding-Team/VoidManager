@@ -21,7 +21,8 @@ namespace VoidManager.Chat.Router
         /// If the player presses TAB while typing a command, any Arguments returned from this will be eligable to be autocompleted.<br/>
         /// If multiple arguments match the typed text, Autocomplete will display a list of possible arguments.<br/>
         /// Arguments starting with '%' will be displayed in the list, but not autocompleted.<br/>
-        /// The exact string "%player_name" will be replaced with a list of the current player names.<br/>
+        /// "%player_name" will be replaced with a list of the current player names.<br/>
+        /// "%integer" or "%number" should be used when a number is expected.<br/>
         /// <br/>
         /// Example:<br/>
         /// /command<br/>
@@ -81,7 +82,8 @@ namespace VoidManager.Chat.Router
         /// If the player presses TAB while typing a command, any Arguments returned from this will be eligable to be autocompleted.<br/>
         /// If multiple arguments match the typed text, Autocomplete will display a list of possible arguments.<br/>
         /// Arguments starting with '%' will be displayed in the list, but not autocompleted.<br/>
-        /// The exact string "%player_name" will be replaced with a list of the current player names.<br/>
+        /// "%player_name" will be replaced with a list of the current player names.<br/>
+        /// "%integer" or "%number" should be used when a number is expected.<br/>
         /// <br/>
         /// Example:<br/>
         /// !command<br/>

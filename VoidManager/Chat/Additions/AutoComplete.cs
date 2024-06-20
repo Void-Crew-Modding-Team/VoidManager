@@ -59,7 +59,7 @@ namespace VoidManager.Chat.Additions
             for (int i = 0; i < split.Length - 1; i++)
             {
                 bool containsReplace(string name) {
-                    if (name[0] == '%')
+                    if (name[0] != '%')
                     {
                         return name.Equals(split[i], StringComparison.CurrentCultureIgnoreCase);
                     }
@@ -68,12 +68,14 @@ namespace VoidManager.Chat.Additions
                         return name switch
                         {
                             "%player_name" => playerNames.Contains(split[i], StringComparer.CurrentCultureIgnoreCase),
+                            "%number" => double.TryParse(split[i], out _),
+                            "%integer" => long.TryParse(split[i], out _),
                             _ => false,
                         };
                     }
                 }
                 //Argument argument = arguments.Find(argument => argument.names.Contains(split[i], StringComparer.CurrentCultureIgnoreCase) || (argument.playerName && playerNames.Contains(split[i], StringComparer.CurrentCultureIgnoreCase)));
-                Argument argument = arguments.First(argument => argument.names.Any(containsReplace));
+                Argument argument = arguments.FirstOrDefault(argument => argument.names.Any(containsReplace));
                 if (argument == null)
                 {
                     Messaging.Notification($"No match found for \"{split[i]}\"");
@@ -121,7 +123,7 @@ namespace VoidManager.Chat.Additions
 
             if (matches.Count + displayOnly.Count == 0)
             {
-                Messaging.Notification($"No match found for \"{partial}\"");
+                Messaging.Notification($"No partial match found for \"{partial}\"");
                 return text;
             }
             else if (matches.Count == 1)

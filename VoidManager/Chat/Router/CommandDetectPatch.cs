@@ -2,6 +2,7 @@
 using HarmonyLib;
 using System.Linq;
 using UI.Chat;
+using VoidManager.Chat.Additions;
 using VoidManager.Utilities;
 
 namespace VoidManager.Chat.Router
