@@ -108,7 +108,7 @@ namespace VoidManager.Chat.Additions
                                         matches.Add(playerName);
                                     }
                                 }
-                                break;
+                                goto default;
                             default:
                                 displayOnly.Add(argumentName);
                                 break;
