@@ -8,6 +8,8 @@ namespace VoidManager.Chat
 {
     class HelpCommand : ChatCommand
     {
+        private List<Argument> cachedArguments;
+
         public override string[] CommandAliases()
             => new string[] { "help", "?" };
 
@@ -17,10 +19,27 @@ namespace VoidManager.Chat
         public override string[] UsageExamples()
             => new List<string>(base.UsageExamples()).Concat(new string[] { $"/{CommandAliases()[0]} help" }).ToArray();
 
-        /*public override string[][] Arguments()
+        public override List<Argument> Arguments()
         {
-            return new string[][] { new string[] { "%command", "%page_number" } };
-        }*/
+            if (cachedArguments != null)
+            {
+                return cachedArguments;
+            }
+            else
+            {
+                List<string> argumentList = new();
+                foreach (ChatCommand command in CommandHandler.GetCommands())
+                {
+                    foreach (string alias in command.CommandAliases())
+                    {
+                        argumentList.Add(alias);
+                    }
+                }
+                cachedArguments = new List<Argument>() { new Argument(argumentList.ToArray()) };
+
+                return cachedArguments;
+            }
+        }
 
         public override void Execute(string arguments)
         {
@@ -30,7 +49,7 @@ namespace VoidManager.Chat
                 {
                     arguments = arguments.Substring(1);
                 }
-                ChatCommand cmd = CommandHandler.GetCommand(arguments.Split(' ')[0]);
+                ChatCommand cmd = CommandHandler.GetCommand(arguments.Split(' ')[0].ToLower());
                 StringBuilder stringBuilder = new();
                 if (cmd != null)
                 {

@@ -6,6 +6,7 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using VoidManager.Chat.Additions;
 using VoidManager.Chat.Router;
 using static VoidManager.BepinPlugin.Bindings;
 
@@ -50,9 +51,19 @@ namespace VoidManager
             Chainloader.ManagerObject.hideFlags = HideFlags.HideAndDontSave;
 
             Events.Instance.ChatWindowOpened += ChatHistory.OnChatOpened;
-            Events.Instance.ChatWindowClosed += ChatHistory.OnChatClosed;
             Events.Instance.ChatWindowOpened += CursorUnlock.OnChatOpened;
+            Events.Instance.ChatWindowOpened += AutoComplete.OnChatOpened;
+            Events.Instance.ChatWindowClosed += ChatHistory.OnChatClosed;
             Events.Instance.ChatWindowClosed += CursorUnlock.OnChatClosed;
+            Events.Instance.ChatWindowClosed += AutoComplete.OnChatClosed;
+            Events.Instance.LateUpdate += ChatHistory.Tick;
+            Events.Instance.LateUpdate += AutoComplete.Tick;
+            Events.Instance.JoinedRoom += PublicCommandHandler.RefreshPublicCommandCache;
+            Events.Instance.ClientModlistRecieved += PublicCommandHandler.RefreshPublicCommandCache;
+            Events.Instance.MasterClientSwitched += PublicCommandHandler.RefreshPublicCommandCache;
+            Events.Instance.PlayerEnteredRoom += AutoComplete.RefreshPlayerList;
+            Events.Instance.PlayerLeftRoom += AutoComplete.RefreshPlayerList;
+            Events.Instance.JoinedRoom += AutoComplete.RefreshPlayerList;
 
             Log.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
         }

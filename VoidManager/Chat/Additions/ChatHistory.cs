@@ -1,5 +1,4 @@
 ﻿using BepInEx;
-using CG.Game.Player;
 using Gameplay.Chat;
 using HarmonyLib;
 using System;
@@ -9,9 +8,8 @@ using UI.Chat;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace VoidManager.Chat.Router
+namespace VoidManager.Chat.Additions
 {
-    [HarmonyPatch(typeof(LocalPlayer))]
     internal class ChatHistory
     {
         private static readonly FieldInfo chatUIField = AccessTools.Field(typeof(TextChat), "_chatUI");
@@ -21,11 +19,9 @@ namespace VoidManager.Chat.Router
         private static readonly List<string> chatHistory = new();
         private static int historyIndex = -1;
 
-        internal static bool chatOpen = false;
+        private static bool chatOpen = false;
 
-        [HarmonyPostfix]
-        [HarmonyPatch("FixedUpdate")]
-        static void Tick()
+        internal static void Tick(object sender, EventArgs e)
         {
             if (!chatOpen) return;
 
@@ -51,6 +47,8 @@ namespace VoidManager.Chat.Router
                 if (historyIndex >= 0)
                 {
                     inputField.value = chatHistory[historyIndex];
+                    inputField.cursorIndex = inputField.text.Length;
+                    inputField.selectIndex = inputField.text.Length;
                 }
                 else
                 {

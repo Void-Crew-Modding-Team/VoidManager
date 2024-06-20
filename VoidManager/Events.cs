@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using CG.Game;
+using HarmonyLib;
 using Photon.Realtime;
 using System;
 using UI.Chat;
@@ -148,6 +149,20 @@ namespace VoidManager
             static void HideChatWindow()
             {
                 Instance.ChatWindowClosed.Invoke(Instance, EventArgs.Empty);
+            }
+        }
+
+        /// <summary>
+        /// Runs once per frame
+        /// </summary>
+        public event EventHandler LateUpdate;
+
+        [HarmonyPatch(typeof(ClientGame), "LateUpdate")]
+        static class ClientGamePatch
+        {
+            static void Postfix()
+            {
+                Instance.LateUpdate.Invoke(Instance, EventArgs.Empty);
             }
         }
     }
