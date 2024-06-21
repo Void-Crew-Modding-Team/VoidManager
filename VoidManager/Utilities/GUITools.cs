@@ -96,11 +96,11 @@ namespace VoidManager.Utilities
         }
 
         /// <summary>
-        /// Creates a checkbox with a label to the right
+        /// Creates a normal Toggle with button-like behaviour.
         /// </summary>
-        /// <param name="label"></param>
-        /// <param name="isOn"></param>
-        /// <returns>true if the value is changed, false otherwise</returns>
+        /// <param name="label">Text</param>
+        /// <param name="isOn">Ref to a bool which tracks current value.</param>
+        /// <returns>true on value change, false otherwise</returns>
         public static bool DrawCheckbox(string label, ref bool isOn)
         {
             bool result = Toggle(isOn, label);
