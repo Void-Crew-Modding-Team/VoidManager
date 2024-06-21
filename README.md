@@ -25,6 +25,10 @@ Notes on Multiplayer mod checks: By default, any given mod must be installed by 
 - VoidManager rooms marked with yellow [M], and red [M] when session has all or higher mods.
 - '[Modded]' added to modded session names, with '[Mods Required]' added to applicable sessions.
 - Mod settings UI
+- Hides Chanloader object for developers
+- Unlocks mouse while using text chat
+- Chat input history
+- Command Auto-complete via tab
 
 ### 🎮 Client Usage
 
@@ -48,12 +52,11 @@ Drag and drop `VoidManager.dll` into `Void Crew\BepInEx\plugins`
 
 ---------------------
 
-### 🤔 Development Guide **Documentation to create Void Manager mods is** [on the wiki](https://github.com/Void-Crew-Modding-Team/VoidManager/wiki)
+### 🤔 Development Guide - **Documentation to create Void Manager mods is** [on the wiki](https://github.com/Void-Crew-Modding-Team/VoidManager/wiki)
 
 ---------------------
 
 ### Future Plans:
 
-- Sent Message History
 - mod whitelist/blacklisting
 - Client ability to view a room's mod list before joining.
