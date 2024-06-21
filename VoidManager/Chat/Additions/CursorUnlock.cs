@@ -1,7 +1,7 @@
 ﻿using CG.Input;
 using System;
 
-namespace VoidManager.Chat.Router
+namespace VoidManager.Chat.Additions
 {
     internal class CursorUnlock : IShowCursorSource
     {

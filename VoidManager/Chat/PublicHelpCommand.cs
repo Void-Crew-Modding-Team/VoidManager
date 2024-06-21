@@ -18,8 +18,34 @@ namespace VoidManager.Chat
         public override string[] UsageExamples()
             => new List<string>(base.UsageExamples()).Concat(new string[] { $"!{CommandAliases()[0]} help" }).ToArray();
 
-        /*public override string[][] Arguments()
-            => new string[][] { new string[] { "%command", "%page_number" } };*/
+        public override List<Argument> Arguments()
+        {
+            List<string> argumentList = new();
+
+            //Required to avoid issues when PublicCommandHandler generates publicCommands
+            if (PhotonNetwork.IsMasterClient)
+            {
+                foreach (PublicCommand command in CommandHandler.GetPublicCommands())
+                {
+                    foreach (string alias in command.CommandAliases())
+                    {
+                        argumentList.Add(alias);
+                    }
+                }
+                return new List<Argument>() { new Argument(argumentList.ToArray()) };
+            }
+            else
+            {
+                foreach (Argument argument in PublicCommandHandler.publicCommands)
+                {
+                    foreach (string alias in argument.names)
+                    {
+                        argumentList.Add(alias);
+                    }
+                }
+                return new List<Argument>() { new Argument(argumentList.ToArray()) };
+            }
+        }
 
         public override void Execute(string arguments, int senderId)
         {
@@ -55,15 +81,14 @@ namespace VoidManager.Chat
             {
                 IOrderedEnumerable<PublicCommand> commands = CommandHandler.GetPublicCommands();
 
-                StringBuilder stringBuilder = new();
-                stringBuilder.AppendLine("<color=green>Public Command List:</color>");
+                //Send multiple messages to avoid VivoxApiException: Message text too long
+                Messaging.Echo("<color=green>Public Command List:</color>", false);
                 foreach (PublicCommand command in commands)
                 {
-                    stringBuilder.AppendLine($"<color=#3f7fff>!{command.CommandAliases()[0]}</color> - {command.Description()}");
+                    Messaging.Echo($"<color=#3f7fff>!{command.CommandAliases()[0]}</color> - {command.Description()}", false);
 
                 }
-                stringBuilder.AppendLine("Use <color=green>!help <command></color> for details about a specific public command");
-                Messaging.Echo(stringBuilder.ToString(), false);
+                Messaging.Echo("Use <color=green>!help <command></color> for details about a specific public command", false);
             }
         }
     }
