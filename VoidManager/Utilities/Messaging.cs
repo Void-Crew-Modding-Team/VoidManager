@@ -26,6 +26,7 @@ namespace VoidManager.Utilities
         /// <param name="timeoutMs"></param>
         public static void Notification(string message, long timeoutMs)
         {
+            if (TextChat.Instance == null) return;
             TextChatVE chatUI = (TextChatVE)chatUIField.GetValue(TextChat.Instance);
             ScrollView logView = (ScrollView)logViewField.GetValue(chatUI);
 
