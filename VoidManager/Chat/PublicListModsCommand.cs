@@ -19,8 +19,6 @@ namespace VoidManager.Chat
 
         public override void Execute(string arguments, int SenderID)
         {
-            if (!PhotonNetwork.IsMasterClient) return;
-
             if (hostMods == null) FindHostMods();
 
             //Send multiple messages to avoid VivoxApiException: Message text too long

@@ -49,8 +49,6 @@ namespace VoidManager.Chat
 
         public override void Execute(string arguments, int senderId)
         {
-            if (!PhotonNetwork.IsMasterClient) return;
-
             if (!string.IsNullOrWhiteSpace(arguments))
             {
                 if (arguments[0] == '!')
