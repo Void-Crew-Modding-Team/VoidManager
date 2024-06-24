@@ -22,15 +22,16 @@ namespace VoidManager.Utilities
         /// Inserts a line to text chat with reference to the executing assembly.<br/>
         /// Removes it after timeoutMs milliseconds
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="timeoutMs"></param>
-        public static void Notification(string message, long timeoutMs)
+        /// <param name="message">The message to display</param>
+        /// <param name="timeoutMs">Number of milliseconds to display the message before deleting it</param>
+        /// <param name="noPrefix">Don't include the mod name at the start of the message</param>
+        public static void Notification(string message, long timeoutMs, bool noPrefix = false)
         {
             if (TextChat.Instance == null) return;
             TextChatVE chatUI = (TextChatVE)chatUIField.GetValue(TextChat.Instance);
             ScrollView logView = (ScrollView)logViewField.GetValue(chatUI);
 
-            Notification(message);
+            Notification(message, noPrefix);
 
             VisualElement log = logView.ElementAt(logView.childCount - 1);
             chatUI.schedule.Execute(() => logView.Remove(log)).ExecuteLater(timeoutMs);
@@ -39,11 +40,12 @@ namespace VoidManager.Utilities
         /// <summary>
         /// Inserts a line to text chat with reference to the executing assembly.
         /// </summary>
-        /// <param name="message"></param>
-        public static void Notification(string message)
+        /// <param name="message">The message to display</param>
+        /// <param name="noPrefix">Don't include the mod name at the start of the message</param>
+        public static void Notification(string message, bool noPrefix = false)
         {
             Assembly assembly = Assembly.GetCallingAssembly();
-            TextChat.Instance.AddLog(new Log($"{assembly.FullName.Split(',')[0]}", message));
+            TextChat.Instance?.AddLog(new Log($"{(noPrefix ? "" : assembly.FullName.Split(',')[0])}", message));
         }
 
         /// <summary>
