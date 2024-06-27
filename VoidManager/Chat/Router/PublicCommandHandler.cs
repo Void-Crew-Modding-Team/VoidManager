@@ -8,6 +8,7 @@ namespace VoidManager.Chat.Router
 {
     internal class PublicCommandHandler : ModMessage
     {
+        private const int version = 1;
         private static List<Argument> localPublicCommandsCache = null;
         private static List<Argument> LocalPublicCommands { get => localPublicCommandsCache ??= GetLocalPublicCommands(); }
 
@@ -20,15 +21,15 @@ namespace VoidManager.Chat.Router
                 BepinPlugin.Log.LogInfo($"Received message from {sender.NickName} with no version");
                 return;
             }
-            if (objects[0] as string != MyPluginInfo.PLUGIN_VERSION)
+            if (version != (int)objects[0])
             {
-                BepinPlugin.Log.LogInfo($"Received message from {sender.NickName} with version {objects[0] as string}, expected version {MyPluginInfo.PLUGIN_VERSION}");
+                BepinPlugin.Log.LogInfo($"Received message from {sender.NickName} with version {objects[0] as string}, expected version {version}");
                 return;
             }
 
             if (objects.Length == 1)
             {
-                Send(MyPluginInfo.PLUGIN_GUID, GetIdentifier(typeof(PublicCommandHandler)), sender, new object[] { MyPluginInfo.PLUGIN_VERSION, Argument.ToByteArray(publicCommands) });
+                Send(MyPluginInfo.PLUGIN_GUID, GetIdentifier(typeof(PublicCommandHandler)), sender, new object[] { version, Argument.ToByteArray(publicCommands) });
             }
             else
             {
@@ -38,7 +39,7 @@ namespace VoidManager.Chat.Router
 
         public static void RequestPublicCommands()
         {
-            Send(MyPluginInfo.PLUGIN_GUID, GetIdentifier(typeof(PublicCommandHandler)), PhotonNetwork.MasterClient, new object[] { MyPluginInfo.PLUGIN_VERSION });
+            Send(MyPluginInfo.PLUGIN_GUID, GetIdentifier(typeof(PublicCommandHandler)), PhotonNetwork.MasterClient, new object[] { version });
         }
 
         private static List<Argument> GetLocalPublicCommands()
