@@ -23,7 +23,7 @@ namespace VoidManager.Chat.Router
             alias = alias.ToLower();
             try
             {
-                if (publicCommand && Photon.Pun.PhotonNetwork.IsMasterClient) { if (publicCommands.ContainsKey(alias)) publicCommands[alias].Execute(arguments, playerId); }
+                if (publicCommand) { if (Photon.Pun.PhotonNetwork.IsMasterClient && publicCommands.ContainsKey(alias)) publicCommands[alias].Execute(arguments, playerId); }
                 else if (chatCommands.ContainsKey(alias)) chatCommands[alias].Execute(arguments);
                 else BepinPlugin.Log.LogInfo($"'{(publicCommand ? "!" : "/")}{alias} {arguments}' cound not be found!");
             }
