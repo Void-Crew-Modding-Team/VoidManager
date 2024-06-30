@@ -1,4 +1,5 @@
-﻿using Photon.Pun;
+﻿using BepInEx.Configuration;
+using Photon.Pun;
 using System;
 using UnityEngine;
 using VoidManager.CustomGUI;
@@ -39,7 +40,7 @@ namespace VoidManager.Utilities
         /// <summary>
         /// Creates a button that when pressed allows the user to enter a new keybind.
         /// </summary>
-        /// <param name="buttonName"></param>
+        /// <param name="buttonName">Must not be null or empty. Should be unique.</param>
         /// <param name="keybind"></param>
         /// <returns>true when a keybind is set, false otherwise</returns>
         /// <exception cref="ArgumentException"></exception>
@@ -74,6 +75,24 @@ namespace VoidManager.Utilities
                 keybindToChange = buttonName;
             }
             return keybindChanged;
+        }
+
+        /// <summary>
+        /// Creates a button that when pressed allows the user to enter a new keybind.
+        /// </summary>
+        /// <param name="buttonName">Must not be null or empty. Should be unique.</param>
+        /// <param name="keybindConfig"></param>
+        /// <returns>true when a keybind is set, false otherwise</returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static bool DrawChangeKeybindButton(string buttonName, ref ConfigEntry<KeyCode> keybindConfig)
+        {
+            KeyCode temp = keybindConfig.Value;
+            bool result = DrawChangeKeybindButton(buttonName, ref temp);
+            if (result)
+            {
+                keybindConfig.Value = temp;
+            }
+            return result;
         }
 
         /// <summary>
@@ -113,6 +132,23 @@ namespace VoidManager.Utilities
         }
 
         /// <summary>
+        /// Creates a normal Toggle with button-like behaviour.
+        /// </summary>
+        /// <param name="label">Text</param>
+        /// <param name="config">Ref to a bool config entry which tracks current value.</param>
+        /// <returns>true on value change, false otherwise</returns>
+        public static bool DrawCheckbox(string label, ref ConfigEntry<bool> config)
+        {
+            bool result = Toggle(config.Value, label);
+            if (result != config.Value)
+            {
+                config.Value = result;
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="rect"></param>
@@ -121,9 +157,12 @@ namespace VoidManager.Utilities
         /// <param name="showAlpha"></param>
         /// <param name="min"></param>
         /// <param name="max"></param>
-        /// <returns></returns>
-        public static void DrawColorPicker(Rect rect, string label, ref Color color, bool showAlpha = true, float min = 0, float max = 20)
+        /// <returns>true on value change, false otherwise</returns>
+        public static bool DrawColorPicker(Rect rect, string label, ref Color color, bool showAlpha = true, float min = 0, float max = 20)
         {
+            bool changed = false;
+            float tempComponent;
+
             BeginArea(rect, "", "Box");
             BeginHorizontal();
             Label(label);
@@ -133,24 +172,44 @@ namespace VoidManager.Utilities
 
             BeginHorizontal();
             Label("R", Width(10));
-            HorizontalSlider(color.r, min, max);
+            tempComponent = HorizontalSlider(color.r, min, max);
+            if (tempComponent != color.r)
+            {
+                color.r = tempComponent;
+                changed = true;
+            }
             EndHorizontal();
 
             BeginHorizontal();
             Label("G", Width(10));
-            HorizontalSlider(color.g, min, max);
+            tempComponent = HorizontalSlider(color.g, min, max);
+            if (tempComponent != color.g)
+            {
+                color.g = tempComponent;
+                changed = true;
+            }
             EndHorizontal();
 
             BeginHorizontal();
             Label("B", Width(10));
-            HorizontalSlider(color.b, min, max);
+            tempComponent = HorizontalSlider(color.b, min, max);
+            if (tempComponent != color.b)
+            {
+                color.b = tempComponent;
+                changed = true;
+            }
             EndHorizontal();
 
             if (showAlpha)
             {
                 BeginHorizontal();
                 Label("A", Width(10));
-                HorizontalSlider(color.a, min, Mathf.Min(max, 1));
+                tempComponent = HorizontalSlider(color.a, min, Mathf.Min(max, 1));
+                if (tempComponent != color.a)
+                {
+                    color.a = tempComponent;
+                    changed = true;
+                }
                 EndHorizontal();
             }
 
@@ -165,6 +224,8 @@ namespace VoidManager.Utilities
             EndHorizontal();
             Label($"{color.r:0.00}, {color.g:0.00}, {color.b:0.00}" + (showAlpha ? $", {color.a:0.00}" : ""));
             EndArea();
+
+            return changed;
         }
     }
 }
