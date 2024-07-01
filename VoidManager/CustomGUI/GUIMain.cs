@@ -305,7 +305,7 @@ namespace VoidManager.CustomGUI
         private static readonly Color32 _classicMenuBackground = new Color32(32, 32, 32, 255);
         private static readonly Color32 _classicButtonBackground = new Color32(40, 40, 40, 255);
         //private static readonly Color32 _hoverButtonFromMenu = new Color32(18, 79, 179, 255);
-        GUISkin ChangeSkin()
+        internal GUISkin ChangeSkin()
         {
             if (_cachedSkin is null || _cachedSkin.window.active.background is null)
             {
