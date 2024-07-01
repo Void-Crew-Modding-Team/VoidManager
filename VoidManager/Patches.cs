@@ -16,7 +16,8 @@ namespace VoidManager
             BepinPlugin.Log.LogInfo($"- - - Void Manager Initialization - - -");
 
             new GameObject("ModManager", typeof(CustomGUI.GUIMain)) { hideFlags = HideFlags.HideAndDontSave };
-            
+            new GameObject("ModList", typeof(ModListGUI)) { hideFlags = HideFlags.HideAndDontSave };
+
             PluginHandler.DiscoverPlugins();
 
             MPModCheckManager.Instance = new MPModCheckManager();
