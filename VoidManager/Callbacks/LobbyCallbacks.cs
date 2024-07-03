@@ -1,8 +1,8 @@
-﻿using Client.Utils;
 using HarmonyLib;
 using Photon.Realtime;
 using System.Collections.Generic;
 using UI.Core;
+using System.Linq;
 using UI.Matchmaking;
 
 namespace VoidManager.Callbacks
@@ -13,7 +13,7 @@ namespace VoidManager.Callbacks
         public static LobbyCallbacks Instance;
         public MatchmakingTerminal ActiveTerminal;
         public TabsRibbon Tabs;
-        public List<RoomInfo> RoomList;
+        public List<RoomInfo> RoomList = new List<RoomInfo>();
 
         public void OnJoinedLobby()
         {
@@ -30,8 +30,35 @@ namespace VoidManager.Callbacks
 
         public void OnRoomListUpdate(List<RoomInfo> roomList)
         {
-            BepinPlugin.Log.LogInfo("Copying room");
-            RoomList = roomList.DeepCopy();
+            foreach (RoomInfo roomInfo in roomList)
+            {
+                int i = 0;
+                RoomInfo foundRoom = null;
+                for(; i < RoomList.Count; i++)
+                {
+                    if (RoomList[i].Name == roomInfo.Name)
+                    {
+                        foundRoom = RoomList[i];
+                        break;
+                    }
+                }
+
+                if (foundRoom != null)
+                {
+                    if (roomInfo.RemovedFromList)
+                    {
+                        RoomList.Remove(foundRoom);
+                    }
+                    else
+                    {
+                        RoomList[i] = roomInfo;
+                    }
+                }
+                else if (!roomInfo.RemovedFromList)
+                {
+                    RoomList.Add(roomInfo);
+                }
+            }
         }
     }
     [HarmonyPatch(typeof(MatchmakingHandler), "Awake")]
