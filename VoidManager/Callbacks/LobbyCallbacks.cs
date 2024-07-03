@@ -31,7 +31,16 @@ namespace VoidManager.Callbacks
         {
             foreach (RoomInfo roomInfo in roomList)
             {
-                RoomInfo foundRoom = RoomList.FirstOrDefault(thing => thing.Name == roomInfo.Name);
+                int i = 0;
+                RoomInfo foundRoom = null;
+                for(; i < RoomList.Count; i++)
+                {
+                    if (RoomList[i].Name == roomInfo.Name)
+                    {
+                        foundRoom = RoomList[i];
+                        break;
+                    }
+                }
 
                 if (foundRoom != null)
                 {
@@ -41,7 +50,7 @@ namespace VoidManager.Callbacks
                     }
                     else
                     {
-                        foundRoom = roomInfo;
+                        RoomList[i] = roomInfo;
                     }
                 }
                 else if (!roomInfo.RemovedFromList)
