@@ -4,7 +4,6 @@ using Photon.Realtime;
 using System.Collections.Generic;
 using UI.Core;
 using UI.Matchmaking;
-using VoidManager.MPModChecks;
 
 namespace VoidManager.Callbacks
 {
@@ -33,7 +32,6 @@ namespace VoidManager.Callbacks
         {
             BepinPlugin.Log.LogInfo("Copying room");
             RoomList = roomList.DeepCopy();
-            ModListGUI.Instance.GUIClose();
         }
     }
     [HarmonyPatch(typeof(MatchmakingHandler), "Awake")]
