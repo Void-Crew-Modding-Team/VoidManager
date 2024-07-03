@@ -149,6 +149,35 @@ namespace VoidManager.Utilities
         }
 
         /// <summary>
+        /// Draws a label, text field, apply button, and reset button<br/>
+        /// 
+        /// </summary>
+        /// <param name="label"></param>
+        /// <param name="value">The value currently in the text field</param>
+        /// <param name="defaultValue">The value after the reset button is pressed</param>
+        /// <param name="minWidth">minimum width of the input text field</param>
+        /// <returns>true when the apply or reset button is pressed, false otherwise</returns>
+        public static bool DrawTextField(string label, ref string value, string defaultValue, float minWidth = 80)
+        {
+            bool changed = false;
+            BeginHorizontal();
+            Label($"{label}: ");
+            value = TextField(value, MinWidth(minWidth));
+            FlexibleSpace();
+            if (Button("Apply"))
+            {
+                changed = true;
+            }
+            if (Button("Reset"))
+            {
+                value = defaultValue;
+                changed = true;
+            }
+            EndHorizontal();
+            return changed;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="rect"></param>
