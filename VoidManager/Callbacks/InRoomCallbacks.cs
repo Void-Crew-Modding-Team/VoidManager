@@ -101,8 +101,6 @@ namespace VoidManager.Callbacks
                 if (Singleton<GameStateMachine>.Instance.CurrentState is GSSpawn)//fixes bug with vanilla getting kicked too early. Treated like a normal photon disconnect, but the error code will be the input value.
                 {
                     BepinPlugin.Log.LogInfo("Kicked while in GSSpawn State.");
-                    Singleton<GameStateMachine>.Instance.GetState<GSPhotonDisconnected>().MessageHeaderOverride = "Kicked";
-                    Singleton<GameStateMachine>.Instance.GetState<GSPhotonDisconnected>().MessageBodyOverride = "Kicked on join.";
                     Singleton<GameStateMachine>.Instance.ChangeState<GSPhotonDisconnected>();
                 }
             }
