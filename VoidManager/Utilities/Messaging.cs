@@ -3,6 +3,7 @@ using Gameplay.Chat;
 using HarmonyLib;
 using Photon.Pun;
 using Photon.Realtime;
+using System;
 using System.Reflection;
 using UI.Chat;
 using UnityEngine.UIElements;
@@ -46,6 +47,17 @@ namespace VoidManager.Utilities
         {
             Assembly assembly = Assembly.GetCallingAssembly();
             TextChat.Instance?.AddLog(new Log($"{(noPrefix ? "" : assembly.FullName.Split(',')[0])}", message));
+        }
+
+        /// <summary>
+        /// Inserts a line to text chat with reference to the executing assembly.
+        /// </summary>
+        /// <param name="message">The message to display</param>
+        [Obsolete("Please use Notification(string, bool)")]
+        public static void Notification(string message)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            TextChat.Instance?.AddLog(new Log($"{assembly.FullName.Split(',')[0]}", message));
         }
 
         /// <summary>
