@@ -19,16 +19,24 @@ Notes on Multiplayer mod checks: By default, any given mod must be installed by 
 - Restrictions for unspecified mods
 - Manual configuration of unspecified mods
 - Listing of other players' mod lists
-- API for local and public chat commands
-- Mod to mod messages (including between different clients)
-- API for recipe and unlock modifications
-- VoidManager rooms marked with yellow [M], and red [M] when session has all or higher mods.
-- '[Modded]' added to modded session names, with '[Mods Required]' added to applicable sessions.
+- '[Modded]' added to modded session names, with '[Mods Required]' added to applicable sessions. VoidManager clients view as yellow and red '[M]' respectably.
+- Room mods list in Matchmaking terminal
 - Mod settings UI
-- Hides Chanloader object for developers
+- Hides Chainloader object for developers
 - Unlocks mouse while using text chat
 - Chat input history
 - Command Auto-complete via tab
+
+## ⌨ API
+- Mod MPType Specification
+- local and public chat commands
+- Networked Mod to mod messages
+- Detection of mods installed on other clients
+- Networking events
+- Recipe and unlock modifications
+- Mod settings UI
+- Notification API
+- Harmony Transpiler Patching API
 
 ### 🎮 Client Usage
 
@@ -59,4 +67,3 @@ Drag and drop `VoidManager.dll` into `Void Crew\BepInEx\plugins`
 ### Future Plans:
 
 - mod whitelist/blacklisting
-- Client ability to view a room's mod list before joining.
