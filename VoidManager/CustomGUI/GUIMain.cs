@@ -309,7 +309,7 @@ namespace VoidManager.CustomGUI
         {
             if (_cachedSkin is null || _cachedSkin.window.active.background is null)
             {
-                _cachedSkin = GUI.skin;
+                _cachedSkin = Instantiate(GUI.skin);
                 Texture2D windowBackground = BuildTexFrom1Color(_classicMenuBackground);
                 _cachedSkin.window.active.background = windowBackground;
                 _cachedSkin.window.onActive.background = windowBackground;
