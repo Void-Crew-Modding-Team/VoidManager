@@ -149,6 +149,44 @@ namespace VoidManager.Utilities
         }
 
         /// <summary>
+        /// Creates a horizontal slider
+        /// </summary>
+        /// <param name="value">The position of the slider</param>
+        /// <param name="leftValue">The minimum value</param>
+        /// <param name="rightValue">The maximum value</param>
+        /// <returns>true on value change, false otherwise</returns>
+        public static bool DrawSlider(ref float value, float leftValue, float rightValue)
+        {
+            bool changed = false;
+            float newValue = HorizontalSlider(value, leftValue, rightValue);
+            if (newValue != value)
+            {
+                changed = true;
+                value = newValue;
+            }
+            return changed;
+        }
+
+        /// <summary>
+        /// Creates a horizontal slider
+        /// </summary>
+        /// <param name="entry">The position of the slider</param>
+        /// <param name="leftValue">The minimum value</param>
+        /// <param name="rightValue">The maximum value</param>
+        /// <returns>true on value change, false otherwise</returns>
+        public static bool DrawSlider(ref ConfigEntry<float> entry, float leftValue, float rightValue)
+        {
+            bool changed = false;
+            float newValue = HorizontalSlider(entry.Value, leftValue, rightValue);
+            if (newValue != entry.Value)
+            {
+                changed = true;
+                entry.Value = newValue;
+            }
+            return changed;
+        }
+
+        /// <summary>
         /// Draws a label, text field, apply button, and reset button<br/>
         /// 
         /// </summary>
