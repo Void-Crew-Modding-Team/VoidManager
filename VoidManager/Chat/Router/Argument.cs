@@ -31,7 +31,40 @@ namespace VoidManager.Chat.Router
         }
 
         /// <summary>
-        /// A argument with a list of arguments to follow it
+        /// An argument with a list of arguments to follow it
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="argument"></param>
+        public Argument(string name, Argument argument)
+        {
+            this.names = new string[] { name };
+            this.arguments = new() { argument };
+        }
+
+        /// <summary>
+        /// An argument with a list of arguments to follow it
+        /// </summary>
+        /// <param name="names"></param>
+        /// <param name="argument"></param>
+        public Argument(string[] names, Argument argument)
+        {
+            this.names = names;
+            this.arguments = new() { argument };
+        }
+
+        /// <summary>
+        /// An argument with a list of arguments to follow it
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="arguments"></param>
+        public Argument(string name, List<Argument> arguments)
+        {
+            this.names = new string[] { name };
+            this.arguments = arguments;
+        }
+
+        /// <summary>
+        /// An argument with a list of arguments to follow it
         /// </summary>
         /// <param name="names"></param>
         /// <param name="arguments"></param>
