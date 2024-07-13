@@ -1,6 +1,6 @@
 [![](https://img.shields.io/badge/-Void_Crew_Modding_Team-111111?style=just-the-label&logo=github&labelColor=24292f)](https://github.com/Void-Crew-Modding-Team)
 [![](https://img.shields.io/github/v/release/Void-Crew-Modding-Team/VoidManager?include_prereleases&style=flat&label=Release%20Version&labelColor=24292f&color=111111)](https://github.com/Void-Crew-Modding-Team/VoidManager/releases/)
-![](https://img.shields.io/badge/Game%20Version-0.26.2-111111?style=flat&labelColor=24292f&color=111111)
+![](https://img.shields.io/badge/Game%20Version-0.26.3-111111?style=flat&labelColor=24292f&color=111111)
 [![](https://img.shields.io/github/license/Void-Crew-Modding-Team/VoidManager?style=flat&label=License&labelColor=24292f&color=111111)](https://github.com/Void-Crew-Modding-Team/VoidManager/blob/master/LICENSE)
 [![](https://img.shields.io/discord/1180651062550593536.svg?&logo=discord&logoColor=ffffff&style=flat&label=Discord&labelColor=24292f&color=111111)](https://discord.gg/g2u5wpbMGu "Void Crew Modding Discord")
 
@@ -37,6 +37,7 @@ Notes on Multiplayer mod checks: By default, any given mod must be installed by 
 - Mod settings UI
 - Notification API
 - Harmony Transpiler Patching API
+- Various Utilities
 
 ### 🎮 Client Usage
 
