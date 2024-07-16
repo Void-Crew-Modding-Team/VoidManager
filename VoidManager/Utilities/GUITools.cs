@@ -220,12 +220,13 @@ namespace VoidManager.Utilities
         /// </summary>
         /// <param name="rect"></param>
         /// <param name="label"></param>
-        /// <param name="color"></param>
+        /// <param name="color">The color to be changed</param>
+        /// <param name="resetColor">The color to load when the reset button is pressed</param>
         /// <param name="showAlpha"></param>
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns>true on value change, false otherwise</returns>
-        public static bool DrawColorPicker(Rect rect, string label, ref Color color, bool showAlpha = true, float min = 0, float max = 20)
+        public static bool DrawColorPicker(Rect rect, string label, ref Color color, Color resetColor, bool showAlpha = true, float min = 0, float max = 20)
         {
             bool changed = false;
             float tempComponent;
@@ -289,7 +290,19 @@ namespace VoidManager.Utilities
             GUI.color = temp;
             EndVertical();
             EndHorizontal();
+
+            BeginHorizontal();
             Label($"{color.r:0.00}, {color.g:0.00}, {color.b:0.00}" + (showAlpha ? $", {color.a:0.00}" : ""));
+            FlexibleSpace();
+            if (Button("Reset", Width(66)))
+            {
+                color.r = resetColor.r;
+                color.g = resetColor.g;
+                color.b = resetColor.b;
+                color.a = resetColor.a;
+                changed = true;
+            }
+            EndHorizontal();
             EndArea();
 
             return changed;
