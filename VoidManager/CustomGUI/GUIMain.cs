@@ -244,6 +244,9 @@ namespace VoidManager.CustomGUI
                             }
                             else
                             {
+                                GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+                                Label(selectedSettings.Name());
+                                GUI.skin.label.alignment = BepinPlugin.Bindings.ModInfoTextAnchor.Value;
                                 if (Button("Back"))
                                 {
                                     LeaveSettingsMenu();
