@@ -19,14 +19,15 @@ namespace VoidManager.MPModChecks
         {
             List<CodeInstruction> targetSequence = new()
             {
-                new CodeInstruction(OpCodes.Ldstr, " Room")
+                new CodeInstruction(OpCodes.Ldstr, " Room"),
+                new CodeInstruction(OpCodes.Call)
             };
             List<CodeInstruction> patchSequence = new()
             {
                 new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(HostGameNamePatch), nameof(SetGameName)))
             };
 
-            return HarmonyHelpers.PatchBySequence(instructions, targetSequence, patchSequence, HarmonyHelpers.PatchMode.BEFORE, HarmonyHelpers.CheckMode.ALWAYS);
+            return HarmonyHelpers.PatchBySequence(instructions, targetSequence, patchSequence, HarmonyHelpers.PatchMode.AFTER, HarmonyHelpers.CheckMode.NONNULL);
         }
 
         public static string SetGameName(string name)
