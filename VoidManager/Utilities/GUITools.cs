@@ -1,6 +1,8 @@
 ﻿using BepInEx.Configuration;
 using Photon.Pun;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using VoidManager.CustomGUI;
 using static UnityEngine.GUILayout;
@@ -187,14 +189,13 @@ namespace VoidManager.Utilities
         }
 
         /// <summary>
-        /// Draws a label, text field, apply button, and reset button<br/>
-        /// 
+        /// Draws a label, text field, apply button, and reset button
         /// </summary>
         /// <param name="label"></param>
         /// <param name="value">The value currently in the text field</param>
         /// <param name="defaultValue">The value after the reset button is pressed</param>
         /// <param name="minWidth">minimum width of the input text field</param>
-        /// <returns>true when the apply or reset button is pressed, false otherwise</returns>
+        /// <returns>true when the Apply or Reset button is pressed, false otherwise</returns>
         public static bool DrawTextField(string label, ref string value, string defaultValue, float minWidth = 80)
         {
             bool changed = false;
@@ -209,6 +210,46 @@ namespace VoidManager.Utilities
             if (Button("Reset"))
             {
                 value = defaultValue;
+                changed = true;
+            }
+            EndHorizontal();
+            return changed;
+        }
+
+        private static readonly Dictionary<object, string> TextFieldStrings = new();
+
+        /// <summary>
+        /// Draws a label, text field, apply button, and reset button
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="label"></param>
+        /// <param name="entry">Changed only when the Apply or Reset button is pressed</param>
+        /// <param name="minWidth">minimum width of the input text field</param>
+        /// <returns>true when the Apply or Reset button is pressed, false otherwise</returns>
+        public static bool DrawTextField<T>(string label, ref ConfigEntry<T> entry, float minWidth = 80)
+        {
+            if (!TextFieldStrings.ContainsKey(entry)) TextFieldStrings.Add(entry, entry.Value.ToString());
+            bool changed = false;
+            BeginHorizontal();
+            Label($"{label}: ");
+            TextFieldStrings[entry] = TextField(TextFieldStrings[entry], MinWidth(minWidth));
+            FlexibleSpace();
+            if (Button("Apply"))
+            {
+                try
+                {
+                    entry.Value = (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromString(TextFieldStrings[entry]);
+                }
+                catch
+                {
+                    TextFieldStrings[entry] = entry.Value.ToString();
+                }
+                changed = true;
+            }
+            if (Button("Reset"))
+            {
+                entry.Value = (T)entry.DefaultValue;
+                TextFieldStrings[entry] = entry.Value.ToString();
                 changed = true;
             }
             EndHorizontal();
