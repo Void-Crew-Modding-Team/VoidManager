@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace VoidManager.Utilities
 {
@@ -8,7 +9,7 @@ namespace VoidManager.Utilities
     /// </summary>
     public class Tools
     {
-        private static List<Tuple<Action, DateTime>> tasks = new();
+        private static readonly Dictionary<object, (Action, DateTime)> uniqueTasks = new();
 
         /// <summary>
         /// Perform an action after a specified delay.<br/><br/>
@@ -18,29 +19,53 @@ namespace VoidManager.Utilities
         /// <param name="delayMs">The number of milliseconds to wait</param>
         public static void DelayDo(Action action, double delayMs)
         {
-            DateTime time = DateTime.Now.AddMilliseconds(delayMs);
-            tasks.Add(Tuple.Create(action, time));
+            DelayDoUnique(new object(), action, delayMs);
+        }
 
-            if (tasks.Count == 1)
+        /// <summary>
+        /// Perform an action after a specified delay.<br/>
+        /// Multiple calls with the same uniqueObject will replace the action and restart the delay<br/><br/>
+        /// Intended for short durations only. Not recommended for anything over a minute.
+        /// </summary>
+        /// <param name="uniqueObject">This is the only object checked for uniqueness<br/>action and delayMs are not checked</param>
+        /// <param name="action">The action to perform after waiting</param>
+        /// <param name="delayMs">The number of milliseconds to wait</param>
+        public static void DelayDoUnique(object uniqueObject, Action action, double delayMs)
+        {
+            uniqueTasks.Remove(uniqueObject);
+            uniqueTasks.Add(uniqueObject, (action, DateTime.Now.AddMilliseconds(delayMs)));
+
+            if (uniqueTasks.Count == 1)
             {
-                Events.Instance.LateUpdate += DoTasks;
+                Events.Instance.LateUpdate += DoUniqueTasks;
             }
         }
 
-        private static void DoTasks(object sender, EventArgs e)
+        /// <summary>
+        /// Removes an action without invoking it
+        /// </summary>
+        /// <param name="uniqueObject"></param>
+        /// <returns>True if the object was found and the action removed, false otherwise</returns>
+        public static bool CancelDelayDoUnique(object uniqueObject)
         {
-            for (int i = tasks.Count - 1; i >= 0; i--)
+            return uniqueTasks.Remove(uniqueObject);
+        }
+
+        private static void DoUniqueTasks(object sender, EventArgs e)
+        {
+            for (int i = uniqueTasks.Count - 1; i >= 0; i--)
             {
-                if (tasks[i].Item2 <= DateTime.Now)
+                KeyValuePair<object, (Action, DateTime)> pair = uniqueTasks.ElementAt(i);
+                if (pair.Value.Item2 <= DateTime.Now)
                 {
-                    tasks[i].Item1.Invoke();
-                    tasks.RemoveAt(i);
+                    pair.Value.Item1.Invoke();
+                    uniqueTasks.Remove(pair.Key);
                 }
             }
 
-            if (tasks.Count == 0)
+            if (uniqueTasks.Count == 0)
             {
-                Events.Instance.LateUpdate -= DoTasks;
+                Events.Instance.LateUpdate -= DoUniqueTasks;
             }
         }
     }
