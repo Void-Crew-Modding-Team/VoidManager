@@ -44,7 +44,7 @@ namespace VoidManager.CustomGUI
 
         Rect ModSettingsArea;
         Vector2 ModSettingsScroll = Vector2.zero;
-        List<ModSettingsMenu> settings = new();
+        internal List<ModSettingsMenu> settings = new();
         ModSettingsMenu selectedSettings;
 
         internal void UpdateWindowSize()

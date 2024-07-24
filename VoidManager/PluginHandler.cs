@@ -85,6 +85,7 @@ namespace VoidManager
                     BepinPlugin.Log.LogError($"Error loading mod '{BPluginName}'\n{ex}");
                 }
             }
+            CustomGUI.GUIMain.Instance.settings.Sort((settings1, settings2) => settings1.Name().CompareTo(settings2.Name()));
             CustomGUI.GUIMain.Instance.mods.Sort((plugin1, plugin2) => plugin1.BepinPlugin.Metadata.Name.CompareTo(plugin2.BepinPlugin.Metadata.Name));
             BepinPlugin.Log.LogInfo($"Loaded {CommandHandler.chatCommandCount} local command(s) and {CommandHandler.publicCommandCount} public command(s)");
             BepinPlugin.Log.LogInfo($"Loaded {ModMessageHandler.modMessageHandlers.Count()} mod message(s)");
