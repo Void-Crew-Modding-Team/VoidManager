@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Security.Cryptography;
 using VoidManager.Chat.Router;
@@ -58,7 +57,7 @@ namespace VoidManager
                         CommandHandler.DiscoverCommands(assembly, BPluginName);
                         CommandHandler.DiscoverPublicCommands(assembly, BPluginName);
                         ModMessageHandler.DiscoverModMessages(assembly, CurrentBepinPlugin);
-                        CustomGUI.GUIMain.Instance.DiscoverGUIMenus(assembly, voidPlugin);
+                        GUIMain.Instance.DiscoverGUIMenus(assembly, voidPlugin);
                         ActiveVoidPlugins.Add(CurrentBepinPlugin.Metadata.GUID, voidPlugin);
                     }
                     else
@@ -77,7 +76,7 @@ namespace VoidManager
                         voidPlugin.VersionInfo = FileVersionInfo.GetVersionInfo(CurrentBepinPlugin.Location);
                         voidPlugin.ModHash = GetFileHash(CurrentBepinPlugin.Location);
                         voidPlugin.BepinPlugin = CurrentBepinPlugin;
-                        CustomGUI.GUIMain.Instance.DiscoverNonVManMod(voidPlugin);
+                        GUIMain.Instance.DiscoverNonVManMod(voidPlugin);
                         GeneratedVoidPlugins.Add(BPluginGUID, voidPlugin);
                     }
                 }
@@ -86,8 +85,8 @@ namespace VoidManager
                     BepinPlugin.Log.LogError($"Error loading mod '{BPluginName}'\n{ex}");
                 }
             }
-            CustomGUI.GUIMain.Instance.settings = CustomGUI.GUIMain.Instance.settings.OrderByDescending(v => v is VManSettings).ThenBy(v => v.Name()).ToList();
-            CustomGUI.GUIMain.Instance.mods.Sort((plugin1, plugin2) => plugin1.BepinPlugin.Metadata.Name.CompareTo(plugin2.BepinPlugin.Metadata.Name));
+            GUIMain.Instance.settings = GUIMain.Instance.settings.OrderByDescending(v => v is VManSettings).ThenBy(v => v.Name()).ToList();
+            GUIMain.Instance.mods.Sort((plugin1, plugin2) => plugin1.BepinPlugin.Metadata.Name.CompareTo(plugin2.BepinPlugin.Metadata.Name));
             BepinPlugin.Log.LogInfo($"Loaded {CommandHandler.chatCommandCount} local command(s) and {CommandHandler.publicCommandCount} public command(s)");
             BepinPlugin.Log.LogInfo($"Loaded {ModMessageHandler.modMessageHandlers.Count()} mod message(s)");
             BepinPlugin.Log.LogInfo($"Discovered {ActiveVoidPlugins.Count} VoidManager plugin(s) from {ActiveBepinPlugins.Count - 1} mod(s)");
