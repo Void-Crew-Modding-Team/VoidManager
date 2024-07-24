@@ -50,17 +50,6 @@ namespace VoidManager.Utilities
         }
 
         /// <summary>
-        /// Inserts a line to text chat with reference to the executing assembly.
-        /// </summary>
-        /// <param name="message">The message to display</param>
-        [Obsolete("Please use Notification(string, bool)")]
-        public static void Notification(string message)
-        {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            TextChat.Instance?.AddLog(new Log($"{assembly.FullName.Split(',')[0]}", message));
-        }
-
-        /// <summary>
         /// Inserts a line to text chat.
         /// </summary>
         /// <param name="message"></param>
