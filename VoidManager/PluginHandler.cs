@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Security.Cryptography;
 using VoidManager.Chat.Router;
+using VoidManager.CustomGUI;
 using VoidManager.ModMessages;
 using VoidManager.MPModChecks;
 
@@ -85,7 +86,7 @@ namespace VoidManager
                     BepinPlugin.Log.LogError($"Error loading mod '{BPluginName}'\n{ex}");
                 }
             }
-            CustomGUI.GUIMain.Instance.settings.OrderByDescending(v => v.Name() == "VoidManager").ThenBy(v => v.Name());
+            CustomGUI.GUIMain.Instance.settings = CustomGUI.GUIMain.Instance.settings.OrderByDescending(v => v is VManSettings).ThenBy(v => v.Name()).ToList();
             CustomGUI.GUIMain.Instance.mods.Sort((plugin1, plugin2) => plugin1.BepinPlugin.Metadata.Name.CompareTo(plugin2.BepinPlugin.Metadata.Name));
             BepinPlugin.Log.LogInfo($"Loaded {CommandHandler.chatCommandCount} local command(s) and {CommandHandler.publicCommandCount} public command(s)");
             BepinPlugin.Log.LogInfo($"Loaded {ModMessageHandler.modMessageHandlers.Count()} mod message(s)");
