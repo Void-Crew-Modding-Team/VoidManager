@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CG.Game;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,6 +10,12 @@ namespace VoidManager.Utilities
     /// </summary>
     public class Tools
     {
+        /// <summary>
+        /// Does a player ship exist
+        /// </summary>
+        /// <returns>True if a player ship exists, false otherwise</returns>
+        public static bool PlayerShipExists { get => ClientGame.Current?.PlayerShip?.Platform != null; }
+
         private static readonly Dictionary<object, (Action, DateTime)> uniqueTasks = new();
 
         /// <summary>
