@@ -1,4 +1,5 @@
 ﻿using CG.Game;
+using CG.Game.SpaceObjects.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,27 @@ namespace VoidManager.Utilities
         /// </summary>
         /// <returns>True if a player ship exists, false otherwise</returns>
         public static bool PlayerShipExists { get => ClientGame.Current?.PlayerShip?.Platform != null; }
+
+        /// <summary>
+        /// Is the player ship in a void jump<br/>
+        /// true for: VoidJumpTravellingStable, VoidJumpTravellingUnstable, VoidJumpInterdiction, VoidJumpApproachingDestination, VoidJumpSpinningDown<br/>
+        /// false otherwise
+        /// </summary>
+        public static bool InVoid
+        {
+            get
+            {
+                VoidJumpSystem voidJumpSystem = ClientGame.Current?.PlayerShip?.GameObject?.GetComponent<VoidJumpSystem>();
+
+                if (voidJumpSystem == null)
+                    return false;
+
+                if (voidJumpSystem.ActiveState is VoidJumpTravellingStable or VoidJumpTravellingUnstable or VoidJumpInterdiction or VoidJumpApproachingDestination or VoidJumpSpinningDown)
+                    return true;
+
+                return false;
+            }
+        }
 
         private static readonly Dictionary<object, (Action, DateTime)> uniqueTasks = new();
 
