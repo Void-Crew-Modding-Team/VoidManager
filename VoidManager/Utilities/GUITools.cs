@@ -98,7 +98,7 @@ namespace VoidManager.Utilities
         }
 
         /// <summary>
-        /// Draws a button with selected highlight when 'selected' is true.
+        /// Draws a button with selected highlight when <paramref name="selected"/> is true.
         /// </summary>
         /// <param name="text">Button text</param>
         /// <param name="selected">Selected Highlight</param>
@@ -189,14 +189,15 @@ namespace VoidManager.Utilities
         }
 
         /// <summary>
-        /// Draws a label, text field, apply button, and reset button
+        /// Draws a label, text field, apply button, and reset button<br/>
+        /// The reset button will not be shown if <paramref name="defaultValue"/> is null
         /// </summary>
         /// <param name="label"></param>
         /// <param name="value">The value currently in the text field</param>
         /// <param name="defaultValue">The value after the reset button is pressed</param>
         /// <param name="minWidth">minimum width of the input text field</param>
         /// <returns>true when the Apply or Reset button is pressed, false otherwise</returns>
-        public static bool DrawTextField(string label, ref string value, string defaultValue, float minWidth = 80)
+        public static bool DrawTextField(string label, ref string value, string defaultValue = null, float minWidth = 80)
         {
             bool changed = false;
             BeginHorizontal();
@@ -207,10 +208,13 @@ namespace VoidManager.Utilities
             {
                 changed = true;
             }
-            if (Button("Reset"))
+            if (defaultValue != null)
             {
-                value = defaultValue;
-                changed = true;
+                if (Button("Reset"))
+                {
+                    value = defaultValue;
+                    changed = true;
+                }
             }
             EndHorizontal();
             return changed;
