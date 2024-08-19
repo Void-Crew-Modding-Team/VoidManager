@@ -67,10 +67,10 @@ namespace VoidManager
 
             Log.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
         }
-        internal class Bindings
+        public class Bindings
         {
-            internal static ConfigEntry<UnityEngine.TextAnchor> ModInfoTextAnchor;
-            internal static ConfigEntry<bool> DebugMode;
+            public static ConfigEntry<UnityEngine.TextAnchor> ModInfoTextAnchor;
+            public static ConfigEntry<bool> DebugMode;
 
             public static void SetDefault()
             {
