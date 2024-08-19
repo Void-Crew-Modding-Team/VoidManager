@@ -1,6 +1,4 @@
-﻿using CG.Game;
-using CG.Game.SpaceObjects.Controllers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,28 +13,16 @@ namespace VoidManager.Utilities
         /// Does a player ship exist
         /// </summary>
         /// <returns>True if a player ship exists, false otherwise</returns>
-        public static bool PlayerShipExists { get => ClientGame.Current?.PlayerShip?.Platform != null; }
+        [Obsolete("Moved to Game.PlayerShipExists")]
+        public static bool PlayerShipExists { get => Game.PlayerShipExists; }
 
         /// <summary>
-        /// Is the player ship in a void jump<br/>
+        /// Is the player ship in a void jump<br/><br/>
         /// true for: VoidJumpTravellingStable, VoidJumpTravellingUnstable, VoidJumpInterdiction, VoidJumpApproachingDestination, VoidJumpSpinningDown<br/>
         /// false otherwise
         /// </summary>
-        public static bool InVoid
-        {
-            get
-            {
-                VoidJumpSystem voidJumpSystem = ClientGame.Current?.PlayerShip?.GameObject?.GetComponent<VoidJumpSystem>();
-
-                if (voidJumpSystem == null)
-                    return false;
-
-                if (voidJumpSystem.ActiveState is VoidJumpTravellingStable or VoidJumpTravellingUnstable or VoidJumpInterdiction or VoidJumpApproachingDestination or VoidJumpSpinningDown)
-                    return true;
-
-                return false;
-            }
-        }
+        [Obsolete("Moved to Game.InVoid")]
+        public static bool InVoid { get { return Game.InVoid; } }
 
         private static readonly Dictionary<object, (Action, DateTime)> uniqueTasks = new();
 

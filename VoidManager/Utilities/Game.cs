@@ -1,4 +1,5 @@
 ﻿using CG.Game;
+using CG.Game.SpaceObjects.Controllers;
 using Gameplay.Quests;
 using ResourceAssets;
 using System;
@@ -95,8 +96,50 @@ namespace VoidManager.Utilities
             }
         }
 
+        /// <summary>
+        /// Does a player ship exist
+        /// </summary>
+        /// <returns>True if a player ship exists, false otherwise</returns>
+        public static bool PlayerShipExists { get => ClientGame.Current?.PlayerShip?.Platform != null; }
 
-        private static GUIDUnion _EndlessQuestGUID = new GUIDUnion("57ff22b0dae09944b9fa81fe5c37c470");
+        /// <summary>
+        /// Is the player ship in a void jump<br/><br/>
+        /// true for: VoidJumpTravellingStable, VoidJumpTravellingUnstable, VoidJumpInterdiction, VoidJumpApproachingDestination, VoidJumpSpinningDown<br/>
+        /// false otherwise
+        /// </summary>
+        public static bool InVoid
+        {
+            get
+            {
+                VoidJumpSystem voidJumpSystem = ClientGame.Current?.PlayerShip?.GameObject?.GetComponent<VoidJumpSystem>();
+
+                if (voidJumpSystem == null)
+                    return false;
+
+                if (voidJumpSystem.ActiveState is VoidJumpTravellingStable or VoidJumpTravellingUnstable or VoidJumpInterdiction or VoidJumpApproachingDestination or VoidJumpSpinningDown)
+                    return true;
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// The player currently sitting in the Pilot's seat<br/>
+        /// null if the seat is empty
+        /// </summary>
+        public static CG.Game.Player.Player CurrentPilot
+        {
+            get
+            {
+                TakeoverChair pilotsSeat = ClientGame.Current?.PlayerShip?.gameObject?.GetComponentInChildren<CG.Ship.Modules.Helm>()?.Chair as TakeoverChair;
+                if (pilotsSeat == null || pilotsSeat.IsAvailable) return null;
+
+                return ClientGame.Current.GetPlayerCharacterByActorNumber(pilotsSeat.photonView.Owner.ActorNumber);
+            }
+        }
+
+
+        private static readonly GUIDUnion _EndlessQuestGUID = new GUIDUnion("57ff22b0dae09944b9fa81fe5c37c470");
 
         /// <summary>
         /// GUID of Endless Pilgrimage
