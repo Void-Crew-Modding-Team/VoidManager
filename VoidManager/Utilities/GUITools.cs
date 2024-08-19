@@ -244,7 +244,7 @@ namespace VoidManager.Utilities
                 {
                     entry.Value = (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromString(TextFieldStrings[entry]);
                 }
-                catch
+                finally
                 {
                     TextFieldStrings[entry] = entry.Value.ToString();
                 }
