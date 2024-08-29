@@ -2,7 +2,6 @@
 using Photon.Realtime;
 using UI.Matchmaking;
 using UnityEngine.UIElements;
-using VoidManager.Callbacks;
 
 namespace VoidManager.MPModChecks
 {
@@ -14,7 +13,7 @@ namespace VoidManager.MPModChecks
         [HarmonyPostfix]
         static void ModdedRoomPatch(RoomInfo pRoom, MatchmakingRoom __result)
         {
-            if(pRoom.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))
+            if(MPModCheckManager.RoomIsModded(pRoom))
             {
                 if (__result.RoomName.StartsWith("[Mods Required]", System.StringComparison.CurrentCultureIgnoreCase))
                 {

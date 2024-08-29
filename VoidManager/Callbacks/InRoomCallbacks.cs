@@ -23,6 +23,7 @@ namespace VoidManager.Callbacks
         internal const byte ModMessageEventCode = 98;
         internal const byte KickMessageEventCode = 97;
         internal const string RoomModsPropertyKey = "Mods";
+        internal const string OfficalModdedPropertyKey = "R_Mod";
 
         public void OnEvent(EventData photonEvent)
         {

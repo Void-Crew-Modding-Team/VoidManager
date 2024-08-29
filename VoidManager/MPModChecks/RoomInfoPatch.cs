@@ -14,8 +14,8 @@ namespace VoidManager.MPModChecks
     {
         static RoomOptions PatchMethod(RoomOptions RoomOptions)
         {
-            RoomOptions.CustomRoomProperties.Add(InRoomCallbacks.RoomModsPropertyKey, MPModCheckManager.Instance.RoomProperties);
-
+            RoomOptions.CustomRoomProperties[InRoomCallbacks.RoomModsPropertyKey] = MPModCheckManager.Instance.RoomProperties;
+            RoomOptions.CustomRoomProperties[InRoomCallbacks.OfficalModdedPropertyKey] = true;
 
             //Rebuild CRPFL array with new value. Litterally adding an index to an array.
             int CRPFLLength = RoomOptions.CustomRoomPropertiesForLobby.Length;
@@ -28,10 +28,22 @@ namespace VoidManager.MPModChecks
             NewCRPFL[i] = InRoomCallbacks.RoomModsPropertyKey; //i was incremented and is still usefull.
             RoomOptions.CustomRoomPropertiesForLobby = NewCRPFL;
 
+            //Compliance. Should be removed after update 5.
+            if (!RoomOptions.CustomRoomPropertiesForLobby.Contains(InRoomCallbacks.OfficalModdedPropertyKey))
+            {
+                CRPFLLength++;
+                NewCRPFL = new string[CRPFLLength + 1];
+                for (i = 0; i < CRPFLLength; i++)
+                {
+                    NewCRPFL[i] = RoomOptions.CustomRoomPropertiesForLobby[i];
+                }
+                NewCRPFL[i] = InRoomCallbacks.OfficalModdedPropertyKey; //i was incremented and is still usefull.
+                RoomOptions.CustomRoomPropertiesForLobby = NewCRPFL;
+            }
 
             return RoomOptions;
         }
-        [HarmonyTranspiler]//
+        [HarmonyTranspiler]
         private static IEnumerable<CodeInstruction> RoomPropertiesPatch(IEnumerable<CodeInstruction> instructions)
         {
             List<CodeInstruction> InstructionList = instructions.ToList();

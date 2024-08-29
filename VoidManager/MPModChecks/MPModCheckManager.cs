@@ -70,7 +70,8 @@ namespace VoidManager.MPModChecks
                 return;
             }
 
-            CurrentRoom.SetCustomProperties(new Hashtable { { InRoomCallbacks.RoomModsPropertyKey, RoomProperties } });
+            //Sets VMan modded property and the official modded property. Compliance
+            CurrentRoom.SetCustomProperties(new Hashtable { { InRoomCallbacks.RoomModsPropertyKey, RoomProperties }, { InRoomCallbacks.OfficalModdedPropertyKey, true } });
         }
 
         private void UpdateHighestLevelOfMPMods(MultiplayerType MT)
@@ -81,6 +82,16 @@ namespace VoidManager.MPModChecks
                 HighestLevelOfMPMods = MT;
                 BepinPlugin.Log.LogInfo("Incrementing HighestLevelOfMPMods to " + MT.ToString());
             }
+        }
+
+        /// <summary>
+        /// Detects if a room has been modified.
+        /// </summary>
+        /// <param name="room"></param>
+        /// <returns>true if room is detected as modded</returns>
+        public static bool RoomIsModded(RoomInfo room)
+        {
+            return room.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey) || room.CustomProperties.ContainsKey(InRoomCallbacks.OfficalModdedPropertyKey);
         }
 
         private void UpdateMyModList()
