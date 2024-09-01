@@ -37,13 +37,24 @@ namespace VoidManager
         }
 
         /// <summary>
-        /// description of mod. Ideal for in-game readme or patch notes.
+        /// Description of mod. Ideal for in-game readme or patch notes.
         /// </summary>
         public virtual string Description
         {
             get
             {
                 return VersionInfo?.FileDescription;
+            }
+        }
+
+        /// <summary>
+        /// Thunderstore ID. In a link (https://thunderstore.io/c/void-crew/p/VoidCrewModdingTeam/VoidManager/), the section equivelant to 'VoidCrewModdingTeam/VoidManager')
+        /// </summary>
+        public virtual string ThunderstoreID
+        {
+            get
+            {
+                return string.Empty;
             }
         }
 
