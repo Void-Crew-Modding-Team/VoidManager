@@ -28,19 +28,6 @@ namespace VoidManager.MPModChecks
             NewCRPFL[i] = InRoomCallbacks.RoomModsPropertyKey; //i was incremented and is still usefull.
             RoomOptions.CustomRoomPropertiesForLobby = NewCRPFL;
 
-            //Compliance. Should be removed after update 5.
-            if (!RoomOptions.CustomRoomPropertiesForLobby.Contains(InRoomCallbacks.OfficalModdedPropertyKey))
-            {
-                CRPFLLength++;
-                NewCRPFL = new string[CRPFLLength + 1];
-                for (i = 0; i < CRPFLLength; i++)
-                {
-                    NewCRPFL[i] = RoomOptions.CustomRoomPropertiesForLobby[i];
-                }
-                NewCRPFL[i] = InRoomCallbacks.OfficalModdedPropertyKey; //i was incremented and is still usefull.
-                RoomOptions.CustomRoomPropertiesForLobby = NewCRPFL;
-            }
-
             return RoomOptions;
         }
         [HarmonyTranspiler]

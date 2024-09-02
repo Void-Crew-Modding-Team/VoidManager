@@ -89,7 +89,7 @@ namespace VoidManager
             GUIMain.Instance.mods.Sort((plugin1, plugin2) => plugin1.BepinPlugin.Metadata.Name.CompareTo(plugin2.BepinPlugin.Metadata.Name));
             BepinPlugin.Log.LogInfo($"Loaded {CommandHandler.chatCommandCount} local command(s) and {CommandHandler.publicCommandCount} public command(s)");
             BepinPlugin.Log.LogInfo($"Loaded {ModMessageHandler.modMessageHandlers.Count()} mod message(s)");
-            BepinPlugin.Log.LogInfo($"Discovered {ActiveVoidPlugins.Count} VoidManager plugin(s) from {ActiveBepinPlugins.Count - 1} mod(s)");
+            BepinPlugin.Log.LogInfo($"Discovered {ActiveVoidPlugins.Count} {MyPluginInfo.PLUGIN_NAME} plugin(s) from {ActiveBepinPlugins.Count - 1} mod(s)");
         }
 
         public static byte[] GetFileHash(string fileLocation)

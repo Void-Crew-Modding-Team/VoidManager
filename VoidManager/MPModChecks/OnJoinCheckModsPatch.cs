@@ -26,10 +26,17 @@ namespace VoidManager.MPModChecks
                 return false;
             }
 
-            foreach(RoomInfo RI in LCI.RoomList)
+            MatchmakingRoom MRoom = ___MatchList.GetSelectedRoom();
+
+            foreach (RoomInfo RI in LCI.RoomList)
             {
-                if (RI.Name == ___matchList.GetSelectedRoom().RoomId)
+                if (RI.Name == MRoom.RoomId)
+            {
+                    if (MRoom.ModdingType != ModdingType.mod_session)
                 {
+                        MenuScreenController.Instance.ShowMessagePopup("matchmaking_unable_join".GetLocalized("Terminals"), $"{MyPluginInfo.USERS_PLUGIN_NAME} blocked connection. Per new modding guidelines, {MyPluginInfo.USERS_PLUGIN_NAME} cannot join non-modded sessions. Future updates will enable this functionallity under certain conditions.");
+                        return false;
+                    }
                     if (!MPModCheckManager.Instance.ModChecksClientside(RI.CustomProperties, false))
                     {
                         ___failPopup.Show("VoidManager blocked connection, Modlists incompatable.\n" + MPModCheckManager.Instance.LastModCheckFailReason);

@@ -26,6 +26,9 @@ namespace VoidManager
             instance = this;
             Log = Logger;
 
+            //Compliance
+            ModdingUtils.RegisterSessionMod();
+
             Harmony.PatchAll();
             Content.Craftables.Instance = new();
             Content.Unlocks.Instance = new();

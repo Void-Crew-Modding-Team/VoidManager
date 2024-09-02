@@ -70,8 +70,8 @@ namespace VoidManager.MPModChecks
                 return;
             }
 
-            //Sets VMan modded property and the official modded property. Compliance
-            CurrentRoom.SetCustomProperties(new Hashtable { { InRoomCallbacks.RoomModsPropertyKey, RoomProperties }, { InRoomCallbacks.OfficalModdedPropertyKey, true } });
+            //Sets VMan modded property.
+            CurrentRoom.SetCustomProperties(new Hashtable { { InRoomCallbacks.RoomModsPropertyKey, RoomProperties } });
         }
 
         private void UpdateHighestLevelOfMPMods(MultiplayerType MT)
