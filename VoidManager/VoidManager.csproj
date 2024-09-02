@@ -1,10 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <AssemblyName>VoidManager</AssemblyName>
-    <Description>Handles Inputs and Commands</Description>
-    <Version>1.1.7</Version>
+    <Description>Manages mods for multiplayer, gives users Mod controls via GUI (when provided by the mod, default keybind F5), provides API for developers, and minor Chat improvements.</Description>
+    <Version>1.1.8</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <RestoreAdditionalProjectSources>
@@ -14,31 +13,25 @@
     </RestoreAdditionalProjectSources>
     <RootNamespace>VoidManager</RootNamespace>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <AssemblyTitle>Manages mods for multiplayer, gives users Mod controls via GUI (when provided by the mod, default keybind F5), provides API for developers, and minor Chat improvements.</AssemblyTitle>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>True</Optimize>
     <DebugType>embedded</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>embedded</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="Utilities\Logger.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.*" />
-    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
   </ItemGroup>
-  
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
   </ItemGroup>
-  
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>Files\0Harmony.dll</HintPath>
@@ -108,64 +101,57 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
-  
   <ItemGroup>
     <Reference Update="System.Xml.Linq">
       <Private>false</Private>
     </Reference>
   </ItemGroup>
-  
   <ItemGroup>
     <Reference Update="mscorlib">
       <Private>false</Private>
     </Reference>
   </ItemGroup>
-  
   <ItemGroup>
     <Reference Update="System">
       <Private>false</Private>
     </Reference>
   </ItemGroup>
-  
   <ItemGroup>
     <Reference Update="System.Core">
       <Private>false</Private>
     </Reference>
   </ItemGroup>
-  
   <ItemGroup>
     <Reference Update="System.Data">
       <Private>false</Private>
     </Reference>
   </ItemGroup>
-  
   <ItemGroup>
     <Reference Update="System.Drawing">
       <Private>false</Private>
     </Reference>
   </ItemGroup>
-  
   <ItemGroup>
     <Reference Update="System.IO.Compression.FileSystem">
       <Private>false</Private>
     </Reference>
   </ItemGroup>
-  
   <ItemGroup>
     <Reference Update="System.Numerics">
       <Private>false</Private>
     </Reference>
   </ItemGroup>
-  
   <ItemGroup>
     <Reference Update="System.Runtime.Serialization">
       <Private>false</Private>
     </Reference>
   </ItemGroup>
-  
   <ItemGroup>
     <Reference Update="System.Xml">
       <Private>false</Private>
     </Reference>
   </ItemGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="powershell.exe -NonInteractive -ExecutionPolicy RemoteSigned -NoProfile -file &quot;$(ProjectDir)PreBuild.ps1&quot; $(OutDir) $(SolutionDir)" />
+  </Target>
 </Project>

@@ -13,13 +13,14 @@ using static VoidManager.BepinPlugin.Bindings;
 namespace VoidManager
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-    [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
+    [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.USERS_PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
     [BepInProcess("Void Crew.exe")]
     public class BepinPlugin : BaseUnityPlugin
     {
         internal static BepinPlugin instance;
         internal static readonly Harmony Harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
         internal static ManualLogSource Log;
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "N/A")]
         private void Awake()
         {
             instance = this;
@@ -33,7 +34,7 @@ namespace VoidManager
             
             DebugMode = Config.Bind("General", "DebugMode", false, "");
 
-            UnspecifiedModListOverride = Config.Bind("General", "Unspecified Mod Overrides", string.Empty, "Insert mods (not configured for VoidManager) for which you would like to override the MPType. \nAvailable MPTypes: client,host,all \nFormat: 'ModNameOrGUID:MPType', delineated by ','. \nEx: VoidManager:all,Better Scoop:Host \n ModName/GUID can be gathered from log files and F5 menu.");
+            UnspecifiedModListOverride = Config.Bind("General", "Unspecified Mod Overrides", string.Empty, $"Insert mods (not configured for {MyPluginInfo.USERS_PLUGIN_NAME}) for which you would like to override the MPType. \nAvailable MPTypes: client,host,all \nFormat: 'ModNameOrGUID:MPType', delineated by ','. \nEx: {MyPluginInfo.USERS_PLUGIN_NAME}:all,Better Scoop:Host \n ModName/GUID can be gathered from log files and F5 menu.");
 
             ModInfoTextAnchor = Config.Bind("Menu", "ModInfoTextAnchor", TextAnchor.UpperLeft, "");
 

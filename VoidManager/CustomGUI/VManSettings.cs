@@ -56,7 +56,7 @@ namespace VoidManager.CustomGUI
             //Size Settings
             HorizontalSlider(0, 100, 100);
             UnityEngine.GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-            Label("ModManager Size");
+            Label("F5 Menu Size");
 
             UnityEngine.GUI.skin.label.alignment = TextAnchor.MiddleRight;
             BeginHorizontal();

@@ -126,7 +126,7 @@ namespace VoidManager.CustomGUI
             if (GUIActive)
             {
                 GUI.skin = ChangeSkin();
-                Window = GUI.Window(999910, Window, WindowFunction, "VoidManager F5 Menu");
+                Window = GUI.Window(999910, Window, WindowFunction, $"{MyPluginInfo.USERS_PLUGIN_NAME} F5 Menu");
 
                 //float y = Window.center.y * 2 * -1;
                 Image.rectTransform.position = new Vector3(Window.center.x, (Window.center.y * -1) + Screen.height, 0);
@@ -155,7 +155,7 @@ namespace VoidManager.CustomGUI
                     {
                         ModListScroll = BeginScrollView(ModListScroll);
                         {
-                            if (GUITools.DrawButtonSelected("VoidManager", selectedMod == null))
+                            if (GUITools.DrawButtonSelected(MyPluginInfo.USERS_PLUGIN_NAME, selectedMod == null))
                             {
                                 selectedMod = null;
                             }
@@ -164,7 +164,7 @@ namespace VoidManager.CustomGUI
                                 DrawModListModButton(vp);
                             }
                             GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-                            Label("<color=yellow>Non-VoidManager Mods</color>");
+                            Label($"<color=yellow>Non-{MyPluginInfo.USERS_PLUGIN_NAME} Mods</color>");
                             foreach (VoidPlugin vp in NonVManMods)
                             {
                                 DrawModListModButton(vp);
@@ -201,10 +201,10 @@ namespace VoidManager.CustomGUI
                             {
                                 //VoidManager about page when no mod selected.
                                 GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-                                Label($"VoidManager - BepInEx Plugin Manager for Void Crew.");
+                                Label($"{MyPluginInfo.USERS_PLUGIN_NAME} - BepInEx Plugin Manager for Void Crew.");
                                 Label("Provides APIs to developers and multiplayer mod management.");
                                 Label($"Version: {MyPluginInfo.PLUGIN_VERSION}");
-                                Label($"\n\nDeveloped by Mest and Dragon");
+                                Label($"\n\nDeveloped by {MyPluginInfo.PLUGIN_AUTHORS}");
                                 Label($"Based on the 'Pulsar Mod Loader' developed by Tom Ritcher");
                                 BeginHorizontal();
                                 FlexibleSpace();
@@ -214,7 +214,7 @@ namespace VoidManager.CustomGUI
                                     Application.OpenURL("https://discord.gg/4QhRRBWsJz");
                                 FlexibleSpace();
                                 EndHorizontal();
-                                if (Button("VoidManager Settings"))
+                                if (Button($"{MyPluginInfo.USERS_PLUGIN_NAME} Settings"))
                                 {
                                     OpenSettingsMenu(settings[0]);
                                 }
@@ -438,10 +438,10 @@ namespace VoidManager.CustomGUI
                 case MultiplayerType.Host:
                     return "<color=#00CC00>Host</color> - The host must have this mod for functionality, but it won't prevent joining a vanilla client's game.";
                 case MultiplayerType.Unspecified:
-                    return "<color=#FFFF99>Unspecified</color> - This mod has not had it's multiplayer operations specified for VoidManager.\n" +
-                        "- If the host has VoidManager and this mod, Connection will be allowed.\n" +
-                        "- If the host has VoidManager but not this mod, they can optionally trust Unspecified Mods.\n" +
-                        "- If the host does not have VoidManager, Connection will be disallowed.\n" +
+                    return $"<color=#FFFF99>Unspecified</color> - This mod has not had it's multiplayer operations specified for {MyPluginInfo.USERS_PLUGIN_NAME}.\n" +
+                        $"- If the host has {MyPluginInfo.USERS_PLUGIN_NAME} and this mod, Connection will be allowed.\n" +
+                        $"- If the host has {MyPluginInfo.USERS_PLUGIN_NAME} but not this mod, they can optionally trust Unspecified Mods.\n" +
+                        $"- If the host does not have {MyPluginInfo.USERS_PLUGIN_NAME}, Connection will be disallowed.\n" +
                         "- If the local client is hosting, vanilla clients will be allowed to join the session.";
                 default:
                     return mptype.ToString();
@@ -468,7 +468,7 @@ namespace VoidManager.CustomGUI
             MPUserDataBlock userData = MPModCheckManager.Instance.GetNetworkedPeerMods(player);
             if (userData != null)
             {
-                Label($"User VoidManager version: {userData.VMVersion}");
+                Label($"User {MyPluginInfo.USERS_PLUGIN_NAME} version: {userData.VMVersion}");
                 Label("ModList:");
                 string ModListText = string.Empty;
                 bool first = true;
