@@ -32,23 +32,12 @@ namespace VoidManager.MPModChecks
 
         public static string SetGameName(string name)
         {
-            switch (MPModCheckManager.Instance.HighestLevelOfMPMods)
+            if(MPModCheckManager.Instance.HighestLevelOfMPMods == MultiplayerType.All)
             {
-                case MultiplayerType.Host:
-                case MultiplayerType.Unspecified:
-                    if (!name.StartsWith("[Modded", System.StringComparison.CurrentCultureIgnoreCase) &&
-                        !name.StartsWith("Modded", System.StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        return "[Modded] " + name;
-                    }
-                    break;
-                case MultiplayerType.All:
-                    if (!name.StartsWith("[Mods Required", System.StringComparison.CurrentCultureIgnoreCase) &&
-                        !name.StartsWith("Mods Required", System.StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        return "[Mods Required] " + name;
-                    }
-                    break;
+                if (!name.StartsWith(ModdedRoomTagPatch.ModsRequiredString, System.StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return $"{ModdedRoomTagPatch.ModsRequiredString} " + name;
+                }
             }
             return name;
         }
