@@ -13,7 +13,8 @@ namespace VoidManager.MPModChecks
 {
     internal class ModListGUI : MonoBehaviour
     {
-        private static readonly FieldInfo matchListField = AccessTools.Field(typeof(MatchmakingTerminal), "matchList");
+        private static readonly FieldInfo MatchmakingTerminalField = AccessTools.Field(typeof(MatchmakingTerminal), "matchMakingJoinPanel");
+        private static readonly FieldInfo MatchListField = AccessTools.Field(typeof(MatchMakingJoinPanel), "MatchList");
 
         internal static ModListGUI Instance { get; private set; }
         GameObject MLCanvas;
@@ -42,7 +43,7 @@ namespace VoidManager.MPModChecks
                 return;
             }
 
-            MatchmakingList matchList = (MatchmakingList)matchListField.GetValue(LCI.ActiveTerminal);
+            MatchmakingList matchList = (MatchmakingList)MatchListField.GetValue(MatchmakingTerminalField.GetValue(LCI.ActiveTerminal));
             if (matchList.GetSelectedRoom()?.RoomId == null)
             {
                 GUIClose();
