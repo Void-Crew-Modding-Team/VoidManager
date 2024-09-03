@@ -24,6 +24,7 @@ namespace VoidManager.Callbacks
         internal const byte KickMessageEventCode = 97;
         internal const string RoomModsPropertyKey = "Mods";
         internal const string OfficalModdedPropertyKey = "R_Mod";
+        internal const string OfficalRoomNamePropertyKey = "R_Na";
 
         public void OnEvent(EventData photonEvent)
         {
@@ -95,14 +96,6 @@ namespace VoidManager.Callbacks
                 catch (Exception ex)
                 {
                     BepinPlugin.Log.LogError("Recieved Photon Event with InfoMessage code, but could not parse data.\n" + ex);
-                }
-            }
-            else if (photonEvent.Code == 203)
-            {
-                if (Singleton<GameStateMachine>.Instance.CurrentState is GSSpawn)//fixes bug with vanilla getting kicked too early. Treated like a normal photon disconnect, but the error code will be the input value.
-                {
-                    BepinPlugin.Log.LogInfo("Kicked while in GSSpawn State.");
-                    Singleton<GameStateMachine>.Instance.ChangeState<GSPhotonDisconnected>();
                 }
             }
         }
