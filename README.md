@@ -1,16 +1,17 @@
-[![](https://img.shields.io/badge/-Void_Crew_Modding_Team-111111?style=just-the-label&logo=github&labelColor=24292f)](https://github.com/Void-Crew-Modding-Team)
+﻿[![](https://img.shields.io/badge/-Void_Crew_Modding_Team-111111?style=just-the-label&logo=github&labelColor=24292f)](https://github.com/Void-Crew-Modding-Team)
 [![](https://img.shields.io/github/v/release/Void-Crew-Modding-Team/VoidManager?include_prereleases&style=flat&label=Release%20Version&labelColor=24292f&color=111111)](https://github.com/Void-Crew-Modding-Team/VoidManager/releases/)
-![](https://img.shields.io/badge/Game%20Version-0.26.3-111111?style=flat&labelColor=24292f&color=111111)
+![](https://img.shields.io/badge/Game%20Version-0.27.0-111111?style=flat&labelColor=24292f&color=111111)
 [![](https://img.shields.io/github/license/Void-Crew-Modding-Team/VoidManager?style=flat&label=License&labelColor=24292f&color=111111)](https://github.com/Void-Crew-Modding-Team/VoidManager/blob/master/LICENSE)
 [![](https://img.shields.io/discord/1180651062550593536.svg?&logo=discord&logoColor=ffffff&style=flat&label=Discord&labelColor=24292f&color=111111)](https://discord.gg/g2u5wpbMGu "Void Crew Modding Discord")
 
-# Void Manager
+# VoidManager
 
 `BepInEx` Plugin Manager for `Void Crew`
 
-Developed by Mest and Dragon, based on [Pulsar Mod Loader](https://github.com/PULSAR-Modders/pulsar-mod-loader)
-
-Notes on Multiplayer mod checks: By default, any given mod must be installed by the host for clients to join. The host can configure this setting with VoidManager vie the F5 menu (ModManager > Mod Settings > VoidManager > Trust MPType.Unspecified mods). Additionally, Mods configured for VoidManager can change this setting.
+Version 1.1.8  
+For Game Version 0.27.0  
+Developed by Mest, Dragon, and 18107  
+Based on [Pulsar Mod Loader](https://github.com/PULSAR-Modders/pulsar-mod-loader)
 
 ---------------------
 
@@ -47,13 +48,14 @@ Notes on Multiplayer mod checks: By default, any given mod must be installed by 
 
 ### 👥 Multiplayer Functionality 
 
-**Complex** - VoidManager handles mods connectiveity to prevent mods not configured for VoidManager from joining vanilla games. If all mods are configured for VoidManager as Client mods, clients will be allowed to join vanilla games. This behaviour is to prevent mods which break vanilla clients from doing so.
+**Complex** - VoidManager handles mods connectiveity to prevent mods not configured for VoidManager from joining vanilla games. If all mods are configured for VoidManager as Client mods, clients will be allowed to join vanilla games. This behaviour is to prevent mods which break vanilla clients from doing so.  
+By default, any given mod must be installed by the host for clients to join. The host can configure this setting with VoidManager via the F5 menu (ModManager > Mod Settings > VoidManager > Trust MPType.Unspecified mods). Additionally, Mods configured for VoidManager can change this setting.
 
 ---------------------
 
 ## 🔧 Install Instructions - **Install following the normal BepInEx procedure.**
 
-Ensure that you have [BepInEx 5](https://thunderstore.io/c/void-crew/p/BepInEx/BepInExPack/) installed, stable version 5 **MONO** build to be precise.
+Ensure that you have [BepInEx 5](https://thunderstore.io/c/void-crew/p/BepInEx/BepInExPack/) (stable version 5 **MONO**) and [VoidManager](https://thunderstore.io/c/void-crew/p/VoidCrewModdingTeam/VoidManager/) installed.
 
 #### ✔️ Mod installation - **Unzip the contents into the BepInEx plugin directory**
 
@@ -68,3 +70,4 @@ Drag and drop `VoidManager.dll` into `Void Crew\BepInEx\plugins`
 ### Future Plans:
 
 - mod whitelist/blacklisting
+- Downgrading to [client] session tag based on mod types, and the ability to join vanilla sessions with Non-Game Influencing mods.

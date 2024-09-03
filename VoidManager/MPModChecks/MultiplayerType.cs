@@ -6,34 +6,28 @@
     public enum MultiplayerType : byte
     {
         /// <summary>
-        /// For debug use, will not show to clients
+        /// For debug use, will not show to clients.
         /// </summary>
         Hidden,
 
         /// <summary>
-        /// Client-Side
+        /// Client-Side. Minimum session type: Mod_Local
         /// </summary>
-        Client = 3,
+        Client = 4,
 
         /// <summary>
-        /// Client-Side, but displays as a host mod.
+        /// Client-Side, displays as a host mod. Minimum session type: Mod_Local
         /// </summary>
-        Host = 4,
+        Host = 8,
 
         /// <summary>
-        /// mod has not had it's multiplayer operations specified for VoidManager.
-        ///- If the host has VoidManager and this mod, Connection will be allowed.
-        ///- If the host has VoidManager but not this mod, they can optionally trust Unspecified Mods.
-        ///- If the host does not have VoidManager, Connection will be disallowed.
-        ///- If the local client is hosting, vanilla clients will be allowed to join the session.
+        /// Can only join Mod_Session, but doesn't require other players to install the mod. Mod_Session
         /// </summary>
-        Unspecified = 6,
-
-        //HostMustHave,
+        Session = 12,
 
         /// <summary>
-        /// All players must have the same mod installed for connection.
+        /// All players must have the same mod installed for connection. Mod_Session
         /// </summary>
-        All = 10
+        All = 20
     }
 }

@@ -70,7 +70,7 @@ namespace VoidManager
                         }
                         else
                         {
-                            voidPlugin = new DefaultVoidPlugin(MultiplayerType.Unspecified);
+                            voidPlugin = new DefaultVoidPlugin(MultiplayerType.Session);
                         }
 
                         voidPlugin.VersionInfo = FileVersionInfo.GetVersionInfo(CurrentBepinPlugin.Location);

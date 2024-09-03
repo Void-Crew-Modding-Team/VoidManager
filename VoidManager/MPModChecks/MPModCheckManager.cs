@@ -121,7 +121,7 @@ namespace VoidManager.MPModChecks
             ProcessedMods = ProcessedMods.Where(mod => mod != null).ToArray();
             MyModList = ProcessedMods;
             MyMPAllModList = ProcessedMods.Where(Mod => Mod.MPType == MultiplayerType.All).ToArray();
-            MyMPUnspecifiedModList = ProcessedMods.Where(Mod => Mod.MPType == MultiplayerType.Unspecified).ToArray();
+            MyMPUnspecifiedModList = ProcessedMods.Where(Mod => Mod.MPType == MultiplayerType.Session).ToArray();
             stopwatch.Stop();
             BepinPlugin.Log.LogInfo("Finished Building MyModList, time elapsted: " + stopwatch.ElapsedMilliseconds.ToString() + " ms");
             BepinPlugin.Log.LogInfo($"MyModList:\n{GetModListAsString(MyModList)}\n");
@@ -502,7 +502,7 @@ namespace VoidManager.MPModChecks
 
             if (!RoomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))//Host doesn't have mods
             {
-                if (HighestLevelOfMPMods >= MultiplayerType.Unspecified)
+                if (HighestLevelOfMPMods >= MultiplayerType.Session)
                 {
                     LastModCheckFailReason = $"Host has no mods, but client has unspecified or higher mods.{GetModListAsString(MyMPAllModList)}{GetModListAsString(MyMPUnspecifiedModList)}";
 
@@ -647,7 +647,7 @@ namespace VoidManager.MPModChecks
             MPModDataBlock[] HostModListForProcessing;
             if (!BepinPlugin.Bindings.TrustMPTypeUnspecified.Value)
             {
-                MPModDataBlock[] JoiningClientMPTypeUnspecifiedMods = JoiningPlayerMPData.ModData.Where(Mod => Mod.MPType == MultiplayerType.Unspecified).ToArray();
+                MPModDataBlock[] JoiningClientMPTypeUnspecifiedMods = JoiningPlayerMPData.ModData.Where(Mod => Mod.MPType == MultiplayerType.Session).ToArray();
                 JoiningClientMPTypeAllMods = JoiningClientMPTypeAllMods.Concat(JoiningClientMPTypeUnspecifiedMods).ToArray();
 
                 HostModListForProcessing = MyModList.Concat(MyMPUnspecifiedModList).ToArray();

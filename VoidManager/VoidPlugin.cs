@@ -69,7 +69,7 @@ namespace VoidManager
         {
             get
             {
-                return MultiplayerType.Unspecified;
+                return MultiplayerType.Session;
             }
         }
     }

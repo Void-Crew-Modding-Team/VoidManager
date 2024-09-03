@@ -120,7 +120,7 @@ namespace VoidManager.MPModChecks
             MultiplayerType.Hidden => "",
             MultiplayerType.Client => "Client",
             MultiplayerType.Host => "<color=#00CC00>Host</color>",
-            MultiplayerType.Unspecified => "<color=#FFFF99>Unknown</color>",
+            MultiplayerType.Session => "<color=#FFFF99>Unknown</color>",
             MultiplayerType.All => "<color=#FF3333>Required</color>",
             _ => "Error - type not found"
         };
