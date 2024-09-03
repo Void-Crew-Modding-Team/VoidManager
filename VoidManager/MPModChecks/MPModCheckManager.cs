@@ -101,7 +101,7 @@ namespace VoidManager.MPModChecks
         /// <returns>true if room is detected as modded</returns>
         public static bool RoomIsModded(RoomInfo room)
         {
-            return room.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey) || room.CustomProperties.ContainsKey(InRoomCallbacks.OfficalModdedPropertyKey);
+            return room.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey) || (room.CustomProperties.TryGetValue(InRoomCallbacks.OfficalModdedPropertyKey, out object MT) && (ModdingType)MT == ModdingType.mod_session);
         }
 
         /// <summary>
@@ -580,6 +580,7 @@ namespace VoidManager.MPModChecks
                 {
                     condition.ClientModVersion = mod.Version;
                     condition.PlayersWithMod = PlayersWithMod.Both;
+                    conditions[mod.ModGUID] = condition;
                 }
                 else
                 {
@@ -593,12 +594,39 @@ namespace VoidManager.MPModChecks
             }
 
 
+
             //Fail reasons for messaging later.
             List<FailInfo> Session = new();
             List<FailInfo> MismatchedVersions = new();
             List<FailInfo> AllClientLacking = new();
             List<FailInfo> AllHostLacking = new();
             List<FailInfo> Custom = new();
+
+
+            //Check mods and gather failDetails.
+            foreach (CheckConditions condition in conditions.Values)
+            {
+                FailInfo failDetail = CheckMod(condition);
+                switch (failDetail.CheckFailReason)
+                {
+                    case CheckFailReason.Session:
+                        Session.Add(failDetail);
+                        break;
+                    case CheckFailReason.MismatchedVersions:
+                        MismatchedVersions.Add(failDetail);
+                        break;
+                    case CheckFailReason.AllClientLacking:
+                        AllClientLacking.Add(failDetail);
+                        break;
+                    case CheckFailReason.AllHostLacking:
+                        AllHostLacking.Add(failDetail);
+                        break;
+                    case CheckFailReason.Custom:
+                        Custom.Add(failDetail);
+                        break;
+                }
+            }
+
 
             //Check if problems were found and add to error message.
             string errorMessage = string.Empty;
@@ -642,7 +670,7 @@ namespace VoidManager.MPModChecks
             {
                 if (inRoom) //Provide kickedMessage popup
                 {
-                    KickMessagePatches.KickTitle = "Disconnected: Incompatable mod list";
+                    KickMessagePatches.KickTitle = "Disconnected: Incompatable mods";
                     KickMessagePatches.KickMessage = errorMessage;
                 }
                 else //Provide Terminal fail to join popup
@@ -672,6 +700,9 @@ namespace VoidManager.MPModChecks
             MPUserDataBlock JoiningPlayerMPData = GetNetworkedPeerMods(joiningPlayer);
             MPModDataBlock[] JoiningClientMods = JoiningPlayerMPData.ModData;
 
+            if (BepinPlugin.Bindings.DebugMode.Value) BepinPlugin.Log.LogInfo($"Host checking user mod list\n{GetModListAsString(JoiningClientMods)}");
+            if (BepinPlugin.Bindings.DebugMode.Value) BepinPlugin.Log.LogInfo($"Host mod list:\n{GetModListAsString(MyModList)}");
+
             //Conditions Dictionary Init
             Dictionary<string, CheckConditions> conditions = new();
 
@@ -695,9 +726,11 @@ namespace VoidManager.MPModChecks
                 CheckConditions condition;
                 if (conditions.TryGetValue(mod.ModGUID, out condition))
                 {
+                    if (BepinPlugin.Bindings.DebugMode.Value) BepinPlugin.Log.LogInfo($"Mod '{mod.ModName}' Matched with Client Mod");
                     condition.ClientModVersion = mod.Version;
                     condition.PlayersWithMod = PlayersWithMod.Both;
                     condition.HashesMatch = mod.Hash.SequenceEqual(condition.Mod.Hash);
+                    conditions[mod.ModGUID] = condition;
                 }
                 else
                 {
@@ -784,7 +817,7 @@ namespace VoidManager.MPModChecks
             {
                 //Send message to joining client.
                 Messaging.Echo($"Kicking player {joiningPlayer.NickName} from session for incompatable mods.\n{errorMessage}", false);
-                Messaging.KickMessage("Kicked: Incompatable mod list", errorMessage, joiningPlayer);
+                Messaging.KickMessage("Kicked: Incompatable mods", errorMessage, joiningPlayer);
                 PhotonNetwork.CloseConnection(joiningPlayer);
                 BepinPlugin.Log.LogMessage($"Kicked player {joiningPlayer.NickName} from session for incompatable mods.\n{errorMessage}");
             }
