@@ -419,7 +419,7 @@ namespace VoidManager.CustomGUI
                 case MultiplayerType.Host:
                     return "<color=#00CC00>Host</color>";
                 case MultiplayerType.Session:
-                    return "<color=#FFFF99>Unspecified</color>";
+                    return "<color=#FFFF99>Session</color>";
                 case MultiplayerType.All:
                     return "<color=#FF3333>All</color>";
                 default:
@@ -431,6 +431,8 @@ namespace VoidManager.CustomGUI
         {
             switch (mptype)
             {
+                case MultiplayerType.Unmanaged:
+                    return $"<color=#FFFF99>Unmanaged</color> - This mod has not had it's multiplayer operations specified for {MyPluginInfo.USERS_PLUGIN_NAME}.";
                 case MultiplayerType.All:
                     return "<color=#FF3333>All</color> - All Clients will be required to install this mod.";
                 case MultiplayerType.Client:
@@ -438,7 +440,7 @@ namespace VoidManager.CustomGUI
                 case MultiplayerType.Host:
                     return "<color=#00CC00>Host</color> - The host must have this mod for functionality, but it won't prevent joining a vanilla client's game.";
                 case MultiplayerType.Session:
-                    return $"<color=#FFFF99>Unspecified</color> - This mod has not had it's multiplayer operations specified for {MyPluginInfo.USERS_PLUGIN_NAME}.\n" +
+                    return $"<color=#FFFF99>Session</color> - Can only join/host Mod_Session, but doesn't require other players to install the mod.\n" +
                         $"- If the host has {MyPluginInfo.USERS_PLUGIN_NAME} and this mod, Connection will be allowed.\n" +
                         $"- If the host has {MyPluginInfo.USERS_PLUGIN_NAME} but not this mod, they can optionally trust Unspecified Mods.\n" +
                         $"- If the host does not have {MyPluginInfo.USERS_PLUGIN_NAME}, Connection will be disallowed.\n" +

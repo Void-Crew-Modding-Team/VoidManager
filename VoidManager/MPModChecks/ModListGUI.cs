@@ -117,10 +117,10 @@ namespace VoidManager.MPModChecks
 
         private string GetMPTypeHeader(MultiplayerType type) => type switch
         {
-            MultiplayerType.Hidden => "",
+            MultiplayerType.Unmanaged => "Unmanaged",
             MultiplayerType.Client => "Client",
             MultiplayerType.Host => "<color=#00CC00>Host</color>",
-            MultiplayerType.Session => "<color=#FFFF99>Unknown</color>",
+            MultiplayerType.Session => "<color=#FFFF99>Session</color>",
             MultiplayerType.All => "<color=#FF3333>Required</color>",
             _ => "Error - type not found"
         };

@@ -27,23 +27,6 @@ namespace VoidManager.MPModChecks
                 }
             }
         }
-        /*[HarmonyPatch(typeof(GSQuitFromMenu), "OnSceneLoaded")]
-        class ClientChecksFailedPatch
-        {
-            [HarmonyPostfix]
-            static void patch(Scene scene)
-            {
-                if (scene.buildIndex == CloneStarConstants.LoadingScreenSceneIndex && KickTitle != null && KickMessage != null)
-                {
-                    Plugin.Log.LogInfo($"Pushing Kick Message via info screen. Title:{KickTitle} message:\n");
-
-                    MenuScreenController.Instance.ShowMessagePopup(KickTitle, KickMessage);
-
-                    KickTitle = null;
-                    KickMessage = null;
-                }
-            }
-        }*/
     }
     
 }
