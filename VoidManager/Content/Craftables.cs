@@ -372,7 +372,7 @@ namespace VoidManager.Content
         {
             CraftableItemCRFI.SetValue(CIToModify, CraftingRules);
             CraftableItemOverrideFI.SetValue(CIToModify, OverrideDefaultRecipe);
-            BepinPlugin.Log.LogInfo($"Overwrote CraftingRules for {CIToModify.ContextInfo.HeaderText}.");
+            //BepinPlugin.Log.LogInfo($"Overwrote CraftingRules for {CIToModify.ContextInfo.HeaderText}.");
         }
 
         /// <summary>
@@ -399,7 +399,7 @@ namespace VoidManager.Content
         public void SetQuestRecipe(CraftableItem CIToModify, bool OverrideDefaultRecipe)
         {
             CraftableItemOverrideFI.SetValue(CIToModify, OverrideDefaultRecipe);
-            BepinPlugin.Log.LogInfo($"Overwrote CraftingRules Override for {CIToModify.ContextInfo.HeaderText}.");
+            //BepinPlugin.Log.LogInfo($"Overwrote CraftingRules Override for {CIToModify.ContextInfo.HeaderText}.");
         }
 
         /// <summary>
@@ -461,7 +461,7 @@ namespace VoidManager.Content
         {
             CraftableItem CI = CreateCraftableItem(RecipeGUID, CraftingRules, OverrideDefaultRecipe);
             GetQuestCraftableList(QuestAsset).Add(CI);
-            BepinPlugin.Log.LogInfo($"Overwrote CraftingRules Override for {CI.ContextInfo.HeaderText} contained in QuestOverrides for quest '{QuestAsset.DisplayName}'");
+            //BepinPlugin.Log.LogInfo($"Overwrote CraftingRules Override for {CI.ContextInfo.HeaderText} contained in QuestOverrides for quest '{QuestAsset.DisplayName}'");
         }
 
         /// <summary>
@@ -476,7 +476,7 @@ namespace VoidManager.Content
         {
             CraftableItem CI = CreateCraftableItem(RecipeGUID, CraftingRules, OverrideDefaultRecipe);
             GetQuestCraftableList(QuestGUID).Add(CI);
-            BepinPlugin.Log.LogInfo($"Added CraftingRules Override for {CI.ContextInfo.HeaderText} contained in QuestOverrides for questGUID '{QuestGUID}'");
+            //BepinPlugin.Log.LogInfo($"Added CraftingRules Override for {CI.ContextInfo.HeaderText} contained in QuestOverrides for questGUID '{QuestGUID}'");
         }
 
 
@@ -490,7 +490,7 @@ namespace VoidManager.Content
         {
             CraftableItem CI = CreateCraftableItemUsingDefaultRecipe(RecipeGUID);
             GetQuestCraftableList(QuestGUID).Add(CI);
-            BepinPlugin.Log.LogInfo($"Added CraftingRules Override for {CI.ContextInfo.HeaderText} contained in QuestOverrides for questGUID '{QuestGUID}'");
+            //BepinPlugin.Log.LogInfo($"Added CraftingRules Override for {CI.ContextInfo.HeaderText} contained in QuestOverrides for questGUID '{QuestGUID}'");
         }
 
         /// <summary>
@@ -503,7 +503,7 @@ namespace VoidManager.Content
         {
             CraftableItem CI = CreateCraftableItemUsingDefaultRecipe(RecipeGUID);
             GetQuestCraftableList(QuestAsset).Add(CI);
-            BepinPlugin.Log.LogInfo($"Added CraftingRules Override for {CI.ContextInfo.HeaderText} contained in QuestOverrides for QuestAsset '{QuestAsset.DisplayName}'");
+            //BepinPlugin.Log.LogInfo($"Added CraftingRules Override for {CI.ContextInfo.HeaderText} contained in QuestOverrides for QuestAsset '{QuestAsset.DisplayName}'");
         }
 
 
@@ -526,7 +526,7 @@ namespace VoidManager.Content
             }
 
             CIL.Remove(CI);
-            BepinPlugin.Log.LogInfo($"Removed CraftingRules Override for {CI.ContextInfo.HeaderText} contained in QuestOverrides for QuestAsset '{QuestAsset.DisplayName}'");
+            //BepinPlugin.Log.LogInfo($"Removed CraftingRules Override for {CI.ContextInfo.HeaderText} contained in QuestOverrides for QuestAsset '{QuestAsset.DisplayName}'");
         }
 
         /// <summary>
@@ -548,7 +548,7 @@ namespace VoidManager.Content
             }
 
             CIL.Remove(CI);
-            BepinPlugin.Log.LogInfo($"Removed CraftingRules Override for {CI.ContextInfo.HeaderText} contained in QuestOverrides for QuestGUID '{QuestGUID}'");
+            //BepinPlugin.Log.LogInfo($"Removed CraftingRules Override for {CI.ContextInfo.HeaderText} contained in QuestOverrides for QuestGUID '{QuestGUID}'");
         }
     }
 }
