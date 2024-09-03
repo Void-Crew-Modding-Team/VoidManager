@@ -43,4 +43,13 @@ namespace VoidManager
             MPModCheckManager.RoomCallbacksClass = new InRoomCallbacks();
         }
     }
+
+    [HarmonyPatch(typeof(GeneralSettings), "Load")]
+    class SetDefaultSettingsPatch
+    {
+        static void Postfix(GeneralSettings __instance)
+        {
+            __instance.JoinModdedGames.SetValue(1);
+        }
+    }
 }
