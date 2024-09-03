@@ -63,7 +63,7 @@ namespace VoidManager
                     else
                     {
                         MultiplayerType MPType;
-                        if (OverridenMods.TryGetValue(BPluginGUID, out MPType) || OverridenMods.TryGetValue(BPluginName, out MPType)) //Overrides unspecified type mods with input from config.
+                        if (OverridenMods.TryGetValue(BPluginGUID, out MPType) || OverridenMods.TryGetValue(BPluginName, out MPType)) //Overrides Unmanaged type mods with input from config.
                         {
                             voidPlugin = new DefaultVoidPlugin(MPType);
                             BepinPlugin.Log.LogInfo($"Discovered MPType override for {BPluginName}. Setting MPType to {MPType}");

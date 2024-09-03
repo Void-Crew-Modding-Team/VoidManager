@@ -414,6 +414,8 @@ namespace VoidManager.CustomGUI
         {
             switch (mptype)
             {
+                case MultiplayerType.Unmanaged:
+                    return "<color=#00CC00>Unmanaged</color>";
                 case MultiplayerType.Client:
                     return "<color=#00CC00>Client</color>";
                 case MultiplayerType.Host:
@@ -440,11 +442,7 @@ namespace VoidManager.CustomGUI
                 case MultiplayerType.Host:
                     return "<color=#00CC00>Host</color> - The host must have this mod for functionality, but it won't prevent joining a vanilla client's game.";
                 case MultiplayerType.Session:
-                    return $"<color=#FFFF99>Session</color> - Can only join/host Mod_Session, but doesn't require other players to install the mod.\n" +
-                        $"- If the host has {MyPluginInfo.USERS_PLUGIN_NAME} and this mod, Connection will be allowed.\n" +
-                        $"- If the host has {MyPluginInfo.USERS_PLUGIN_NAME} but not this mod, they can optionally trust Unspecified Mods.\n" +
-                        $"- If the host does not have {MyPluginInfo.USERS_PLUGIN_NAME}, Connection will be disallowed.\n" +
-                        "- If the local client is hosting, vanilla clients will be allowed to join the session.";
+                    return $"<color=#FFFF99>Session</color> - Can only join/host Mod_Session, but doesn't require other players to install the mod.\n";
                 default:
                     return mptype.ToString();
             }
