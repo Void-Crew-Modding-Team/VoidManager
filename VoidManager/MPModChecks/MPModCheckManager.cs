@@ -31,7 +31,7 @@ namespace VoidManager.MPModChecks
         /// <summary>
         /// Highest level of mods MPType. Does as says
         /// </summary>
-        public MultiplayerType HighestLevelOfMPMods { get; private set; } = MultiplayerType.Hidden;
+        public MultiplayerType HighestLevelOfMPMods { get; private set; } = MultiplayerType.Session;
 
         internal static InRoomCallbacks RoomCallbacksClass;
         private MPModDataBlock[] MyModList = null;
