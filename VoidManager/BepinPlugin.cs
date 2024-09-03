@@ -27,7 +27,7 @@ namespace VoidManager
             Log = Logger;
 
             //Compliance
-            ModdingUtils.RegisterSessionMod();
+            ModdingUtils.SessionModdingType = ModdingType.mod_session;
 
             Harmony.PatchAll();
             Content.Craftables.Instance = new();
