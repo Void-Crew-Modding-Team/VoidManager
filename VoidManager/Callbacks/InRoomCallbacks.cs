@@ -110,7 +110,7 @@ namespace VoidManager.Callbacks
         {
             NetworkedPeerManager.Instance.LeftRoom();
 
-            Events.Instance.CallOnLeftRoom();
+            Events.Instance.OnLeftRoom();
         }
 
         public void OnMasterClientSwitched(Player newMasterClient)
@@ -118,7 +118,7 @@ namespace VoidManager.Callbacks
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
                 MPModCheckManager.Instance.UpdateLobbyProperties();
 
-            Events.Instance.CallOnMasterClientSwitched(newMasterClient);
+            Events.Instance.OnMasterClientSwitched(newMasterClient);
         }
 
         public void OnPlayerEnteredRoom(Player newPlayer)

@@ -198,7 +198,7 @@ namespace VoidManager.MPModChecks
             }
             else
             {
-                Events.Instance.CallHostOnClientVerified(JoiningPlayer);
+                Events.Instance.OnHostVerifiedClient(JoiningPlayer);
             }
         }
 
@@ -524,7 +524,7 @@ namespace VoidManager.MPModChecks
             else
             {
                 BepinPlugin.Log.LogMessage("Hostside mod check passed for player " + joiningPlayer.NickName);
-                Events.Instance.CallHostOnClientVerified(joiningPlayer);
+                Events.Instance.OnHostVerifiedClient(joiningPlayer);
             }
         }
 
