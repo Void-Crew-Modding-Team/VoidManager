@@ -29,12 +29,16 @@ namespace VoidManager
             //Compliance
             ModdingUtils.SessionModdingType = ModdingType.mod_session;
 
-            Harmony.PatchAll();
+            //Wrapped with try catch. If PatchAll fails, further code does not run.
+            try { Harmony.PatchAll(); }
+            catch (Exception e) { Log.LogError(e); }
+
+
             Content.Craftables.Instance = new();
             Content.Unlocks.Instance = new();
             Events.Instance = new();
 
-            
+
             DebugMode = Config.Bind("General", "DebugMode", false, "");
 
             UnspecifiedModListOverride = Config.Bind("General", "Unspecified Mod Overrides", string.Empty, $"Insert mods (not configured for {MyPluginInfo.USERS_PLUGIN_NAME}) for which you would like to override the MPType. \nAvailable MPTypes: client,host,all \nFormat: 'ModNameOrGUID:MPType', delineated by ','. \nEx: {MyPluginInfo.USERS_PLUGIN_NAME}:all,Better Scoop:Host \n ModName/GUID can be gathered from log files and F5 menu.");
@@ -70,7 +74,7 @@ namespace VoidManager
             Events.Instance.JoinedRoom += AutoComplete.RefreshPlayerList;
 
             Log.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
-        }
+            }
         public class Bindings
         {
             public static ConfigEntry<UnityEngine.TextAnchor> ModInfoTextAnchor;
