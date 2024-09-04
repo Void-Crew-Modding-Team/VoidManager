@@ -66,7 +66,7 @@ namespace VoidManager
         /// </summary>
         public event EventHandler LeftRoom;
 
-        internal void CallOnLeftRoom()
+        internal void OnLeftRoom()
         {
             LeftRoom?.Invoke(this, EventArgs.Empty);
         }
@@ -77,7 +77,7 @@ namespace VoidManager
         /// </summary>
         public event EventHandler<PlayerEventArgs> MasterClientSwitched;
 
-        internal void CallOnMasterClientSwitched(Player newMasterClient)
+        internal void OnMasterClientSwitched(Player newMasterClient)
         {
             MasterClientSwitched?.Invoke(this, new PlayerEventArgs() { player = newMasterClient });
         }
@@ -88,7 +88,7 @@ namespace VoidManager
         /// </summary>
         public event EventHandler<PlayerEventArgs> HostVerifiedClient;
 
-        internal void CallHostOnClientVerified(Player verifiedPlayer) //Called by ModChecksHostOnClientJoin and PlayerJoinedChecks
+        internal void OnHostVerifiedClient(Player verifiedPlayer) //Called by ModChecksHostOnClientJoin and PlayerJoinedChecks
         {
             HostVerifiedClient?.Invoke(this, new PlayerEventArgs() { player = verifiedPlayer });
         }
