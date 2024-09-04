@@ -577,7 +577,7 @@ namespace VoidManager.MPModChecks
                 CheckConditions condition;
                 if (conditions.TryGetValue(mod.ModGUID, out condition))
                 {
-                    condition.ClientModVersion = mod.Version;
+                    condition.HostModVersion = mod.Version;
                     condition.PlayersWithMod = PlayersWithMod.Both;
                     conditions[mod.ModGUID] = condition;
                 }
