@@ -184,6 +184,8 @@ namespace VoidManager.CustomGUI
                                 BepInPlugin bepInPlugin = selectedMod.BepinPlugin.Metadata;
                                 Label($"Author: {selectedMod.Author}");
                                 Label($"Name: {bepInPlugin.Name}");
+                                if (BepinPlugin.Bindings.DebugMode.Value) 
+                                    Label($"GUID: {bepInPlugin.GUID}");
                                 Label($"Version: {bepInPlugin.Version}");
                                 if (selectedMod.Description != string.Empty)
                                     Label($"Description: {selectedMod.Description}");
