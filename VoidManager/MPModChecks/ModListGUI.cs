@@ -62,7 +62,7 @@ namespace VoidManager.MPModChecks
                 GUIClose();
                 return;
             }
-            MPUserDataBlock roomData = MPModCheckManager.DeserializeHashlessMPUserData((byte[])room.CustomProperties[InRoomCallbacks.RoomModsPropertyKey]);
+            MPUserDataBlock roomData = NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])room.CustomProperties[InRoomCallbacks.RoomModsPropertyKey]);
             mods = roomData.ModData.Where(mod => mod.MPType > MultiplayerType.Client).ToList();
             mods.Sort((modA, modB) =>
             {

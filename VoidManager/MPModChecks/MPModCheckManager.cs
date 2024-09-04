@@ -1,17 +1,17 @@
 ﻿using BepInEx;
 using BepInEx.Bootstrap;
-using ExitGames.Client.Photon;
+using CG.GameLoopStateMachine;
+using CG.GameLoopStateMachine.GameStates;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using ToolClasses;
 using UnityEngine;
 using VoidManager.Callbacks;
+using VoidManager.MPModChecks.Patches;
 using VoidManager.Utilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
@@ -36,7 +36,7 @@ namespace VoidManager.MPModChecks
         internal static InRoomCallbacks RoomCallbacksClass;
         private MPModDataBlock[] MyModList = null;
         internal byte[] RoomProperties { get; private set; }
-        internal Dictionary<Player, MPUserDataBlock> NetworkedPeersModLists = new Dictionary<Player, MPUserDataBlock>();
+        //internal Dictionary<Player, MPUserDataBlock> NetworkedPeersModLists = new Dictionary<Player, MPUserDataBlock>();
         internal string LastModCheckFailReason;
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace VoidManager.MPModChecks
 
         internal void BuildRoomProperties()
         {
-            RoomProperties = SerializeHashlessMPUserData();
+            RoomProperties = NetworkedPeerManager.SerializeHashlessMPUserData(MyModList);
         }
 
         internal void UpdateLobbyProperties()
@@ -143,332 +143,27 @@ namespace VoidManager.MPModChecks
             MyModList = ProcessedMods;
             stopwatch.Stop();
             BepinPlugin.Log.LogInfo("Finished Building MyModList, time elapsted: " + stopwatch.ElapsedMilliseconds.ToString() + " ms");
-            BepinPlugin.Log.LogInfo($"MyModList:\n{GetModListAsString(MyModList)}\n");
+            BepinPlugin.Log.LogInfo($"MyModList:\n{NetworkedPeerManager.GetModListAsString(MyModList)}\n");
         }
 
-        /// <summary>
-        /// Serilizes user data into a byte array for network transfer. Does not contain a hash
-        /// </summary>
-        /// <returns>Serilized User data (Hashless)</returns>
-        public byte[] SerializeHashlessMPUserData()
+        internal void JoinedRoom()
         {
-            MemoryStream dataStream = new MemoryStream();
-            using (BinaryWriter writer = new BinaryWriter(dataStream))
+            if (!MPModCheckManager.Instance.ModChecksClientside(PhotonNetwork.CurrentRoom.CustomProperties))
             {
-                //Datastream storage structure:
-                writer.Write(MyPluginInfo.PLUGIN_VERSION);      //--Header--
-                writer.Write(MyModList.Length);                 //string VMVersion
-                for (int i = 0; i < MyModList.Length; i++)      //int    modcount
-                {                                               //
-                    MPModDataBlock dataBlock = MyModList[i];    //--ModData--
-                    writer.Write(dataBlock.ModName);            //string mod name
-                    writer.Write(dataBlock.ModGUID);            //string harmony ident
-                    writer.Write(dataBlock.Version);            //string mod version
-                    writer.Write((byte)dataBlock.MPType);       //byte   AllRequireMod
-                    writer.Write(dataBlock.DownloadID);         //string ModID
-                }
-            }
-
-            return dataStream.ToArray();
-        }
-
-        /// <summary>
-        /// Deserializes bytes representing a serialized MPUserDataBlock which does not contain a hash.
-        /// </summary>
-        /// <param name="byteData"></param>
-        /// <returns>MPUserDataBlock (Hashless)</returns>
-        public static MPUserDataBlock DeserializeHashlessMPUserData(byte[] byteData)
-        {
-            MemoryStream memoryStream = new MemoryStream(byteData);
-            memoryStream.Position = 0;
-            try
-            {
-                using (BinaryReader reader = new BinaryReader(memoryStream))
-                {
-
-                    string VMVersion = reader.ReadString();
-                    int ModCount = reader.ReadInt32();
-                    MPModDataBlock[] ModList = new MPModDataBlock[ModCount];
-                    for (int i = 0; i < ModCount; i++)
-                    {
-                        string modname = reader.ReadString();
-                        string HarmonyIdent = reader.ReadString();
-                        string ModVersion = reader.ReadString();
-                        MultiplayerType MPType = (MultiplayerType)reader.ReadByte();
-                        string ModID = reader.ReadString();
-                        ModList[i] = new MPModDataBlock(HarmonyIdent, modname, ModVersion, MPType, ModID);
-                    }
-
-                    memoryStream.Dispose();
-                    return new MPUserDataBlock(VMVersion, ModList);
-
-                }
-            }
-            catch (Exception ex)
-            {
-                BepinPlugin.Log.LogInfo($"Failed to read mod list from Hashless MPUserData, returning null.\n{ex.Message}");
-                memoryStream.Dispose();
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Serilizes user data into a byte array for network transfer. Contains a hash.
-        /// </summary>
-        /// <returns>Serilized User data (Hashfull)</returns>
-        public byte[] SerializeHashfullMPUserData()
-        {
-            MemoryStream dataStream = new MemoryStream();
-            using (BinaryWriter writer = new BinaryWriter(dataStream))
-            {
-                //Datastream storage structure:
-                writer.Write(MyPluginInfo.PLUGIN_VERSION);      //--Header--
-                writer.Write(MyModList.Length);                 //string VMVersion
-                for (int i = 0; i < MyModList.Length; i++)      //int    modcount
-                {                                               //
-                    MPModDataBlock dataBlock = MyModList[i];    //--ModData--
-                    writer.Write(dataBlock.ModName);            //string mod name
-                    writer.Write(dataBlock.ModGUID);            //string harmony ident
-                    writer.Write(dataBlock.Version);            //string mod version
-                    writer.Write((byte)dataBlock.MPType);       //bool   AllRequireMod
-                    writer.Write(dataBlock.DownloadID);         //string ModID
-                    writer.Write(dataBlock.Hash);               //byte[] Hash
-                }
-            }
-            return dataStream.ToArray();
-        }
-
-        /// <summary>
-        /// Deserializes bytes representing a serialized MPUserDataBlock containing a hash.
-        /// </summary>
-        /// <param name="byteData"></param>
-        /// <returns>MPUserDataBlock (Hashfull)</returns>
-        public static MPUserDataBlock DeserializeHashfullMPUserData(byte[] byteData)
-        {
-            MemoryStream memoryStream = new MemoryStream(byteData);
-            memoryStream.Position = 0;
-            try
-            {
-                using (BinaryReader reader = new BinaryReader(memoryStream))
-                {
-
-                    string VoidManager = reader.ReadString();
-                    int ModCount = reader.ReadInt32();
-                    MPModDataBlock[] ModList = new MPModDataBlock[ModCount];
-                    for (int i = 0; i < ModCount; i++)
-                    {
-                        string modname = reader.ReadString();
-                        string HarmonyIdent = reader.ReadString();
-                        string ModVersion = reader.ReadString();
-                        MultiplayerType MPType = (MultiplayerType)reader.ReadByte();
-                        string ModID = reader.ReadString();
-                        byte[] Hash = reader.ReadBytes(32);
-                        ModList[i] = new MPModDataBlock(HarmonyIdent, modname, ModVersion, MPType, ModID, Hash);
-                    }
-                    memoryStream.Dispose();
-                    return new MPUserDataBlock(VoidManager, ModList);
-                }
-            }
-            catch (Exception ex)
-            {
-                BepinPlugin.Log.LogInfo($"Failed to read mod list from Hashfull MPUserData, returning null.\n{ex.Message}");
-                memoryStream.Dispose();
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Converts a ModDataBlock array to a string list, usually for logging purposes. Starts with a new line.
-        /// </summary>
-        /// <param name="ModDatas"></param>
-        /// <returns>Converts ModDataBLocks to a string list.</returns>
-        public static string GetModListAsString(MPModDataBlock[] ModDatas)
-        {
-            string ModList = string.Empty;
-            foreach (MPModDataBlock DataBlock in ModDatas)
-            {
-                ModList += $"\n - {DataBlock.ModName} {DataBlock.Version}";
-            }
-            return ModList;
-        }
-
-        /// <summary>
-        /// Converts a ModDataBlock array to a string list for echo chat purposes.
-        /// </summary>
-        /// <param name="ModDatas"></param>
-        /// <returns>Converts ModDataBLocks to a string list.</returns>
-        public static string GetModListAsStringForChat(MPModDataBlock[] ModDatas)
-        {
-            string ModList = string.Empty;
-            bool first = true;
-            foreach (MPModDataBlock DataBlock in ModDatas)
-            {
-                if (first)
-                {
-                    first = false;
-                    ModList += $" - {DataBlock.ModName} {DataBlock.Version}";
-                }
-                else
-                {
-                    ModList += $"\n - {DataBlock.ModName} {DataBlock.Version}";
-                }
-            }
-            return ModList;
-        }
-
-        /// <summary>
-        /// Provides the host MPUserDataBlock from room properties.
-        /// </summary>
-        /// <returns>Host's MPUserDataBlock</returns>
-        public MPUserDataBlock GetHostModList()
-        {
-            if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))
-            {
-                try
-                {
-                    return DeserializeHashlessMPUserData((byte[])PhotonNetwork.CurrentRoom.CustomProperties[InRoomCallbacks.RoomModsPropertyKey]);
-                }
-                catch
-                {
-                    BepinPlugin.Log.LogError("Failed to Deserialize host mod list.");
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Gets full mod list of Networked Peer.
-        /// </summary>
-        /// <param name="Player"></param>
-        /// <returns>MPUserDataBlock of NetworkedPeer. Returns null if no modlist found.</returns>
-        public MPUserDataBlock GetNetworkedPeerMods(Player Player)
-        {
-            if (NetworkedPeersModLists.TryGetValue(Player, out MPUserDataBlock value))
-            {
-                return value;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Checks if given player has mod, checked by mod GUID
-        /// </summary>
-        /// <param name="Player"></param>
-        /// <param name="ModGUID"></param>
-        /// <returns>Returns true if player has mod</returns>
-        public bool NetworkedPeerHasMod(Player Player, string ModGUID)
-        {
-            MPUserDataBlock userData = GetNetworkedPeerMods(Player);
-            if (userData != null)
-            {
-                foreach (MPModDataBlock modData in userData.ModData)
-                {
-                    if (modData.ModGUID == ModGUID)
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Finds all Networked Peers with a given mod GUID
-        /// </summary>
-        /// <param name="ModGUID"></param>
-        /// <returns>NetworkedPeers using given mod</returns>
-        public List<Player> NetworkedPeersWithMod(string ModGUID)
-        {
-            List<Player> playerList = new List<Player>();
-            foreach (KeyValuePair<Player, MPUserDataBlock> userEntry in NetworkedPeersModLists)
-            {
-                foreach (MPModDataBlock modData in userEntry.Value.ModData)
-                {
-                    if (modData.ModGUID == ModGUID)
-                    {
-                        playerList.Add(userEntry.Key);
-                    }
-                }
-            }
-            return playerList;
-        }
-
-        /// <summary>
-        /// Adds a player's mod list to the local NetworkedPeersModLists
-        /// </summary>
-        /// <param name="Player"></param>
-        /// <param name="modList"></param>
-        public void AddNetworkedPeerMods(Player Player, MPUserDataBlock modList)
-        {
-            BepinPlugin.Log.LogMessage($"recieved modlist from user '{Player.NickName}' with the following info:\nVoidManager Version: {modList.VMVersion}\nModList:\n{MPModCheckManager.GetModListAsString(modList.ModData)}\n");
-            if (NetworkedPeersModLists.ContainsKey(Player))
-            {
-                NetworkedPeersModLists[Player] = modList;
+                BepinPlugin.Log.LogInfo("Disconnecting from Room");
+                GameStateMachine.Instance.ChangeState<GSPhotonDisconnected>();
                 return;
             }
-            NetworkedPeersModLists.Add(Player, modList);
 
-            Events.Instance.OnClientModlistRecieved(Player);
-        }
+            //Sends to host twice. The first sends hashfull data to the host, the latter sends hashless data to other clients (including host).
+            NetworkedPeerManager.SendModlistToHost(MyModList);
+            NetworkedPeerManager.SendModListToOthers(MyModList);
 
-        /// <summary>
-        /// Clears player from NetworkedPeersModLists
-        /// </summary>
-        /// <param name="Player"></param>
-        public void RemoveNetworkedPeerMods(Player Player)
-        {
-            NetworkedPeersModLists.Remove(Player);
-        }
-
-        /// <summary>
-        /// Clears all lists from NetworkedPeersModLists
-        /// </summary>
-        internal void ClearAllNetworkedPeerMods()
-        {
-            NetworkedPeersModLists.Clear();
-        }
-
-        /// <summary>
-        /// Checks if player has a mod list in NetworkedPeersModLists 
-        /// </summary>
-        /// <param name="Player"></param>
-        /// <returns>existance of player key in dictionary</returns>
-        public bool GetNetworkedPeerModlistExists(Player Player)
-        {
-            return NetworkedPeersModLists.ContainsKey(Player);
-        }
-
-        private static MPUserDataBlock GetHostModList(RoomInfo room)
-        {
-            if (room.CustomProperties.ContainsKey("modList"))
+            //Add host mod list to local cache.
+            if (!PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))
             {
-                try { return DeserializeHashlessMPUserData((byte[])room.CustomProperties["modList"]); }
-                catch { BepinPlugin.Log.LogError("Failed to Deserialize host mod list. Could be an older version of VoidManager"); }
+                NetworkedPeerManager.Instance.AddNetworkedPeerMods(PhotonNetwork.MasterClient, NetworkedPeerManager.Instance.GetHostModList());
             }
-            return new MPUserDataBlock();
-        }
-
-        internal void SendModlistToClient(Player Player)
-        {
-            if (Player.IsLocal) { return; }
-
-            PhotonNetwork.RaiseEvent(InRoomCallbacks.PlayerMPUserDataEventCode, new object[] { false, SerializeHashlessMPUserData() }, new RaiseEventOptions { TargetActors = new int[1] { Player.ActorNumber } }, SendOptions.SendReliable);
-        }
-
-        internal void SendModlistToHost()
-        {
-            if (PhotonNetwork.IsMasterClient) { return; }
-
-            PhotonNetwork.RaiseEvent(InRoomCallbacks.PlayerMPUserDataEventCode, new object[] { true, SerializeHashfullMPUserData() }, new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient }, SendOptions.SendReliable);
-        }
-
-        internal void SendModListToOthers()
-        {
-            BepinPlugin.Log.LogMessage("sending others");
-            PhotonNetwork.RaiseEvent(InRoomCallbacks.PlayerMPUserDataEventCode, new object[] { false, SerializeHashlessMPUserData() }, null, SendOptions.SendReliable);
         }
 
         internal void PlayerJoined(Player JoiningPlayer)
@@ -479,7 +174,7 @@ namespace VoidManager.MPModChecks
             }
             else
             {
-                MPModCheckManager.Instance.SendModlistToClient(JoiningPlayer);
+                NetworkedPeerManager.SendModlistToClient(MyModList, JoiningPlayer);
             }
         }
 
@@ -488,7 +183,7 @@ namespace VoidManager.MPModChecks
             for (int i = 0; i < 50; i++)
             {
                 yield return new WaitForSeconds(.2f);
-                if (Instance.GetNetworkedPeerModlistExists(JoiningPlayer))
+                if (NetworkedPeerManager.Instance.GetNetworkedPeerModlistExists(JoiningPlayer))
                 {
                     Instance.ModChecksHostOnClientJoin(JoiningPlayer);
                     yield break;
@@ -498,7 +193,7 @@ namespace VoidManager.MPModChecks
             {
                 //Kick player if mod no mod list recieved and there are local MPType.All Mods.
                 BepinPlugin.Log.LogMessage($"Kicked player {JoiningPlayer.NickName} for not having mods.");
-                Messaging.Echo($"Kicked player {JoiningPlayer.NickName} for not having mods.\n{GetModListAsStringForChat(Instance.MyModList.Where(MDB => MDB.MPType == MultiplayerType.All).ToArray())}", false);
+                Messaging.Echo($"Kicked player {JoiningPlayer.NickName} for not having mods.\n{NetworkedPeerManager.GetModListAsStringForChat(Instance.MyModList.Where(MDB => MDB.MPType == MultiplayerType.All).ToArray())}", false);
                 PhotonNetwork.CloseConnection(JoiningPlayer);
             }
             else
@@ -532,7 +227,7 @@ namespace VoidManager.MPModChecks
                 if (HighestLevelOfMPMods >= MultiplayerType.Session)
                 {
                     // Case: Host doesn't have mods, but Client has mod(s) which need the room to be marked as 'Mod_Session'.
-                    LastModCheckFailReason = $"Host has no mods, but client has Mod_Session or higher mods.{GetModListAsString(Instance.MyModList.Where(MDB => MDB.MPType >= MultiplayerType.Session).ToArray())}";
+                    LastModCheckFailReason = $"Host has no mods, but client has Mod_Session or higher mods.{NetworkedPeerManager.GetModListAsString(Instance.MyModList.Where(MDB => MDB.MPType >= MultiplayerType.Session).ToArray())}";
 
                     KickMessagePatches.KickTitle = "Disconnected: Incompatable mod list";
                     KickMessagePatches.KickMessage = LastModCheckFailReason;
@@ -554,7 +249,7 @@ namespace VoidManager.MPModChecks
 
 
             //Selects only mods which have MPType set to all for comparison.
-            MPUserDataBlock HostModData = DeserializeHashlessMPUserData((byte[])RoomProperties[InRoomCallbacks.RoomModsPropertyKey]);
+            MPUserDataBlock HostModData = NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])RoomProperties[InRoomCallbacks.RoomModsPropertyKey]);
             MPModDataBlock[] HostMods = HostModData.ModData;
 
             BepinPlugin.Log.LogMessage($"Void Manager versions - Host: {HostModData.VMVersion} Client: {MyPluginInfo.PLUGIN_VERSION}");
@@ -699,11 +394,11 @@ namespace VoidManager.MPModChecks
 
 
             //Collect Client/Host mods
-            MPUserDataBlock JoiningPlayerMPData = GetNetworkedPeerMods(joiningPlayer);
+            MPUserDataBlock JoiningPlayerMPData = NetworkedPeerManager.Instance.GetNetworkedPeerMods(joiningPlayer);
             MPModDataBlock[] JoiningClientMods = JoiningPlayerMPData.ModData;
 
-            if (BepinPlugin.Bindings.DebugMode.Value) BepinPlugin.Log.LogInfo($"Host checking user mod list\n{GetModListAsString(JoiningClientMods)}");
-            if (BepinPlugin.Bindings.DebugMode.Value) BepinPlugin.Log.LogInfo($"Host mod list:\n{GetModListAsString(MyModList)}");
+            if (BepinPlugin.Bindings.DebugMode.Value) BepinPlugin.Log.LogInfo($"Host checking user mod list\n{NetworkedPeerManager.GetModListAsString(JoiningClientMods)}");
+            if (BepinPlugin.Bindings.DebugMode.Value) BepinPlugin.Log.LogInfo($"Host mod list:\n{NetworkedPeerManager.GetModListAsString(MyModList)}");
 
             //Conditions Dictionary Init
             Dictionary<string, CheckConditions> conditions = new();
@@ -725,7 +420,7 @@ namespace VoidManager.MPModChecks
             }
 
             //Loop through Joining Client mods
-            foreach(MPModDataBlock mod in JoiningClientMods)
+            foreach (MPModDataBlock mod in JoiningClientMods)
             {
                 CheckConditions condition;
                 if (conditions.TryGetValue(mod.ModGUID, out condition))
@@ -780,8 +475,8 @@ namespace VoidManager.MPModChecks
                         break;
                 }
             }
-            
-            
+
+
             string errorMessage = string.Empty;
 
             if (Session.Count > 0) //Case: Client and Host have mismatched mod versions
@@ -886,7 +581,7 @@ namespace VoidManager.MPModChecks
 
 
                 // These mods will enable/disable themselves as needed.
-                case MultiplayerType.Client: 
+                case MultiplayerType.Client:
                 case MultiplayerType.Host:
                     failDetails.CheckFailReason = CheckFailReason.NoFail;
                     break;
@@ -895,99 +590,5 @@ namespace VoidManager.MPModChecks
             //All other MPTypes will default to allow.
             return failDetails;
         }
-
-        /// <summary>
-        /// Contains data for a given mod pair when being checked.
-        /// </summary>
-        public struct CheckConditions
-        {
-            /// <summary>
-            /// Contains data for a given mod pair when being checked.
-            /// </summary>
-            public CheckConditions()
-            {
-            }
-
-            /// <summary>
-            /// The mod belonging to the ChecKConditions instance.
-            /// </summary>
-            public MPModDataBlock Mod;
-
-            /// <summary>
-            /// If host is calling, true; If Client is calling, false.
-            /// </summary>
-            public bool HostCheck = false;
-
-            /// <summary>
-            /// If Client, Host, or both players have this mod installed.
-            /// </summary>
-            public PlayersWithMod PlayersWithMod;
-
-            /// <summary>
-            /// Version string of client's mod.
-            /// </summary>
-            public string ClientModVersion = string.Empty;
-
-            /// <summary>
-            /// Version string of host's mod.
-            /// </summary>
-            public string HostModVersion = string.Empty;
-
-            /// <summary>
-            /// Current session is Mod_Session.
-            /// </summary>
-            public bool IsMod_Session;
-
-            /// <summary>
-            /// If is HostCheck and sha256 hash sent by client matches host's hash.
-            /// </summary>
-            public bool HashesMatch = false;
-        }
-
-        /// <summary>
-        /// The response from CheckMod
-        /// </summary>
-        public struct FailInfo
-        {
-            /// <summary>
-            /// The response from CheckMod
-            /// </summary>
-            public FailInfo()
-            {
-            }
-
-            /// <summary>
-            /// An error message for custom fail reasons.
-            /// </summary>
-            public string FailMessage = string.Empty;
-
-            /// <summary>
-            /// The error reason.
-            /// </summary>
-            public CheckFailReason CheckFailReason;
-
-            //Tracks failling mod with fail reason.
-            internal MPModDataBlock FailingMod;
-        }
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-
-        public enum PlayersWithMod : byte
-        {
-            Client,
-            Host,
-            Both
-        }
-
-        public enum CheckFailReason : byte
-        {
-            NoFail,
-            MismatchedVersions,
-            AllClientLacking,
-            AllHostLacking,
-            Session,
-            Custom
-        }
-
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     }
 }

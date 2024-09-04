@@ -2,7 +2,7 @@
 using HarmonyLib;
 using UnityEngine.SceneManagement;
 
-namespace VoidManager.MPModChecks
+namespace VoidManager.MPModChecks.Patches
 {
     internal class KickMessagePatches
     {
@@ -28,5 +28,5 @@ namespace VoidManager.MPModChecks
             }
         }
     }
-    
+
 }

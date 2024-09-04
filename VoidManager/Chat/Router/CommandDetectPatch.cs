@@ -28,6 +28,7 @@ namespace VoidManager.Chat.Router
     internal class PublicCommandDetectPatch
     { // Other player chat command
         [HarmonyPostfix]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Method Declaration", "Harmony003:Harmony non-ref patch parameters modified", Justification = "N/A")]
         static void DiscoverPublicCommand(string cloudID, string channelTextMessage)
         {
             Photon.Realtime.Player p = VoipService.CloudIDToPlayer(cloudID);

@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using UI.Matchmaking;
 
-namespace VoidManager.MPModChecks
+namespace VoidManager.MPModChecks.Patches
 {
     [HarmonyPatch(typeof(MatchMakingJoinPanel), "QuickJoinRequested")]
     internal class QuickJoinPatch

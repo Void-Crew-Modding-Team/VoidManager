@@ -465,7 +465,7 @@ namespace VoidManager.CustomGUI
 
         void DrawPlayerModList(Player player)
         {
-            MPUserDataBlock userData = MPModCheckManager.Instance.GetNetworkedPeerMods(player);
+            MPUserDataBlock userData = NetworkedPeerManager.Instance.GetNetworkedPeerMods(player);
             if (userData != null)
             {
                 Label($"User {MyPluginInfo.USERS_PLUGIN_NAME} version: {userData.VMVersion}");

@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using VoidManager.Callbacks;
 
-namespace VoidManager.MPModChecks
+namespace VoidManager.MPModChecks.Patches
 {
     [HarmonyPatch(typeof(PhotonService), "PhotonCreateRoom")]
     internal class RoomInfoPatch
@@ -36,7 +36,7 @@ namespace VoidManager.MPModChecks
             List<CodeInstruction> InstructionList = instructions.ToList();
 
             int count = InstructionList.Count;
-            for(int i = count - 1; i >= 0; i--)
+            for (int i = count - 1; i >= 0; i--)
             {
                 if (InstructionList[i].opcode == OpCodes.Call)
                 {

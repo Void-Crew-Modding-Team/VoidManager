@@ -20,6 +20,7 @@ namespace VoidManager
 
             PluginHandler.DiscoverPlugins();
 
+            NetworkedPeerManager.Instance = new NetworkedPeerManager();
             MPModCheckManager.Instance = new MPModCheckManager();
             BepinPlugin.Log.LogInfo($"- - - - - - - - - - - - - - - - - - - -");
         }

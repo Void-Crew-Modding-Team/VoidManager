@@ -1,6 +1,4 @@
-﻿using CG.GameLoopStateMachine;
-using CG.GameLoopStateMachine.GameStates;
-using ExitGames.Client.Photon;
+﻿using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -8,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using VoidManager.ModMessages;
 using VoidManager.MPModChecks;
+using VoidManager.MPModChecks.Patches;
 
 namespace VoidManager.Callbacks
 {
@@ -40,7 +39,7 @@ namespace VoidManager.Callbacks
                 object[] data = (object[])photonEvent.CustomData;
                 if ((bool)data[0])//Hashfull vs Hashless marker
                 {
-                    MPModCheckManager.Instance.AddNetworkedPeerMods(sender, MPModCheckManager.DeserializeHashfullMPUserData((byte[])data[1]));
+                    NetworkedPeerManager.Instance.AddNetworkedPeerMods(sender, NetworkedPeerManager.DeserializeHashfullMPUserData((byte[])data[1]));
                 }
                 else if (PhotonNetwork.IsMasterClient) //Data is hashless but recieving player is host. Data recieved should be hashfull when sent to host. Also no point turning down hashfull data from other clients when local is client.
                 {
@@ -49,7 +48,7 @@ namespace VoidManager.Callbacks
                 }
                 else
                 {
-                    MPModCheckManager.Instance.AddNetworkedPeerMods(sender, MPModCheckManager.DeserializeHashlessMPUserData((byte[])data[1]));
+                    NetworkedPeerManager.Instance.AddNetworkedPeerMods(sender, NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])data[1]));
                 }
             }
             else if (photonEvent.Code == ModMessageEventCode)//ModMessagesEvents
@@ -101,21 +100,7 @@ namespace VoidManager.Callbacks
 
         public void OnJoinedRoom()
         {
-            if (!MPModCheckManager.Instance.ModChecksClientside(PhotonNetwork.CurrentRoom.CustomProperties))
-            {
-                BepinPlugin.Log.LogInfo("Disconnecting from Room");
-                GameStateMachine.Instance.ChangeState<GSPhotonDisconnected>();
-                return;
-            }
-            //Sends to host twice. Should fixme
-            MPModCheckManager.Instance.SendModlistToHost();
-            MPModCheckManager.Instance.SendModListToOthers();
-
-            //Add host mod list to local cache.
-            if (!PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(RoomModsPropertyKey))
-            {
-                MPModCheckManager.Instance.AddNetworkedPeerMods(PhotonNetwork.MasterClient, MPModCheckManager.Instance.GetHostModList());
-            }
+            MPModCheckManager.Instance.JoinedRoom();
 
             //Above controls whether a game is joined, so it is better to let it run first.
             Events.Instance.OnJoinedRoom();
@@ -123,16 +108,15 @@ namespace VoidManager.Callbacks
 
         public void OnLeftRoom()
         {
-            MPModCheckManager.Instance.ClearAllNetworkedPeerMods();
+            NetworkedPeerManager.Instance.LeftRoom();
+
             Events.Instance.CallOnLeftRoom();
         }
 
         public void OnMasterClientSwitched(Player newMasterClient)
         {
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
-            {
                 MPModCheckManager.Instance.UpdateLobbyProperties();
-            }
 
             Events.Instance.CallOnMasterClientSwitched(newMasterClient);
         }
@@ -140,13 +124,15 @@ namespace VoidManager.Callbacks
         public void OnPlayerEnteredRoom(Player newPlayer)
         {
             MPModCheckManager.Instance.PlayerJoined(newPlayer);
+
             Events.Instance.OnPlayerEnteredRoom(newPlayer);
         }
 
         public void OnPlayerLeftRoom(Player leavingPlayer)
         {
             Events.Instance.OnPlayerLeftRoom(leavingPlayer);
-            MPModCheckManager.Instance.RemoveNetworkedPeerMods(leavingPlayer);
+
+            NetworkedPeerManager.Instance.PlayerLeftRoom(leavingPlayer);
         }
 
 
