@@ -518,6 +518,8 @@ namespace VoidManager.MPModChecks
 
         internal bool ModChecksClientside(Hashtable RoomProperties, bool inRoom = true)
         {
+            if (inRoom && PhotonNetwork.IsMasterClient) { return true; } // Should not check own room.
+
             LastModCheckFailReason = string.Empty;
             BepinPlugin.Log.LogMessage($"Starting Clientside mod checks for room: {RoomProperties[InRoomCallbacks.OfficalRoomNamePropertyKey]}");
 
