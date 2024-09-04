@@ -1,9 +1,11 @@
-﻿using HarmonyLib;
+﻿using Gameplay.Terminals;
+using HarmonyLib;
 using Photon.Realtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UI.Core;
 using UI.Matchmaking;
 using UnityEngine;
 using VoidManager.Callbacks;
@@ -17,9 +19,16 @@ namespace VoidManager.MPModChecks
         private static readonly FieldInfo MatchListField = AccessTools.Field(typeof(MatchMakingJoinPanel), "MatchList");
 
         internal static ModListGUI Instance { get; private set; }
+
+        List<MPModDataBlock> mods;
+        string LastCheckedRoom;
+        internal RoomInfo CurrentRoom;
+        internal TabsRibbon Tabs;
+
+
+        //GUI vars
         GameObject MLCanvas;
         private bool GUIActive = false;
-        List<MPModDataBlock> mods;
         Rect WindowPos;
         Vector2 ListScroll = Vector2.zero;
 
@@ -36,41 +45,31 @@ namespace VoidManager.MPModChecks
 
         private void Update()
         {
-            LobbyCallbacks LCI = LobbyCallbacks.Instance;
-            if (LCI == null || LCI.ActiveTerminal == null || LCI.RoomList == null || LCI.Tabs == null || LCI.Tabs.ActiveHeader != 0)
+            if(CurrentRoom == null || !CurrentRoom.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))
             {
                 GUIClose();
                 return;
             }
 
-            MatchmakingList matchList = (MatchmakingList)MatchListField.GetValue(MatchmakingTerminalField.GetValue(LCI.ActiveTerminal));
-            if (matchList.GetSelectedRoom()?.RoomId == null)
-            {
+            // Disable GUI when room settings are open.
+            if (Tabs.ActiveHeader == 0)
+                GUIOpen();
+            else
                 GUIClose();
-                return;
-            }
 
-            RoomInfo room = LCI.RoomList.FirstOrDefault(room => room.Name == matchList.GetSelectedRoom().RoomId);
-            if (room == null)
+            // Save CPU cycles by only running when selecting new room. Side effect, if the room mod list gets changed, the room must be deselected/reselected to see updated list.
+            if (LastCheckedRoom != CurrentRoom.Name)
             {
-                GUIClose();
-                return;
+                MPUserDataBlock roomData = NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])CurrentRoom.CustomProperties[InRoomCallbacks.RoomModsPropertyKey]);
+                mods = roomData.ModData.Where(mod => mod.MPType > MultiplayerType.Client).ToList();
+                mods.Sort((modA, modB) =>
+                {
+                    int type = modB.MPType.CompareTo(modA.MPType);
+                    if (type != 0) return type;
+                    return modA.ModName.CompareTo(modB.ModName);
+                });
+                GUIOpen();
             }
-
-            if (!room.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))
-            {
-                GUIClose();
-                return;
-            }
-            MPUserDataBlock roomData = NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])room.CustomProperties[InRoomCallbacks.RoomModsPropertyKey]);
-            mods = roomData.ModData.Where(mod => mod.MPType > MultiplayerType.Client).ToList();
-            mods.Sort((modA, modB) =>
-            {
-                int type = modB.MPType.CompareTo(modA.MPType);
-                if (type != 0) return type;
-                return modA.ModName.CompareTo(modB.ModName);
-            });
-            GUIOpen();
         }
 
         private void GUIOpen()
@@ -85,6 +84,9 @@ namespace VoidManager.MPModChecks
         {
             if (!GUIActive) return;
 
+            CurrentRoom = null;
+            LastCheckedRoom = null;
+            mods = null;
             GUIActive = false;
         }
 
@@ -99,10 +101,15 @@ namespace VoidManager.MPModChecks
 
         private void WindowFunction(int windowID)
         {
+            if (mods.Count == 0)
+            {
+                GUILayout.Label("No Mods");
+                return;
+            }
             ListScroll = GUILayout.BeginScrollView(ListScroll);
             MultiplayerType lastType = mods[0].MPType;
             GUILayout.Label(GetMPTypeHeader(lastType));
-            foreach(MPModDataBlock mod in mods)
+            foreach (MPModDataBlock mod in mods)
             {
                 if (mod.MPType != lastType)
                 {
@@ -115,6 +122,7 @@ namespace VoidManager.MPModChecks
             GUILayout.EndScrollView();
         }
 
+        //Consider using GUIMain.GetColoredMPTypeText(MPType)
         private string GetMPTypeHeader(MultiplayerType type) => type switch
         {
             MultiplayerType.Unmanaged => "Unmanaged",
@@ -124,5 +132,63 @@ namespace VoidManager.MPModChecks
             MultiplayerType.All => "<color=#FF3333>Required</color>",
             _ => "Error - type not found"
         };
+    }
+
+    //Set selected room for GUI
+    [HarmonyPatch(typeof(MatchMakingJoinPanel), "RoomSelected")]
+    class OnRoomSelectedPatch
+    {
+        static void Postfix(MatchmakingRoom room)
+        {
+            if (MatchmakingController.Instance.GetCachedRoomList().TryGetValue(room.RoomId, out RoomInfo RI))
+            {
+                ModListGUI.Instance.CurrentRoom = RI;
+            }
+        }
+    }
+
+    //Close GUI when entering a game
+    [HarmonyPatch(typeof(MatchmakingController), "JoinGame")]
+    class OnRoomDeselectedPatch
+    {
+        static void Postfix(RoomJoinStatus __result)
+        {
+            if (__result == RoomJoinStatus.Success)
+            {
+                ModListGUI.Instance.GUIClose();
+            }
+        }
+    }
+
+    //Close GUI when backing out of main menu JoinPanel
+    [HarmonyPatch(typeof(MatchMakingMenu), "OnExit")]
+    class LeftMatchMakingMenuPatch
+    {
+        static void Postfix()
+        {
+            ModListGUI.Instance.GUIClose();
+        }
+    }
+
+    //Close GUI when leaving any screen; Set Tabs value for disabling GUI while touching game settings.
+    [HarmonyPatch(typeof(TerminalScreen), "SetPanelActive")]
+    class LeftMatchmakingTerminalPatch
+    {
+        private static readonly FieldInfo tabsField = AccessTools.Field(typeof(MatchmakingTerminal), "tabs");
+        static void Postfix(TerminalScreen __instance,  bool active)
+        {
+            if (active)
+            {
+                GameObject GO = __instance.gameObject;
+                if (GO.name == "MatchmakingTerminal")
+                {
+                    ModListGUI.Instance.Tabs = (TabsRibbon)tabsField.GetValue(GO.GetComponent<MatchmakingTerminal>());
+                }
+            }
+            else
+            {
+                ModListGUI.Instance.GUIClose();
+            }
+        }
     }
 }

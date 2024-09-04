@@ -9,6 +9,7 @@ using VoidManager.Callbacks;
 
 namespace VoidManager.MPModChecks.Patches
 {
+    //On room create, initialize room properties with modded properties
     [HarmonyPatch(typeof(PhotonService), "PhotonCreateRoom")]
     internal class RoomInfoPatch
     {
