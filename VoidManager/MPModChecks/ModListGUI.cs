@@ -21,7 +21,7 @@ namespace VoidManager.MPModChecks
         internal static ModListGUI Instance { get; private set; }
 
         List<MPModDataBlock> mods;
-        string LastCheckedRoom;
+        string LastCheckedRoom = string.Empty;
         internal RoomInfo CurrentRoom;
         internal TabsRibbon Tabs;
 
@@ -52,10 +52,14 @@ namespace VoidManager.MPModChecks
             }
 
             // Disable GUI when room settings are open.
-            if (Tabs.ActiveHeader == 0)
+            if (Tabs == null || Tabs.ActiveHeader == 0)
                 GUIOpen();
             else
+            {
                 GUIClose();
+                return;
+            }
+                
 
             // Save CPU cycles by only running when selecting new room. Side effect, if the room mod list gets changed, the room must be deselected/reselected to see updated list.
             if (LastCheckedRoom != CurrentRoom.Name)
@@ -68,6 +72,7 @@ namespace VoidManager.MPModChecks
                     if (type != 0) return type;
                     return modA.ModName.CompareTo(modB.ModName);
                 });
+                LastCheckedRoom = CurrentRoom.Name;
                 GUIOpen();
             }
         }
@@ -85,7 +90,7 @@ namespace VoidManager.MPModChecks
             if (!GUIActive) return;
 
             CurrentRoom = null;
-            LastCheckedRoom = null;
+            LastCheckedRoom = string.Empty;
             mods = null;
             GUIActive = false;
         }
@@ -155,6 +160,7 @@ namespace VoidManager.MPModChecks
         {
             if (__result == RoomJoinStatus.Success)
             {
+                ModListGUI.Instance.Tabs = null;
                 ModListGUI.Instance.GUIClose();
             }
         }
@@ -187,6 +193,7 @@ namespace VoidManager.MPModChecks
             }
             else
             {
+                ModListGUI.Instance.Tabs = null;
                 ModListGUI.Instance.GUIClose();
             }
         }
