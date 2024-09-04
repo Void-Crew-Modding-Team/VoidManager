@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using UI.Matchmaking;
 
-namespace VoidManager.Callbacks
+namespace VoidManager.Patches
 {
     //Fixes a bug that causes the currently selected game to be deselected when the game list refreshes
     [HarmonyPatch(typeof(MatchmakingList), "RoomsUpdated")]
