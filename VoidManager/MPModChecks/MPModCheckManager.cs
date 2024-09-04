@@ -558,7 +558,6 @@ namespace VoidManager.MPModChecks
             BepinPlugin.Log.LogMessage($"Void Manager versions - Host: {HostModData.VMVersion} Client: {MyPluginInfo.PLUGIN_VERSION}");
 
 
-
             //Loop through Local/Client mods
             foreach (MPModDataBlock mod in MyModList)
             {
@@ -585,6 +584,7 @@ namespace VoidManager.MPModChecks
                 else
                 {
                     condition = new();
+                    condition.IsMod_Session = roomToJoinIsModded;
                     condition.PlayersWithMod = PlayersWithMod.Host;
                     condition.HostCheck = false;
                     condition.Mod = mod;
@@ -706,12 +706,14 @@ namespace VoidManager.MPModChecks
             //Conditions Dictionary Init
             Dictionary<string, CheckConditions> conditions = new();
 
+            bool isModSession = IsMod_Session();
+
 
             //Loop through Local/Host mods
-            foreach(MPModDataBlock mod in MyModList)
+            foreach (MPModDataBlock mod in MyModList)
             {
                 CheckConditions condition = new CheckConditions();
-                condition.IsMod_Session = IsMod_Session();
+                condition.IsMod_Session = isModSession;
                 condition.HostCheck = true;
                 condition.PlayersWithMod = PlayersWithMod.Host;
                 condition.Mod = mod;
@@ -735,6 +737,7 @@ namespace VoidManager.MPModChecks
                 else
                 {
                     condition = new CheckConditions();
+                    condition.IsMod_Session = isModSession;
                     condition.PlayersWithMod = PlayersWithMod.Client;
                     condition.HostCheck = true;
                     condition.Mod = mod;
