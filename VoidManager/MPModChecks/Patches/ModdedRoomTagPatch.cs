@@ -1,10 +1,11 @@
 ﻿using HarmonyLib;
-using Photon.Realtime;
+using UI.Matchmaking;
+using UnityEngine.UIElements;
 
 namespace VoidManager.MPModChecks.Patches
 {
     //Basically the latest point to find room name and photonRoomInfo in the same method.
-    [HarmonyPatch(typeof(MatchmakingRoom), "FromRoomInfo")]
+    [HarmonyPatch(typeof(MatchmakingList), "BindItem")]
     class ModdedRoomTagPatch
     {
         public const string ModSessionString = "<b><color=#ff8000>[mod_session] </color></b>";
@@ -12,29 +13,27 @@ namespace VoidManager.MPModChecks.Patches
         public const string ModLocalString = "<b><color=#FFD700>[mod_local] </color></b>";
         public const int MSLLength = 42;
         public const string ModsRequiredString = "[Mods Required]";
-        public static readonly string ModsRequiredLobbyListString = $"{ModSessionString} {ModsRequiredString}";
+        public static readonly string ModsRequiredLobbyListString = $"{ModSessionString}{ModsRequiredString}";
 
         const string RedM = "<b><color=red>[M]</color></b> ";
         const string YellowM = "<b><color=yellow>[M]</color></b> ";
         const string GreenM = "<b><color=#249d48>[M]</color></b> ";
 
         [HarmonyPostfix]
-        static void ModdedRoomPatch(RoomInfo pRoom, MatchmakingRoom __result)
+        static void ModdedRoomPatch(VisualElement item, MatchmakingRoom room)
         {
-            if (MPModCheckManager.RoomIsModded(pRoom))
+            TextElement textElement = item.Q<TextElement>("RoomName", default, default);
+            if (textElement.text.StartsWith(ModsRequiredLobbyListString, System.StringComparison.CurrentCultureIgnoreCase))
             {
-                if (__result.RoomName.StartsWith(ModsRequiredLobbyListString, System.StringComparison.CurrentCultureIgnoreCase))
-                {
-                    __result.RoomName = __result.RoomName.Replace(ModsRequiredLobbyListString, RedM);
-                }
-                else if (__result.RoomName.StartsWith(ModSessionString, System.StringComparison.CurrentCultureIgnoreCase))
-                {
-                    __result.RoomName = __result.RoomName.Replace(ModSessionString, YellowM);
-                }
-                else if (__result.RoomName.StartsWith(ModLocalString, System.StringComparison.CurrentCultureIgnoreCase))
-                {
-                    __result.RoomName = __result.RoomName.Replace(ModLocalString, GreenM);
-                }
+                textElement.text = textElement.text.Replace(ModsRequiredLobbyListString, RedM);
+            }
+            else if (textElement.text.StartsWith(ModSessionString, System.StringComparison.CurrentCultureIgnoreCase))
+            {
+                textElement.text = textElement.text.Replace(ModSessionString, YellowM);
+            }
+            else if (textElement.text.StartsWith(ModLocalString, System.StringComparison.CurrentCultureIgnoreCase))
+            {
+                textElement.text = textElement.text.Replace(ModLocalString, GreenM);
             }
         }
     }
