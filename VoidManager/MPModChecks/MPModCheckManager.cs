@@ -252,7 +252,7 @@ namespace VoidManager.MPModChecks
             MPUserDataBlock HostModData = NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])RoomProperties[InRoomCallbacks.RoomModsPropertyKey]);
             MPModDataBlock[] HostMods = HostModData.ModData;
 
-            BepinPlugin.Log.LogMessage($"Void Manager versions - Host: {HostModData.VMVersion} Client: {MyPluginInfo.PLUGIN_VERSION}");
+            BepinPlugin.Log.LogMessage($"VoidManager versions - Host: {HostModData.VMVersion} Client: {MyPluginInfo.PLUGIN_VERSION}");
 
 
             //Loop through Local/Client mods
