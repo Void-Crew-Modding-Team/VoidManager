@@ -164,7 +164,7 @@ namespace VoidManager.CustomGUI
                                 DrawModListModButton(vp);
                             }
                             GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-                            Label($"<color=yellow>Non-{MyPluginInfo.USERS_PLUGIN_NAME} Mods</color>");
+                            Label($"<color={SessionMPTypeColorCode}>Non-{MyPluginInfo.USERS_PLUGIN_NAME} Mods</color>");
                             foreach (VoidPlugin vp in NonVManMods)
                             {
                                 DrawModListModButton(vp);
@@ -400,8 +400,8 @@ namespace VoidManager.CustomGUI
 
         public const string AllMPTypeColorCode = "#FF3333";
         public const string SessionMPTypeColorCode = "#FFFF99";
-        public const string HostMPTypeColorCode = "00CC00";
-        public const string ClientMPTypeColorCode = "00CC00";
+        public const string HostMPTypeColorCode = "#00CC00";
+        public const string ClientMPTypeColorCode = "#00CC00";
 
         /// <summary>
         /// HTML color codes for MPType colors.
@@ -439,9 +439,9 @@ namespace VoidManager.CustomGUI
                 case MultiplayerType.Session:
                     return $"<color={SessionMPTypeColorCode}>Session</color>";
                 case MultiplayerType.Host:
-                    return $"<color=#{HostMPTypeColorCode}>Host</color>";
+                    return $"<color={HostMPTypeColorCode}>Host</color>";
                 case MultiplayerType.Client:
-                    return $"<color=#{ClientMPTypeColorCode}>Client</color>";
+                    return $"<color={ClientMPTypeColorCode}>Client</color>";
                 case MultiplayerType.Unmanaged:
                 default:
                     return mptype.ToString();
@@ -454,13 +454,13 @@ namespace VoidManager.CustomGUI
             switch (mptype)
             {
                 case MultiplayerType.All:
-                    return $"<color=#{AllMPTypeColorCode}>All</color> - All Clients will be required to install this mod.";
+                    return $"<color={AllMPTypeColorCode}>All</color> - All Clients will be required to install this mod.";
                 case MultiplayerType.Session:
-                    return $"<color=#{SessionMPTypeColorCode}>Session</color> - Can only join/host Mod_Session, but doesn't require other players to install the mod.\n";
+                    return $"<color={SessionMPTypeColorCode}>Session</color> - Can only join/host Mod_Session, but doesn't require other players to install the mod.\n";
                 case MultiplayerType.Host:
-                    return $"<color=#{HostMPTypeColorCode}>Host</color> - General MPType for a host-side mod, allowed to join vanilla sessions.";
+                    return $"<color={HostMPTypeColorCode}>Host</color> - General MPType for a host-side mod, allowed to join vanilla sessions.";
                 case MultiplayerType.Client:
-                    return $"<color=#{ClientMPTypeColorCode}>Client</color> - Client Side, allowed to join vanilla sessions.";
+                    return $"<color={ClientMPTypeColorCode}>Client</color> - Client Side, allowed to join vanilla sessions.";
                 case MultiplayerType.Unmanaged:
                     return $"<color=#FFFF99>Unmanaged</color> - This mod has not had it's multiplayer operations specified for {MyPluginInfo.USERS_PLUGIN_NAME}.";
 
