@@ -1,5 +1,4 @@
-﻿using Gameplay.Chat;
-using HarmonyLib;
+﻿using HarmonyLib;
 using System;
 using System.Collections;
 using System.Collections.Generic;

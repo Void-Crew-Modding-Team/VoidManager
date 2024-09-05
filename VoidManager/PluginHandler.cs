@@ -76,7 +76,7 @@ namespace VoidManager
                         voidPlugin.VersionInfo = FileVersionInfo.GetVersionInfo(CurrentBepinPlugin.Location);
                         voidPlugin.ModHash = GetFileHash(CurrentBepinPlugin.Location);
                         voidPlugin.BepinPlugin = CurrentBepinPlugin;
-                        GUIMain.Instance.DiscoverNonVManMod(voidPlugin);
+                        GUIMain.Instance.DiscoverNonVoidManagerMod(voidPlugin);
                         GeneratedVoidPlugins.Add(BPluginGUID, voidPlugin);
                     }
                 }

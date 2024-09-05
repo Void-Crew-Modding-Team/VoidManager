@@ -85,18 +85,6 @@ namespace VoidManager.Utilities
         }
 
         /// <summary>
-        /// Returns the Local player
-        /// </summary>
-        [Obsolete("Please switch to CG.Game.Player.LocalPlayer.Instance")]
-        public static CG.Game.Player.Player LocalPlayer
-        {
-            get
-            {
-                return  CG.Game.Player.LocalPlayer.Instance;
-            }
-        }
-
-        /// <summary>
         /// Does a player ship exist
         /// </summary>
         /// <returns>True if a player ship exists, false otherwise</returns>
