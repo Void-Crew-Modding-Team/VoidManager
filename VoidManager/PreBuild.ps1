@@ -204,7 +204,7 @@ Write-Output "Auto-Filling MyPluginInfo.cs..."
 $InfoFileContent = "#pragma warning disable CS1591`r`nnamespace $DefaultNamespace`r`n{`r`n    //Auto-Generated File. Created by PreBuild.ps1`r`n    public class MyPluginInfo`r`n    {"
 if($GUID)
 {
-	$InfoFileContent += "`r`n        public const string PLUGIN_GUID = `"" + $GUID + "`";'"
+	$InfoFileContent += "`r`n        public const string PLUGIN_GUID = `"" + $GUID + "`";"
 }
 else
 {
@@ -255,13 +255,19 @@ $ReadmeData = $ReadmeData.Replace("[UserModName]", $UserPluginName)
 $ReadmeData = $ReadmeData.Replace("[ModName]", $PluginName)
 $ReadmeData = $ReadmeData.Replace("[Description]", $PluginDescription)
 
+
+# Write README to Output folder - Old code, saved file with BOM. Thunderstore does not accept BOM.
+# $ReadmeData | Out-File -FilePath "$OutputDir\README.md" -Encoding utf8
+
 # Write README to Output folder
-$ReadmeData | Out-File -FilePath "$OutputDir\README.md" -Encoding utf8
+$Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $False
+[System.IO.File]::WriteAllLines("$OutputDir\README.md", $ReadmeData, $Utf8NoBomEncoding)
 
 # Write 2nd README to Project Output folder for github
 if($ProjectReadmeFileOutPath)
 {
-    $ReadmeData | Out-File -FilePath $ProjectReadmeFileOutPath -Encoding utf8
+    [System.IO.File]::WriteAllLines($ProjectReadmeFileOutPath, $ReadmeData, $Utf8NoBomEncoding)
+    ## $ReadmeData | Out-File -FilePath $ProjectReadmeFileOutPath -Encoding utf8
 }
 
 
