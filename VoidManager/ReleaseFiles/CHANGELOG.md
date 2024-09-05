@@ -1,5 +1,13 @@
 ## 1.1.8
-- Scream at us if this is still here.
+- Major codebase refactoring
+- Changes to room joining/handling for phase 1 modding compliance
+- Adjusted modded lobby tags.
+- Standardized Void Manager name visible to users
+- Join modded games setting defaults to true
+- Mod GUIDs now displayed in F5 menu while DebugMode setting is enabled
+- Removed fix of early kick bug due to vanilla fix implementation
+- Renamed ModManager GUI to 'Void Manager F5 Menu'
+- API Extensions
 
 ## 1.1.7
 - Mod settings now sort alphabetically
