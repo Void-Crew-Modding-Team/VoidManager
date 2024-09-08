@@ -2,7 +2,6 @@
 using BepInEx.Bootstrap;
 using CG.GameLoopStateMachine;
 using CG.GameLoopStateMachine.GameStates;
-using Gameplay.Atmosphere;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
