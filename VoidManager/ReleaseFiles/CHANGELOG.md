@@ -1,3 +1,6 @@
+## 1.1.9
+- Developer API extension.
+
 ## 1.1.8
 - Major codebase refactoring
 - Changes to room joining/handling for phase 1 modding compliance

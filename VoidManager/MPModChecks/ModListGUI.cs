@@ -99,7 +99,7 @@ namespace VoidManager.MPModChecks
         {
             if (GUIActive)
             {
-                GUI.skin = GUIMain.Instance.ChangeSkin();
+                GUI.skin = GUIMain.ChangeSkin();
                 WindowPos = GUI.Window(918107, WindowPos, WindowFunction, "Mod List");
             }
         }

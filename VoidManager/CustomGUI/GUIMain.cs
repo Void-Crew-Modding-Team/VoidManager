@@ -10,6 +10,7 @@ using UnityEngine.UI;
 using VoidManager.MPModChecks;
 using VoidManager.Utilities;
 using static UnityEngine.GUILayout;
+using static VoidManager.Utilities.GUITools;
 
 namespace VoidManager.CustomGUI
 {
@@ -537,22 +538,6 @@ namespace VoidManager.CustomGUI
             }
 
             Tab = tab;
-        }
-
-        Texture2D BuildTexFrom1Color(Color color)
-        {
-            Texture2D tex = new Texture2D(1, 1);
-            tex.SetPixel(0, 0, color);
-            tex.Apply();
-            return tex;
-        }
-
-        Texture2D BuildTexFromColorArray(Color[] color, int width, int height)
-        {
-            Texture2D tex = new Texture2D(width, height);
-            tex.SetPixels(color);
-            tex.Apply();
-            return tex;
         }
 
         /// <summary>
