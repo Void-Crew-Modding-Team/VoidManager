@@ -23,6 +23,7 @@
     <DebugType>embedded</DebugType>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Patches\PhotonLogLevelPatch.cs" />
     <Compile Remove="Utilities\Logger.cs" />
   </ItemGroup>
   <ItemGroup>
