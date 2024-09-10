@@ -40,12 +40,13 @@ namespace VoidManager.CustomGUI
 
         Rect PlayerModInfoArea;
         Vector2 PlayerModInfoScroll = Vector2.zero;
-
+        internal List<PlayerSettingsMenu> playerSettings = new();
 
         Rect ModSettingsArea;
         Vector2 ModSettingsScroll = Vector2.zero;
         internal List<ModSettingsMenu> settings = new();
         ModSettingsMenu selectedSettings;
+
 
         internal void UpdateWindowSize()
         {
@@ -74,6 +75,8 @@ namespace VoidManager.CustomGUI
 
             UpdateWindowSize();
             settings.Add(new VManSettings());
+            playerSettings.Add(new VPersonSettings());
+            playerSettings.Add(new VPersonSettings2());
 
             //Background image to block mouse clicks passing IMGUI
             Background = new GameObject("GUIMainBG", new Type[] { typeof(GraphicRaycaster) });
@@ -184,16 +187,16 @@ namespace VoidManager.CustomGUI
                                 BepInPlugin bepInPlugin = selectedMod.BepinPlugin.Metadata;
                                 Label($"Author: {selectedMod.Author}");
                                 Label($"Name: {bepInPlugin.Name}");
-                                if (BepinPlugin.Bindings.DebugMode.Value) 
+                                if (BepinPlugin.Bindings.DebugMode.Value)
                                     Label($"GUID: {bepInPlugin.GUID}");
                                 Label($"Version: {bepInPlugin.Version}");
                                 if (selectedMod.Description != string.Empty)
                                     Label($"Description: {selectedMod.Description}");
                                 Label($"MPRequirement: {GetTextForMPType(selectedMod.MPType)}");
                                 Label("\nSettings menus:");
-                                foreach(ModSettingsMenu MSM in settings)
+                                foreach (ModSettingsMenu MSM in settings)
                                 {
-                                    if(MSM.MyVoidPlugin == selectedMod && Button(MSM.Name()))
+                                    if (MSM.MyVoidPlugin == selectedMod && Button(MSM.Name()))
                                     {
                                         OpenSettingsMenu(MSM);
                                     }
@@ -272,10 +275,17 @@ namespace VoidManager.CustomGUI
                     {
                         PlayerListScroll = BeginScrollView(PlayerListScroll);
                         {
+                            if (PhotonNetwork.PlayerList.Count() == 0)
+                            {
+                                GUILayout.Label("No room found.");
+                                EndScrollView();
+                                EndArea();
+                                break;
+                            }
                             foreach (Player player in PhotonNetwork.PlayerList)
                             {
-                                if (player.IsLocal)
-                                    continue;
+                                /*if (player.IsLocal)
+                                    continue;*/
                                 if (GUITools.DrawButtonSelected(player.NickName, selectedPlayer == player))
                                     selectedPlayer = player;
                             }
@@ -292,6 +302,25 @@ namespace VoidManager.CustomGUI
                                 Label($"Player: {selectedPlayer.NickName} {(selectedPlayer.IsMasterClient ? "(Host)" : string.Empty)}");
 
                                 DrawPlayerModList(selectedPlayer);
+                                if (playerSettings.Count > 0)
+                                {
+                                    GUILayout.Label("\nSettings menus:");
+                                    foreach (PlayerSettingsMenu menu in playerSettings)
+                                    {
+                                        GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+                                        GUILayout.BeginHorizontal();
+                                        HorizontalSlider(0, 100, 100);
+                                        if (menu.Name() != string.Empty)
+                                        {
+                                            GUILayout.Label(menu.Name());
+                                            HorizontalSlider(0, 100, 100);
+                                        }
+                                        GUILayout.EndHorizontal();
+                                        GUILayout.BeginVertical(new GUIStyle(GUI.skin.box) { normal = { background = Texture2D.blackTexture } });
+                                        menu.Draw(selectedPlayer);
+                                        GUILayout.EndVertical();
+                                    }
+                                }
                             }
                         }
                         EndScrollView();
@@ -527,7 +556,7 @@ namespace VoidManager.CustomGUI
 
         public void ChangeTab(byte tab)
         {
-            if(Tab == 1 && tab != 1)
+            if (Tab == 1 && tab != 1)
             {
                 LeaveSettingsMenu();
             }
@@ -558,10 +587,11 @@ namespace VoidManager.CustomGUI
         {
             mods.Add(voidPlugin);
             Type[] types = assembly.GetTypes();
-            // Finds gui menu implementations from all the Assemblies in the same file location.
-            IEnumerable<Type> chatCommandInstances = types.Where(t => typeof(ModSettingsMenu).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+
+            // Finds settings menu implementations from all the Assemblies in the same file location.
+            IEnumerable<Type> modSettingsMenuInstances = types.Where(t => typeof(ModSettingsMenu).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
             bool hasSettingsMenu = false;
-            foreach (Type modType in chatCommandInstances)
+            foreach (Type modType in modSettingsMenuInstances)
             { // Iterates through each discovered gui menu
                 ModSettingsMenu MSMInstance = (ModSettingsMenu)Activator.CreateInstance(modType);
                 MSMInstance.MyVoidPlugin = voidPlugin;
@@ -569,6 +599,18 @@ namespace VoidManager.CustomGUI
                 hasSettingsMenu = true;
             }
             if (hasSettingsMenu) BepinPlugin.Log.LogInfo($"[{voidPlugin.BepinPlugin.Metadata.Name}] detected settings menu(s)");
+
+            // Finds player settings menu implementations from all the Assemblies in the same file location.
+            IEnumerable<Type> playerSettingsMenuInstances = types.Where(t => typeof(PlayerSettingsMenu).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+            hasSettingsMenu = false;
+            foreach (Type modType in playerSettingsMenuInstances)
+            { // Iterates through each discovered gui menu
+                PlayerSettingsMenu PSMInstance = (PlayerSettingsMenu)Activator.CreateInstance(modType);
+                PSMInstance.MyVoidPlugin = voidPlugin;
+                playerSettings.Add(PSMInstance);
+                hasSettingsMenu = true;
+            }
+            if (hasSettingsMenu) BepinPlugin.Log.LogInfo($"[{voidPlugin.BepinPlugin.Metadata.Name}] detected player settings menu(s)");
         }
 
         internal void DiscoverNonVoidManagerMod(VoidPlugin voidPlugin)
