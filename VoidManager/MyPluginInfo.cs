@@ -1,4 +1,3 @@
-#pragma warning disable CS1591
 namespace VoidManager
 {
     //Auto-Generated File. Created by PreBuild.ps1
@@ -14,4 +13,3 @@ namespace VoidManager
         public const string PLUGIN_THUNDERSTORE_ID = "VoidCrewModdingTeam/VoidManager";
     }
 }
-#pragma warning restore CS1591

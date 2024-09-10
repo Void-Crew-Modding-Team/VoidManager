@@ -1,5 +1,6 @@
 ## 1.1.9
 - Developer API extension.
+- Extra logging configs.
 
 ## 1.1.8
 - Major codebase refactoring

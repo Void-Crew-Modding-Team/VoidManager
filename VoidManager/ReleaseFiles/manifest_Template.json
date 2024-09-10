@@ -1,9 +1,0 @@
-{
-    "name": "[UserModName]",
-    "version_number": "[ModVersion]",
-    "website_url": "[GithubLink]",
-    "description": "[Description]",
-    "dependencies": [
-        "BepInEx-BepInExPack-5.4.2100"
-    ]
-}
