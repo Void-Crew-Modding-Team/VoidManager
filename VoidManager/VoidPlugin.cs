@@ -72,5 +72,18 @@ namespace VoidManager
                 return MultiplayerType.Session;
             }
         }
+
+        /// <summary>
+        /// Called by VoidManager on host session, join session, host change, session escalation
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public virtual SessionChangedReturn OnSessionChange(SessionChangedInput input)
+        {
+            return new SessionChangedReturn()
+            {
+                SetMod_Session = false
+            };
+        }
     }
 }
