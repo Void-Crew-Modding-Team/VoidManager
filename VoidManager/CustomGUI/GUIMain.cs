@@ -10,6 +10,7 @@ using UnityEngine.UI;
 using VoidManager.MPModChecks;
 using VoidManager.Utilities;
 using static UnityEngine.GUILayout;
+using static VoidManager.Utilities.GUITools;
 
 namespace VoidManager.CustomGUI
 {
@@ -339,7 +340,11 @@ namespace VoidManager.CustomGUI
         private static readonly Color32 _classicMenuBackground = new Color32(32, 32, 32, 255);
         private static readonly Color32 _classicButtonBackground = new Color32(40, 40, 40, 255);
         //private static readonly Color32 _hoverButtonFromMenu = new Color32(18, 79, 179, 255);
-        internal GUISkin ChangeSkin()
+        /// <summary>
+        /// VoidManager's default GUISkin
+        /// </summary>
+        /// <returns></returns>
+        public static GUISkin ChangeSkin()
         {
             if (_cachedSkin is null || _cachedSkin.window.active.background is null)
             {
@@ -562,22 +567,6 @@ namespace VoidManager.CustomGUI
             }
 
             Tab = tab;
-        }
-
-        Texture2D BuildTexFrom1Color(Color color)
-        {
-            Texture2D tex = new Texture2D(1, 1);
-            tex.SetPixel(0, 0, color);
-            tex.Apply();
-            return tex;
-        }
-
-        Texture2D BuildTexFromColorArray(Color[] color, int width, int height)
-        {
-            Texture2D tex = new Texture2D(width, height);
-            tex.SetPixels(color);
-            tex.Apply();
-            return tex;
         }
 
         /// <summary>

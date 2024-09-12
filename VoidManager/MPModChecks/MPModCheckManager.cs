@@ -95,23 +95,23 @@ namespace VoidManager.MPModChecks
         }
 
         /// <summary>
-        /// Detects if a room has been modified.
+        /// Detects if a room is been modded as Mod_Session.
         /// </summary>
         /// <param name="room"></param>
-        /// <returns>true if room is detected as modded</returns>
+        /// <returns>true if room is detected as Mod_Session</returns>
         public static bool RoomIsModded(RoomInfo room)
         {
             return room.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey) || (room.CustomProperties.TryGetValue(InRoomCallbacks.OfficalModdedPropertyKey, out object MT) && (ModdingType)MT == ModdingType.mod_session);
         }
 
         /// <summary>
-        /// Detects if a room has been modified.
+        /// Detects if a room has been modded as Mod_Session.
         /// </summary>
         /// <param name="roomProperties"></param>
-        /// <returns>true if room is detected as modded</returns>
+        /// <returns>true if room is detected as Mod_Session</returns>
         public static bool RoomIsModded(Hashtable roomProperties)
         {
-            return roomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey) || roomProperties.ContainsKey(InRoomCallbacks.OfficalModdedPropertyKey);
+            return roomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey) || (roomProperties.TryGetValue(InRoomCallbacks.OfficalModdedPropertyKey, out object MT) && (ModdingType)MT == ModdingType.mod_session);
         }
 
 

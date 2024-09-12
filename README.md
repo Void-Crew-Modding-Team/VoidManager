@@ -20,7 +20,7 @@ Based on [Pulsar Mod Loader](https://github.com/PULSAR-Modders/pulsar-mod-loader
 
 ---------------------
 
-### 💡 Function - **Various features to assist in mod management.**
+### 💡 Functions - **Various features to assist in mod management.**
 - Handling for mods requiring installation by all users
 - Manual configuration of mods not configured for Void Manager.
 - Viewing of other players' mod lists

@@ -2,7 +2,9 @@
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+using ExitGames.Client.Photon;
 using HarmonyLib;
+using Photon.Pun;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,9 +40,7 @@ namespace VoidManager
             Content.Unlocks.Instance = new();
             Events.Instance = new();
 
-
             DebugMode = Config.Bind("General", "DebugMode", false, "");
-
             UnspecifiedModListOverride = Config.Bind("General", "Unspecified Mod Overrides", string.Empty, $"Insert mods (not configured for {MyPluginInfo.USERS_PLUGIN_NAME}) for which you would like to override the MPType. \nAvailable MPTypes: client,host,all \nFormat: 'ModNameOrGUID:MPType', delineated by ','. \nEx: {MyPluginInfo.USERS_PLUGIN_NAME}:all,Better Scoop:Host \n ModName/GUID can be gathered from log files and F5 menu.");
 
             ModInfoTextAnchor = Config.Bind("Menu", "ModInfoTextAnchor", TextAnchor.UpperLeft, "");
@@ -53,7 +53,9 @@ namespace VoidManager
 
             MenuOpenKeybind = Config.Bind("Menu", "Open Keybind", OpenMenu, "");
 
-            TrustMPTypeUnspecified = Config.Bind("Multiplayer", "TrustMPTypeUnspecified", true, "");
+
+            PunLoggingSettingLevel = Config.Bind("Debug", "PunLogLevel", PunLogLevel.ErrorsOnly);
+            PunDebugLogLevel = Config.Bind("Debug", "PunDebugLevel", DebugLevel.ERROR);
 
             //Fix chainloader getting deleted by GC?
             Chainloader.ManagerObject.hideFlags = HideFlags.HideAndDontSave;
@@ -72,6 +74,7 @@ namespace VoidManager
             Events.Instance.PlayerEnteredRoom += AutoComplete.RefreshPlayerList;
             Events.Instance.PlayerLeftRoom += AutoComplete.RefreshPlayerList;
             Events.Instance.JoinedRoom += AutoComplete.RefreshPlayerList;
+            Events.Instance.SessionChanged += PluginHandler.OnSessionChanged;
 
             Log.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
             }
@@ -93,8 +96,6 @@ namespace VoidManager
 
             internal static ConfigEntry<KeyboardShortcut> MenuOpenKeybind;
             internal static KeyboardShortcut OpenMenu = new KeyboardShortcut(KeyCode.F5);
-
-            internal static ConfigEntry<bool> TrustMPTypeUnspecified;
 
             internal static ConfigEntry<string> UnspecifiedModListOverride;
             internal static Dictionary<string, MPModChecks.MultiplayerType> ModOverrideDictionary;
@@ -128,6 +129,10 @@ namespace VoidManager
                     }
                 }
             }
+
+            //Photon Logging
+            internal static ConfigEntry<PunLogLevel> PunLoggingSettingLevel;
+            internal static ConfigEntry<DebugLevel> PunDebugLogLevel;
         }
     }
 }

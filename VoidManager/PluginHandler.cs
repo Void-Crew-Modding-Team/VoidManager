@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Bootstrap;
+using Photon.Pun;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -90,6 +91,41 @@ namespace VoidManager
             BepinPlugin.Log.LogInfo($"Loaded {CommandHandler.chatCommandCount} local command(s) and {CommandHandler.publicCommandCount} public command(s)");
             BepinPlugin.Log.LogInfo($"Loaded {ModMessageHandler.modMessageHandlers.Count()} mod message(s)");
             BepinPlugin.Log.LogInfo($"Discovered {ActiveVoidPlugins.Count} {MyPluginInfo.PLUGIN_NAME} plugin(s) from {ActiveBepinPlugins.Count - 1} mod(s)");
+        }
+
+        internal static void OnSessionChanged(object sender, SessionChangedInput e)
+        {
+            /* Last two values of input are fairly generalised IsMod_Session = isMod_Session; HostHasMod = hostHasMod;
+             * so it will be handled here
+            
+             * Host Start            SessionChangedInput(true, CallType.Hosting, true)
+             * Join Room             SessionChangedInput(false, CallType.Joining, PhotonNetwork.MasterClient.IsLocal)
+             * Host Change           SessionChangedInput(newMasterClient.IsLocal, CallType.HostChange, false)
+             * Session Escalation    SessionChangedInput(PhotonNetwork.MasterClient.IsLocal, CallType.SessionEscalated)
+            */
+            //BepinPlugin.Log.LogInfo($"[OnSessionChanged - Event] {e.CallType} | {e.IsHost} {e.CallType} {e.StartedAsHost}");
+
+            if (MPModCheckManager.RoomIsModded(PhotonNetwork.CurrentRoom)) e.IsMod_Session = true;
+            MPUserDataBlock userData = null;
+            if (!e.IsHost) userData = NetworkedPeerManager.Instance.GetHostModList();
+            e.HostHasMod = true;
+
+            bool MarkAsModSession = false;
+            foreach (VoidPlugin voidPlugin in ActiveVoidPlugins.Values)
+            {
+                // Check for VoidPlugin in Hosts list for `HostHasMod` condition
+                if (userData != null)
+                {
+                    foreach (MPModDataBlock mPModDataBlock in userData.ModData)
+                    {
+                        if (mPModDataBlock.ModGUID == voidPlugin.BepinPlugin.Metadata.GUID) break;
+                    }
+                    e.HostHasMod = false;
+                }
+                //BepinPlugin.Log.LogInfo($"[OnSessionChanged - Call] {e.CallType} | {voidPlugin.BepinPlugin.Metadata.Name} | {e.IsHost} {e.CallType} {e.StartedAsHost} {e.IsMod_Session} {e.HostHasMod}");
+                SessionChangedReturn result = voidPlugin.OnSessionChange(e);
+                if (result.SetMod_Session || voidPlugin.MPType == MultiplayerType.Session || voidPlugin.MPType == MultiplayerType.All) MarkAsModSession = true;
+            }
         }
 
         public static byte[] GetFileHash(string fileLocation)
