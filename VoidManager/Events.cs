@@ -58,6 +58,7 @@ namespace VoidManager
         internal void OnJoinedRoom()
         {
             JoinedRoom?.Invoke(this, EventArgs.Empty);
+            SessionChanged?.Invoke(this, new SessionChangedInput());
         }
 
 
@@ -80,6 +81,7 @@ namespace VoidManager
         internal void OnMasterClientSwitched(Player newMasterClient)
         {
             MasterClientSwitched?.Invoke(this, new PlayerEventArgs() { player = newMasterClient });
+            SessionChanged?.Invoke(this, new SessionChangedInput());
         }
 
 
@@ -113,7 +115,23 @@ namespace VoidManager
         internal void OnHostStartSession()
         {
             HostStartSession?.Invoke(this, EventArgs.Empty);
+            SessionChanged?.Invoke(this, new SessionChangedInput());
         }
+
+
+        /// <summary>
+        ///  Called when: hosting a session, joining a session, on host change, on session escalation.
+        /// </summary>
+        public event EventHandler<SessionChangedInput> SessionChanged;
+
+        /// <summary>
+        /// Used to escalate sessions MPType
+        /// </summary>
+        internal void OnEscalateSession()
+        {
+            SessionChanged?.Invoke(this, new SessionChangedInput());
+        }
+
 
         [HarmonyPatch(typeof(GameSessionManager), "HostGameSession")]
         class HostStartSessionpatch

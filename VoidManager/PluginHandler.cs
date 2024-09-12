@@ -92,6 +92,11 @@ namespace VoidManager
             BepinPlugin.Log.LogInfo($"Discovered {ActiveVoidPlugins.Count} {MyPluginInfo.PLUGIN_NAME} plugin(s) from {ActiveBepinPlugins.Count - 1} mod(s)");
         }
 
+        internal static void OnSessionChanged(object sender, SessionChangedInput e)
+        {
+            
+        }
+
         public static byte[] GetFileHash(string fileLocation)
         {
             using (SHA256 Hasher = SHA256.Create())
