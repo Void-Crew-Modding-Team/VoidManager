@@ -1,6 +1,5 @@
 ﻿using BepInEx;
 using BepInEx.Bootstrap;
-using CG.Game;
 using Photon.Pun;
 using System;
 using System.Collections.Generic;
@@ -105,10 +104,13 @@ namespace VoidManager
              * Session Escalation    SessionChangedInput(PhotonNetwork.MasterClient.IsLocal, CallType.SessionEscalated)
             */
             //BepinPlugin.Log.LogInfo($"[OnSessionChanged - Event] {e.CallType} | {e.IsHost} {e.CallType} {e.StartedAsHost}");
-            if (VoidManager.MPModChecks.MPModCheckManager.RoomIsModded(PhotonNetwork.CurrentRoom)) e.IsMod_Session = true;
+
+            if (MPModCheckManager.RoomIsModded(PhotonNetwork.CurrentRoom)) e.IsMod_Session = true;
             MPUserDataBlock userData = null;
             if (!e.IsHost) userData = NetworkedPeerManager.Instance.GetHostModList();
             e.HostHasMod = true;
+
+            bool MarkAsModSession = false;
             foreach (VoidPlugin voidPlugin in ActiveVoidPlugins.Values)
             {
                 // Check for VoidPlugin in Hosts list for `HostHasMod` condition
@@ -121,7 +123,8 @@ namespace VoidManager
                     e.HostHasMod = false;
                 }
                 //BepinPlugin.Log.LogInfo($"[OnSessionChanged - Call] {e.CallType} | {voidPlugin.BepinPlugin.Metadata.Name} | {e.IsHost} {e.CallType} {e.StartedAsHost} {e.IsMod_Session} {e.HostHasMod}");
-                voidPlugin.OnSessionChange(e);
+                SessionChangedReturn result = voidPlugin.OnSessionChange(e);
+                if (result.SetMod_Session || voidPlugin.MPType == MultiplayerType.Session || voidPlugin.MPType == MultiplayerType.All) MarkAsModSession = true;
             }
         }
 
