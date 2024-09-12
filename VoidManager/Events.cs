@@ -1,5 +1,6 @@
 ﻿using CG.Game;
 using HarmonyLib;
+using Photon.Pun;
 using Photon.Realtime;
 using System;
 using UI.Chat;
@@ -58,6 +59,7 @@ namespace VoidManager
         internal void OnJoinedRoom()
         {
             JoinedRoom?.Invoke(this, EventArgs.Empty);
+            SessionChanged?.Invoke(this, new SessionChangedInput(false, CallType.Joining, PhotonNetwork.MasterClient.IsLocal, false, false));
         }
 
 
@@ -80,6 +82,7 @@ namespace VoidManager
         internal void OnMasterClientSwitched(Player newMasterClient)
         {
             MasterClientSwitched?.Invoke(this, new PlayerEventArgs() { player = newMasterClient });
+            SessionChanged?.Invoke(this, new SessionChangedInput(newMasterClient.IsLocal, CallType.HostChange, false, false, false));
         }
 
 
@@ -113,7 +116,23 @@ namespace VoidManager
         internal void OnHostStartSession()
         {
             HostStartSession?.Invoke(this, EventArgs.Empty);
+            SessionChanged?.Invoke(this, new SessionChangedInput(true, CallType.Hosting, true, false, false));
         }
+
+
+        /// <summary>
+        ///  Called when: hosting a session, joining a session, on host change, on session escalation.
+        /// </summary>
+        public event EventHandler<SessionChangedInput> SessionChanged;
+
+        /// <summary>
+        /// Used to escalate sessions MPType
+        /// </summary>
+        internal void OnEscalateSession()
+        {
+            SessionChanged?.Invoke(this, new SessionChangedInput(PhotonNetwork.MasterClient.IsLocal, CallType.SessionEscalated, false, false, false));
+        }
+
 
         [HarmonyPatch(typeof(GameSessionManager), "HostGameSession")]
         class HostStartSessionpatch
