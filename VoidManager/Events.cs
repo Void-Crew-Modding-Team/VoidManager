@@ -133,29 +133,47 @@ namespace VoidManager
             SessionChanged?.Invoke(this, new SessionChangedInput(true, CallType.Hosting, true, false, false));
         }
 
-
-        /// <summary>
-        ///  Called when: hosting a session, joining a session, on host change, on session escalation.
-        /// </summary>
-        public event EventHandler<SessionChangedInput> SessionChanged;
-
-        /// <summary>
-        /// Used to escalate sessions MPType
-        /// </summary>
-        internal void OnEscalateSession()
-        {
-            SessionChanged?.Invoke(this, new SessionChangedInput(PhotonNetwork.MasterClient.IsLocal, CallType.SessionEscalated, false, false, false));
-        }
-
-
         [HarmonyPatch(typeof(GameSessionManager), "HostGameSession")]
-        class HostStartSessionpatch
+        class HostStartSessionPatch
         {
             static void Postfix()
             {
                 Instance.OnHostStartSession();
             }
         }
+
+
+        /// <summary>
+        /// Called by host when creating a photon room. (Recurs once, may fail to execute if host drops)
+        /// </summary>
+        public event EventHandler HostCreateRoom;
+
+        internal void OnHostCreateRoom()
+        {
+            HostCreateRoom?.Invoke(this, EventArgs.Empty);
+            PluginHandler.InternalSessionChanged(CallType.HostCreateRoom, ModdingUtils.SessionModdingType == ModdingType.mod_session, true);
+        }
+
+
+        /// <summary>
+        /// Called after after loading a joined game session (reccurs multiple times in the same PhotonRoom).
+        /// </summary>
+        public event EventHandler JoinedSession;
+
+        internal void OnJoinedSession()
+        {
+            SessionChanged?.Invoke(this, new SessionChangedInput(PhotonNetwork.MasterClient.IsLocal, CallType.SessionEscalated, false, false, false));
+        }
+
+        [HarmonyPatch(typeof(GameSessionManager), "JoinGameSession")]
+        class JoinSessionPatch
+        {
+            static void Postfix()
+            {
+                Instance.OnJoinedSession();
+            }
+        }
+
 
         /// <summary>
         /// Called when the player opens the chat window ("Enter" by default)
