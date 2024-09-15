@@ -70,7 +70,7 @@ namespace VoidManager
         }
 
         /// <summary>
-        /// Called by VoidManager on host session, join session, host change, session escalation
+        /// Called by VoidManager on Host Create Room, Host Session, Join Session, Host Change, Session Escalation. May run multiple times if a mod escalates to Mod_Session.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
