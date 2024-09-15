@@ -36,6 +36,8 @@ namespace VoidManager
 
         internal void OnPlayerEnteredRoom(Player joiningPlayer)
         {
+            MPModCheckManager.Instance.PlayerJoined(joiningPlayer);
+
             PlayerEnteredRoom?.Invoke(this, new PlayerEventArgs() { player = joiningPlayer });
         }
 
@@ -48,16 +50,21 @@ namespace VoidManager
         internal void OnPlayerLeftRoom(Player leavingPlayer)
         {
             PlayerLeftRoom?.Invoke(this, new PlayerEventArgs() { player = leavingPlayer });
+
+            NetworkedPeerManager.Instance.PlayerLeftRoom(leavingPlayer);
         }
 
 
         /// <summary>
-        /// Called by photon on room join.
+        /// Called by photon on room join. Occurs once in a single photon room.
         /// </summary>
         public event EventHandler JoinedRoom;
 
         internal void OnJoinedRoom()
         {
+            MPModCheckManager.Instance.JoinedRoom();
+
+            //Above controls whether a game is joined, so it is better to let it run first.
             JoinedRoom?.Invoke(this, EventArgs.Empty);
             SessionChanged?.Invoke(this, new SessionChangedInput(false, CallType.Joining, PhotonNetwork.MasterClient.IsLocal, false, false));
         }
@@ -70,6 +77,8 @@ namespace VoidManager
 
         internal void OnLeftRoom()
         {
+            NetworkedPeerManager.Instance.LeftRoom();
+
             LeftRoom?.Invoke(this, EventArgs.Empty);
         }
 
@@ -81,6 +90,11 @@ namespace VoidManager
 
         internal void OnMasterClientSwitched(Player newMasterClient)
         {
+            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                MPModCheckManager.Instance.UpdateLobbyProperties();
+
+
+            bool IsMasterClient = newMasterClient.IsLocal;
             MasterClientSwitched?.Invoke(this, new PlayerEventArgs() { player = newMasterClient });
             SessionChanged?.Invoke(this, new SessionChangedInput(newMasterClient.IsLocal, CallType.HostChange, false, false, false));
         }
@@ -109,7 +123,7 @@ namespace VoidManager
 
 
         /// <summary>
-        /// Called after after loading a game session (reccurs multiple times in the same PhotonRoom).
+        /// Called after after loading a hosted game session (reccurs multiple times in the same PhotonRoom).
         /// </summary>
         public event EventHandler HostStartSession;
 

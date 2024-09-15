@@ -100,39 +100,32 @@ namespace VoidManager.Callbacks
 
         public void OnJoinedRoom()
         {
-            MPModCheckManager.Instance.JoinedRoom();
-
-            //Above controls whether a game is joined, so it is better to let it run first.
             Events.Instance.OnJoinedRoom();
         }
 
         public void OnLeftRoom()
         {
-            NetworkedPeerManager.Instance.LeftRoom();
-
             Events.Instance.OnLeftRoom();
         }
 
         public void OnMasterClientSwitched(Player newMasterClient)
         {
-            if (PhotonNetwork.LocalPlayer.IsMasterClient)
-                MPModCheckManager.Instance.UpdateLobbyProperties();
-
             Events.Instance.OnMasterClientSwitched(newMasterClient);
         }
 
         public void OnPlayerEnteredRoom(Player newPlayer)
         {
-            MPModCheckManager.Instance.PlayerJoined(newPlayer);
-
             Events.Instance.OnPlayerEnteredRoom(newPlayer);
         }
 
         public void OnPlayerLeftRoom(Player leavingPlayer)
         {
             Events.Instance.OnPlayerLeftRoom(leavingPlayer);
+        }
 
-            NetworkedPeerManager.Instance.PlayerLeftRoom(leavingPlayer);
+        public void OnCreatedRoom()
+        {
+            Events.Instance.OnHostCreateRoom();
         }
 
 
@@ -154,10 +147,6 @@ namespace VoidManager.Callbacks
         }
 
         public void OnFriendListUpdate(List<FriendInfo> friendList)
-        {
-        }
-
-        public void OnCreatedRoom()
         {
         }
 
