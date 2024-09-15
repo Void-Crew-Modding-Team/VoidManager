@@ -1,5 +1,8 @@
 ﻿using BepInEx;
 using BepInEx.Bootstrap;
+using ExitGames.Client.Photon;
+using Photon.Pun;
+using Photon.Realtime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,10 +10,12 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
+using VoidManager.Callbacks;
 using VoidManager.Chat.Router;
 using VoidManager.CustomGUI;
 using VoidManager.ModMessages;
 using VoidManager.MPModChecks;
+using VoidManager.Utilities;
 
 namespace VoidManager
 {
@@ -76,7 +81,7 @@ namespace VoidManager
                         voidPlugin.VersionInfo = FileVersionInfo.GetVersionInfo(CurrentBepinPlugin.Location);
                         voidPlugin.ModHash = GetFileHash(CurrentBepinPlugin.Location);
                         voidPlugin.BepinPlugin = CurrentBepinPlugin;
-                        GUIMain.Instance.DiscoverNonVManMod(voidPlugin);
+                        GUIMain.Instance.DiscoverNonVoidManagerMod(voidPlugin);
                         GeneratedVoidPlugins.Add(BPluginGUID, voidPlugin);
                     }
                 }
@@ -92,12 +97,97 @@ namespace VoidManager
             BepinPlugin.Log.LogInfo($"Discovered {ActiveVoidPlugins.Count} {MyPluginInfo.PLUGIN_NAME} plugin(s) from {ActiveBepinPlugins.Count - 1} mod(s)");
         }
 
+        /// <summary>
+        /// Gets the Sha256 File has from the given file location.
+        /// </summary>
+        /// <param name="fileLocation"></param>
+        /// <returns>SHA256 File Hash</returns>
         public static byte[] GetFileHash(string fileLocation)
         {
             using (SHA256 Hasher = SHA256.Create())
             {
                 return Hasher.ComputeHash(File.ReadAllBytes(fileLocation));
             }
+        }
+
+        internal static bool CreatedRoomAsHost = false;
+
+        internal static void InternalSessionChanged(CallType callType, bool isMod_Session, bool isMasterClient, Player Host = null)
+        {
+            Dictionary<VoidPlugin, SessionChangedInput> CalledAsNonModSession = new();
+            bool IncrimentedToMod_Session = false;
+
+            //Instantiate InputValue and assing values.
+            SessionChangedInput inputData = new();
+            inputData.CallType = callType;
+            inputData.IsHost = isMasterClient;
+            inputData.HostHasMod = isMasterClient;
+            inputData.CreatedRoomAsHost = CreatedRoomAsHost;
+            inputData.StartedSessionAsHost = GameSessionManager.Instance.StartedSessionAsHost;
+            inputData.IsMod_Session = isMod_Session;
+
+            foreach (KeyValuePair<string, VoidPlugin> KVP in ActiveVoidPlugins)
+            {
+                if (!isMasterClient)
+                {
+                    inputData.HostHasMod = NetworkedPeerManager.Instance.NetworkedPeerHasMod(Host, KVP.Key);
+                }
+
+                //Call OnSessionChange. Store mods which didn't incriment to ModSession for the case of one incrimenting.
+                if (!isMod_Session)
+                {
+                    if (!KVP.Value.OnSessionChange(inputData).SetMod_Session)
+                    {
+                        CalledAsNonModSession.Add(KVP.Value, inputData);
+                    }
+                    else
+                    {
+                        IncrimentedToMod_Session = true;
+                        isMod_Session = true;
+                    }
+                }
+                else
+                {
+                    KVP.Value.OnSessionChange(inputData);
+                }
+            }
+
+            //FixMe - Should call as Escalation if a mod escalated.
+            //Call previous OnSessionChanged values if ModSession changed.
+            if (IncrimentedToMod_Session && isMasterClient)
+            {
+                ModdingUtils.RegisterSessionMod();
+                foreach (KeyValuePair<VoidPlugin, SessionChangedInput> KVP in CalledAsNonModSession)
+                {
+                    SessionChangedInput inputValue = KVP.Value;
+                    inputValue.IsMod_Session = true;
+                    KVP.Key.OnSessionChange(inputValue);
+                }
+            }
+        }
+
+        //internal use for recieving escalation event.
+        internal static void InternalEscalateSession()
+        {
+            InternalSessionChanged(CallType.SessionEscalated, true, PhotonNetwork.IsMasterClient, PhotonNetwork.MasterClient);
+        }
+
+        internal static bool SessionWasEscalated = false;
+
+        internal static bool CanEscalateSession()
+        {
+            return PhotonNetwork.IsMasterClient && !SessionWasEscalated;
+        }
+
+        internal static void EscalateSession()
+        {
+            if(!CanEscalateSession()) { return; }
+
+            Messaging.Echo("Escalating to Mod_Session", false);
+            ModdingUtils.RegisterSessionMod();
+            PhotonNetwork.RaiseEvent(InRoomCallbacks.SessionEscalationEventCode, default, default, SendOptions.SendReliable);
+            InternalEscalateSession();
+            SessionWasEscalated = true;
         }
     }
 }

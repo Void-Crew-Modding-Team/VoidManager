@@ -352,5 +352,33 @@ namespace VoidManager.Utilities
 
             return changed;
         }
+
+        /// <summary>
+        /// Creates Texture2D of input color.
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public static Texture2D BuildTexFrom1Color(Color color)
+        {
+            Texture2D tex = new Texture2D(1, 1);
+            tex.SetPixel(0, 0, color);
+            tex.Apply();
+            return tex;
+        }
+
+        /// <summary>
+        /// Creates a 2D texture based on array of colors.
+        /// </summary>
+        /// <param name="color"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        public static Texture2D BuildTexFromColorArray(Color[] color, int width, int height)
+        {
+            Texture2D tex = new Texture2D(width, height);
+            tex.SetPixels(color);
+            tex.Apply();
+            return tex;
+        }
     }
 }

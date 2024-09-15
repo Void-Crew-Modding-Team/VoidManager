@@ -9,21 +9,6 @@ namespace VoidManager.Utilities
     /// </summary>
     public class Tools
     {
-        /// <summary>
-        /// Does a player ship exist
-        /// </summary>
-        /// <returns>True if a player ship exists, false otherwise</returns>
-        [Obsolete("Moved to Game.PlayerShipExists")]
-        public static bool PlayerShipExists { get => Game.PlayerShipExists; }
-
-        /// <summary>
-        /// Is the player ship in a void jump<br/><br/>
-        /// true for: VoidJumpTravellingStable, VoidJumpTravellingUnstable, VoidJumpInterdiction, VoidJumpApproachingDestination, VoidJumpSpinningDown<br/>
-        /// false otherwise
-        /// </summary>
-        [Obsolete("Moved to Game.InVoid")]
-        public static bool InVoid { get { return Game.InVoid; } }
-
         private static readonly Dictionary<object, (Action, DateTime)> uniqueTasks = new();
 
         /// <summary>

@@ -1,43 +1,46 @@
-﻿[![](https://img.shields.io/badge/-Void_Crew_Modding_Team-111111?style=just-the-label&logo=github&labelColor=24292f)](https://github.com/Void-Crew-Modding-Team)
+[![](https://img.shields.io/badge/-Void_Crew_Modding_Team-111111?style=just-the-label&logo=github&labelColor=24292f)](https://github.com/Void-Crew-Modding-Team)
 [![](https://img.shields.io/github/v/release/Void-Crew-Modding-Team/VoidManager?include_prereleases&style=flat&label=Release%20Version&labelColor=24292f&color=111111)](https://github.com/Void-Crew-Modding-Team/VoidManager/releases/)
 ![](https://img.shields.io/badge/Game%20Version-0.27.0-111111?style=flat&labelColor=24292f&color=111111)
 [![](https://img.shields.io/github/license/Void-Crew-Modding-Team/VoidManager?style=flat&label=License&labelColor=24292f&color=111111)](https://github.com/Void-Crew-Modding-Team/VoidManager/blob/master/LICENSE)
 [![](https://img.shields.io/discord/1180651062550593536.svg?&logo=discord&logoColor=ffffff&style=flat&label=Discord&labelColor=24292f&color=111111)](https://discord.gg/g2u5wpbMGu "Void Crew Modding Discord")
 
-# VoidManager
+# Void Manager
 
 `BepInEx` Plugin Manager for `Void Crew`
 
-Version 1.1.8  
+Version 1.2.0  
 For Game Version 0.27.0  
 Developed by Mest, Dragon, and 18107  
 Based on [Pulsar Mod Loader](https://github.com/PULSAR-Modders/pulsar-mod-loader)
 
+
 ---------------------
 
-### 💡 Function - **Several features to assist in mod handling and management.**
+### 💡 Functions - **Various features to assist in mod management.**
 - Handling for mods requiring installation by all users
-- Restrictions for unspecified mods
-- Manual configuration of unspecified mods
-- Listing of other players' mod lists
-- '[Modded]' added to modded session names, with '[Mods Required]' added to applicable sessions. VoidManager clients view as yellow and red '[M]' respectably.
-- Room mods list in Matchmaking terminal
-- Mod settings UI
+- Manual configuration of mods not configured for Void Manager.
+- Viewing of other players' mod lists
+- Viewing of room mod lists in MatchMaking Join Panels.
+- '[Mods Required]' added to applicable sessions names. VoidManager clients view as green, yellow, and red '[M]' based on session modding compatability.
+- Mod settings GUI 'Void Manager F5 Menu'
 - Hides Chainloader object for developers
 - Unlocks mouse while using text chat
 - Chat input history
-- Command Auto-complete via tab
+- Command Auto-complete via tab key-press
+- Disables Quick Join
+- Escalation to `Mod_Session` option for a Void Manager host
 
 ## ⌨ API
 - Mod MPType Specification
+- OnSessionChanged callback with gamestate parameter inputs for enabling/disabling Mod_session features.
 - local and public chat commands
 - Networked Mod to mod messages
 - Detection of mods installed on other clients
 - Networking events
 - Recipe and unlock modifications
-- Mod settings UI
-- Notification API
-- Harmony Transpiler Patching API
+- Mod settings GUI
+- User Notifications
+- Harmony Transpiler Patching Tools
 - Various Utilities
 
 ### 🎮 Client Usage
@@ -48,8 +51,15 @@ Based on [Pulsar Mod Loader](https://github.com/PULSAR-Modders/pulsar-mod-loader
 
 ### 👥 Multiplayer Functionality 
 
-**Complex** - VoidManager handles mods connectiveity to prevent mods not configured for VoidManager from joining vanilla games. If all mods are configured for VoidManager as Client mods, clients will be allowed to join vanilla games. This behaviour is to prevent mods which break vanilla clients from doing so.  
-By default, any given mod must be installed by the host for clients to join. The host can configure this setting with VoidManager via the F5 menu (ModManager > Mod Settings > VoidManager > Trust MPType.Unspecified mods). Additionally, Mods configured for VoidManager can change this setting.
+**Complex** - Void Manager allows/disallows connection to rooms based on mod MPType configuration.
+
+#### MPTypes
+
+- **All** - Requires all clients to install the mod.
+- **Session** - Requires the session to be marked as `Mod_Session`
+- **Host** - - General MPType for a host-side mod, allowed to join vanilla sessions. Mods utilizing this MPType should disable `Mod_Session` features when applicable.
+- **Client** - - Client Side, allowed to join vanilla sessions. Mods utilizing this MPType should disable `Mod_Session` features when applicable.
+- **Unmanaged** - A mod loaded alongside but not configured for Void Manager. May be manually configured as above MPTypes.
 
 ---------------------
 
@@ -69,5 +79,6 @@ Drag and drop `VoidManager.dll` into `Void Crew\BepInEx\plugins`
 
 ### Future Plans:
 
-- mod whitelist/blacklisting
-- Downgrading to [client] session tag based on mod types, and the ability to join vanilla sessions with Non-Game Influencing mods.
+- API for mods to disable session progress
+- API for permission requests from the session host, so that a mod may enable special features in a `Mod_Session`
+- Mod whitelist/blacklisting

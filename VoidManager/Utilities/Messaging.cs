@@ -3,7 +3,6 @@ using Gameplay.Chat;
 using HarmonyLib;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
 using System.Reflection;
 using UI.Chat;
 using UnityEngine.UIElements;
@@ -59,7 +58,7 @@ namespace VoidManager.Utilities
             if (local) TextChat.Instance.AddLog(new Log($"", message));//fixme
             else
             {
-                VoipService.Instance.SendTextMessage($"[Void Manager]: {message}");
+                VoipService.Instance.SendTextMessage($"[{MyPluginInfo.USERS_PLUGIN_NAME}]: {message}");
             }
         }
 

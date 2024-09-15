@@ -10,6 +10,7 @@ using UnityEngine.UI;
 using VoidManager.MPModChecks;
 using VoidManager.Utilities;
 using static UnityEngine.GUILayout;
+using static VoidManager.Utilities.GUITools;
 
 namespace VoidManager.CustomGUI
 {
@@ -164,7 +165,7 @@ namespace VoidManager.CustomGUI
                                 DrawModListModButton(vp);
                             }
                             GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-                            Label($"<color=yellow>Non-{MyPluginInfo.USERS_PLUGIN_NAME} Mods</color>");
+                            Label($"<color={SessionMPTypeColorCode}>Non-{MyPluginInfo.USERS_PLUGIN_NAME} Mods</color>");
                             foreach (VoidPlugin vp in NonVManMods)
                             {
                                 DrawModListModButton(vp);
@@ -310,7 +311,11 @@ namespace VoidManager.CustomGUI
         private static readonly Color32 _classicMenuBackground = new Color32(32, 32, 32, 255);
         private static readonly Color32 _classicButtonBackground = new Color32(40, 40, 40, 255);
         //private static readonly Color32 _hoverButtonFromMenu = new Color32(18, 79, 179, 255);
-        internal GUISkin ChangeSkin()
+        /// <summary>
+        /// VoidManager's default GUISkin
+        /// </summary>
+        /// <returns></returns>
+        public static GUISkin ChangeSkin()
         {
             if (_cachedSkin is null || _cachedSkin.window.active.background is null)
             {
@@ -397,54 +402,73 @@ namespace VoidManager.CustomGUI
             return _cachedSkin;
         }
 
-        static string GetColorTextForMPType(MultiplayerType mptype)
+
+        public const string AllMPTypeColorCode = "#FF3333";
+        public const string SessionMPTypeColorCode = "#FFFF99";
+        public const string HostMPTypeColorCode = "#00CC00";
+        public const string ClientMPTypeColorCode = "#00CC00";
+
+        /// <summary>
+        /// HTML color codes for MPType colors.
+        /// </summary>
+        /// <param name="mptype"></param>
+        /// <returns>HTML Color code</returns>
+        public static string GetColorTextForMPType(MultiplayerType mptype)
         {
             switch (mptype)
             {
-                //case MultiplayerType.Client:
-                //    return "green";
+                case MultiplayerType.Host:
+                    return HostMPTypeColorCode;
+                case MultiplayerType.Client:
+                    return ClientMPTypeColorCode;
                 case MultiplayerType.Session:
-                    return "#FFFF99";
+                    return SessionMPTypeColorCode;
                 case MultiplayerType.All:
-                    return "#FF3333";
+                    return AllMPTypeColorCode;
                 default:
                     return string.Empty;
             }
         }
 
-        static string GetColoredMPTypeText(MultiplayerType mptype)
+        /// <summary>
+        /// Returns a string for the MPType in it's given color.
+        /// </summary>
+        /// <param name="mptype"></param>
+        /// <returns></returns>
+        public static string GetColoredMPTypeText(MultiplayerType mptype)
         {
             switch (mptype)
             {
-                case MultiplayerType.Unmanaged:
-                    return "<color=#00CC00>Unmanaged</color>";
-                case MultiplayerType.Client:
-                    return "<color=#00CC00>Client</color>";
-                case MultiplayerType.Host:
-                    return "<color=#00CC00>Host</color>";
-                case MultiplayerType.Session:
-                    return "<color=#FFFF99>Session</color>";
                 case MultiplayerType.All:
-                    return "<color=#FF3333>All</color>";
+                    return $"<color={AllMPTypeColorCode}>All</color>";
+                case MultiplayerType.Session:
+                    return $"<color={SessionMPTypeColorCode}>Session</color>";
+                case MultiplayerType.Host:
+                    return $"<color={HostMPTypeColorCode}>Host</color>";
+                case MultiplayerType.Client:
+                    return $"<color={ClientMPTypeColorCode}>Client</color>";
+                case MultiplayerType.Unmanaged:
                 default:
                     return mptype.ToString();
             }
         }
 
-        static string GetTextForMPType(MultiplayerType mptype)
+        //Colored names and descriptions of MPTypes
+        public static string GetTextForMPType(MultiplayerType mptype)
         {
             switch (mptype)
             {
+                case MultiplayerType.All:
+                    return $"<color={AllMPTypeColorCode}>All</color> - All Clients will be required to install this mod.";
+                case MultiplayerType.Session:
+                    return $"<color={SessionMPTypeColorCode}>Session</color> - Can only join/host Mod_Session, but doesn't require other players to install the mod.\n";
+                case MultiplayerType.Host:
+                    return $"<color={HostMPTypeColorCode}>Host</color> - General MPType for a host-side mod, allowed to join vanilla sessions.";
+                case MultiplayerType.Client:
+                    return $"<color={ClientMPTypeColorCode}>Client</color> - Client Side, allowed to join vanilla sessions.";
                 case MultiplayerType.Unmanaged:
                     return $"<color=#FFFF99>Unmanaged</color> - This mod has not had it's multiplayer operations specified for {MyPluginInfo.USERS_PLUGIN_NAME}.";
-                case MultiplayerType.All:
-                    return "<color=#FF3333>All</color> - All Clients will be required to install this mod.";
-                case MultiplayerType.Client:
-                    return "<color=#00CC00>Client</color> - This mod is client-side, but might have special behavior.";
-                case MultiplayerType.Host:
-                    return "<color=#00CC00>Host</color> - The host must have this mod for functionality, but it won't prevent joining a vanilla client's game.";
-                case MultiplayerType.Session:
-                    return $"<color=#FFFF99>Session</color> - Can only join/host Mod_Session, but doesn't require other players to install the mod.\n";
+
                 default:
                     return mptype.ToString();
             }
@@ -452,8 +476,7 @@ namespace VoidManager.CustomGUI
 
         void DrawModListModButton(VoidPlugin voidPlugin)
         {
-            
-            if (voidPlugin.MPType > MPModChecks.MultiplayerType.Host)
+            if (voidPlugin.MPType >= MPModChecks.MultiplayerType.Session)
             {
                 if (GUITools.DrawButtonSelected($"<color={GetColorTextForMPType(voidPlugin.MPType)}>{voidPlugin.BepinPlugin.Metadata.Name}</color>", selectedMod == voidPlugin)) //FFFF99
                     selectedMod = voidPlugin;
@@ -517,26 +540,10 @@ namespace VoidManager.CustomGUI
             Tab = tab;
         }
 
-        Texture2D BuildTexFrom1Color(Color color)
-        {
-            Texture2D tex = new Texture2D(1, 1);
-            tex.SetPixel(0, 0, color);
-            tex.Apply();
-            return tex;
-        }
-
-        Texture2D BuildTexFromColorArray(Color[] color, int width, int height)
-        {
-            Texture2D tex = new Texture2D(width, height);
-            tex.SetPixels(color);
-            tex.Apply();
-            return tex;
-        }
-
         /// <summary>
         /// Iterates through the current Plugin files and searches for gui menus.
         /// </summary>
-        public void DiscoverGUIMenus(System.Reflection.Assembly assembly, VoidPlugin voidPlugin)
+        internal void DiscoverGUIMenus(System.Reflection.Assembly assembly, VoidPlugin voidPlugin)
         {
             mods.Add(voidPlugin);
             Type[] types = assembly.GetTypes();
@@ -553,7 +560,7 @@ namespace VoidManager.CustomGUI
             if (hasSettingsMenu) BepinPlugin.Log.LogInfo($"[{voidPlugin.BepinPlugin.Metadata.Name}] detected settings menu(s)");
         }
 
-        public void DiscoverNonVManMod(VoidPlugin voidPlugin)
+        internal void DiscoverNonVoidManagerMod(VoidPlugin voidPlugin)
         {
             NonVManMods.Add(voidPlugin);
         }

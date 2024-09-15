@@ -126,12 +126,9 @@ namespace VoidManager.CustomGUI
                 MenuUnlockCursor.Value = !MenuUnlockCursor.Value;
             }
 
-
-            //MPModChecks trust MPType.Unspecified
-            HorizontalSlider(0, 100, 100);
-            if (Button($"Trust Unspecified mods: {(TrustMPTypeUnspecified.Value ? "Trusted" : "Not Trusted")}"))
+            if (Button("Escalate to Mod_Session"))
             {
-                TrustMPTypeUnspecified.Value = !TrustMPTypeUnspecified.Value;
+                PluginHandler.EscalateSession(); // Execution check handled in-method.
             }
         }
     }

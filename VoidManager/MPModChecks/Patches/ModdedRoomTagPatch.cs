@@ -15,9 +15,9 @@ namespace VoidManager.MPModChecks.Patches
         public const string ModsRequiredString = "[Mods Required]";
         public static readonly string ModsRequiredLobbyListString = $"{ModSessionString}{ModsRequiredString}";
 
-        const string RedM = "<b><color=red>[M]</color></b> ";
-        const string YellowM = "<b><color=yellow>[M]</color></b> ";
-        const string GreenM = "<b><color=#249d48>[M]</color></b> ";
+        const string RedM = $"<b><color={CustomGUI.GUIMain.AllMPTypeColorCode}>[M]</color></b> ";
+        const string YellowM = $"<b><color={CustomGUI.GUIMain.SessionMPTypeColorCode}>[M]</color></b> ";
+        const string GreenM = $"<b><color={CustomGUI.GUIMain.ClientMPTypeColorCode}>[M]</color></b> ";
 
         [HarmonyPostfix]
         static void ModdedRoomPatch(VisualElement item, MatchmakingRoom room)

@@ -99,7 +99,7 @@ namespace VoidManager.MPModChecks
         {
             if (GUIActive)
             {
-                GUI.skin = GUIMain.Instance.ChangeSkin();
+                GUI.skin = GUIMain.ChangeSkin();
                 WindowPos = GUI.Window(918107, WindowPos, WindowFunction, "Mod List");
             }
         }
@@ -132,9 +132,9 @@ namespace VoidManager.MPModChecks
         {
             MultiplayerType.Unmanaged => "Unmanaged",
             MultiplayerType.Client => "Client",
-            MultiplayerType.Host => "<color=#00CC00>Host</color>",
-            MultiplayerType.Session => "<color=#FFFF99>Session</color>",
-            MultiplayerType.All => "<color=#FF3333>Required</color>",
+            MultiplayerType.Host => $"<color={GUIMain.HostMPTypeColorCode}>Host</color>",
+            MultiplayerType.Session => $"<color={GUIMain.SessionMPTypeColorCode}>Session</color>",
+            MultiplayerType.All => $"<color={GUIMain.AllMPTypeColorCode}>Required</color>",
             _ => "Error - type not found"
         };
     }

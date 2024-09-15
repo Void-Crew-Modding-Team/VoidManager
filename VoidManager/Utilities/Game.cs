@@ -4,6 +4,7 @@ using Gameplay.Quests;
 using ResourceAssets;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace VoidManager.Utilities
 {
@@ -82,18 +83,6 @@ namespace VoidManager.Utilities
                 }
             }
             return null;
-        }
-
-        /// <summary>
-        /// Returns the Local player
-        /// </summary>
-        [Obsolete("Please switch to CG.Game.Player.LocalPlayer.Instance")]
-        public static CG.Game.Player.Player LocalPlayer
-        {
-            get
-            {
-                return  CG.Game.Player.LocalPlayer.Instance;
-            }
         }
 
         /// <summary>
