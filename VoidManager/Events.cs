@@ -4,6 +4,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using UI.Chat;
+using VoidManager.MPModChecks;
 
 namespace VoidManager
 {
@@ -66,7 +67,6 @@ namespace VoidManager
 
             //Above controls whether a game is joined, so it is better to let it run first.
             JoinedRoom?.Invoke(this, EventArgs.Empty);
-            SessionChanged?.Invoke(this, new SessionChangedInput(false, CallType.Joining, PhotonNetwork.MasterClient.IsLocal, false, false));
         }
 
 
@@ -96,7 +96,7 @@ namespace VoidManager
 
             bool IsMasterClient = newMasterClient.IsLocal;
             MasterClientSwitched?.Invoke(this, new PlayerEventArgs() { player = newMasterClient });
-            SessionChanged?.Invoke(this, new SessionChangedInput(newMasterClient.IsLocal, CallType.HostChange, false, false, false));
+            PluginHandler.InternalSessionChanged(CallType.HostChange, ((IsMasterClient && ModdingUtils.SessionModdingType == ModdingType.mod_session) || MPModCheckManager.IsMod_Session()), IsMasterClient, newMasterClient);
         }
 
 
@@ -130,7 +130,7 @@ namespace VoidManager
         internal void OnHostStartSession()
         {
             HostStartSession?.Invoke(this, EventArgs.Empty);
-            SessionChanged?.Invoke(this, new SessionChangedInput(true, CallType.Hosting, true, false, false));
+            PluginHandler.InternalSessionChanged(CallType.HostStartSession, MPModCheckManager.IsMod_Session(), true);
         }
 
         [HarmonyPatch(typeof(GameSessionManager), "HostGameSession")]
@@ -162,7 +162,9 @@ namespace VoidManager
 
         internal void OnJoinedSession()
         {
-            SessionChanged?.Invoke(this, new SessionChangedInput(PhotonNetwork.MasterClient.IsLocal, CallType.SessionEscalated, false, false, false));
+            JoinedSession?.Invoke(this, EventArgs.Empty);
+            PluginHandler.CreatedRoomAsHost = false;
+            PluginHandler.InternalSessionChanged(CallType.Joining, MPModCheckManager.IsMod_Session(), false, PhotonNetwork.MasterClient);
         }
 
         [HarmonyPatch(typeof(GameSessionManager), "JoinGameSession")]
