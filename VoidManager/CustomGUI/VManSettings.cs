@@ -125,6 +125,11 @@ namespace VoidManager.CustomGUI
             {
                 MenuUnlockCursor.Value = !MenuUnlockCursor.Value;
             }
+
+            if (Button("Escalate to Mod_Session"))
+            {
+                PluginHandler.EscalateSession(); // Execution check handled in-method.
+            }
         }
     }
 }

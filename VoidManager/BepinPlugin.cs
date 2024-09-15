@@ -74,7 +74,6 @@ namespace VoidManager
             Events.Instance.PlayerEnteredRoom += AutoComplete.RefreshPlayerList;
             Events.Instance.PlayerLeftRoom += AutoComplete.RefreshPlayerList;
             Events.Instance.JoinedRoom += AutoComplete.RefreshPlayerList;
-            Events.Instance.SessionChanged += PluginHandler.OnSessionChanged;
 
             Log.LogInfo($"{MyPluginInfo.PLUGIN_GUID} Initialized.");
             }

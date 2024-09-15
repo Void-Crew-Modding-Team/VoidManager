@@ -15,6 +15,7 @@ using VoidManager.Chat.Router;
 using VoidManager.CustomGUI;
 using VoidManager.ModMessages;
 using VoidManager.MPModChecks;
+using VoidManager.Utilities;
 
 namespace VoidManager
 {
@@ -171,11 +172,22 @@ namespace VoidManager
             InternalSessionChanged(CallType.SessionEscalated, true, PhotonNetwork.IsMasterClient, PhotonNetwork.MasterClient);
         }
 
+        internal static bool SessionWasEscalated = false;
+
+        internal static bool CanEscalateSession()
+        {
+            return PhotonNetwork.IsMasterClient && !SessionWasEscalated;
+        }
+
         internal static void EscalateSession()
         {
+            if(!CanEscalateSession()) { return; }
+
+            Messaging.Echo("Escalating to Mod_Session", false);
             ModdingUtils.RegisterSessionMod();
             PhotonNetwork.RaiseEvent(InRoomCallbacks.SessionEscalationEventCode, default, default, SendOptions.SendReliable);
             InternalEscalateSession();
+            SessionWasEscalated = true;
         }
     }
 }

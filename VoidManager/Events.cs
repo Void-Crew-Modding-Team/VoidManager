@@ -151,6 +151,7 @@ namespace VoidManager
         internal void OnHostCreateRoom()
         {
             HostCreateRoom?.Invoke(this, EventArgs.Empty);
+            PluginHandler.SessionWasEscalated = true;
             PluginHandler.InternalSessionChanged(CallType.HostCreateRoom, ModdingUtils.SessionModdingType == ModdingType.mod_session, true);
         }
 
@@ -164,6 +165,7 @@ namespace VoidManager
         {
             JoinedSession?.Invoke(this, EventArgs.Empty);
             PluginHandler.CreatedRoomAsHost = false;
+            PluginHandler.SessionWasEscalated = false;
             PluginHandler.InternalSessionChanged(CallType.Joining, MPModCheckManager.IsMod_Session(), false, PhotonNetwork.MasterClient);
         }
 
