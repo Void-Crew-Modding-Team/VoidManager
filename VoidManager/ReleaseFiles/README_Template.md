@@ -14,10 +14,6 @@ Developed by [Authors]
 Based on [Pulsar Mod Loader](https://github.com/PULSAR-Modders/pulsar-mod-loader)
 
 
-**IMPORTANT NOTES**
-- Void Manager currently cannot join Vanilla sessions as part of Void Manager's ***Phase 1*** [Modding Guideline](https://steamcommunity.com/app/1063420/discussions/0/6057990917770747901/) compliance. This is planned to change in the future.
-- Various features of Void Manager may be broken/disabled. If something is broken please report it to us on our discord server.
-
 ---------------------
 
 ### 💡 Functions - **Various features to assist in mod management.**
@@ -32,9 +28,11 @@ Based on [Pulsar Mod Loader](https://github.com/PULSAR-Modders/pulsar-mod-loader
 - Chat input history
 - Command Auto-complete via tab key-press
 - Disables Quick Join
+- Escalation to `Mod_Session` option for a Void Manager host
 
 ## ⌨ API
 - Mod MPType Specification
+- OnSessionChanged callback with gamestate parameter inputs for enabling/disabling Mod_session features.
 - local and public chat commands
 - Networked Mod to mod messages
 - Detection of mods installed on other clients
@@ -53,16 +51,14 @@ Based on [Pulsar Mod Loader](https://github.com/PULSAR-Modders/pulsar-mod-loader
 
 ### 👥 Multiplayer Functionality 
 
-### Void Manager currently cannot join Vanilla sessions as part of Void Manager's ***Phase 1*** [Modding Guideline](https://steamcommunity.com/app/1063420/discussions/0/6057990917770747901/) compliance.
-
 **Complex** - Void Manager allows/disallows connection to rooms based on mod MPType configuration.
 
 #### MPTypes
 
 - **All** - Requires all clients to install the mod.
 - **Session** - Requires the session to be marked as `Mod_Session`
-- **Host** - **Functionally Disabled** - General MPType for a host-side mod, allowed to join vanilla sessions. Mods utilizing this MPType should disable `Mod_Session` features when applicable.
-- **Client** - **Functionally Disabled** - Client Side, allowed to join vanilla sessions. Mods utilizing this MPType should disable `Mod_Session` features when applicable.
+- **Host** - - General MPType for a host-side mod, allowed to join vanilla sessions. Mods utilizing this MPType should disable `Mod_Session` features when applicable.
+- **Client** - - Client Side, allowed to join vanilla sessions. Mods utilizing this MPType should disable `Mod_Session` features when applicable.
 - **Unmanaged** - A mod loaded alongside but not configured for Void Manager. May be manually configured as above MPTypes.
 
 ---------------------
@@ -83,10 +79,6 @@ Drag and drop `[ModName].dll` into `Void Crew\BepInEx\plugins`
 
 ### Future Plans:
 
-- Mod whitelist/blacklisting
-- Phase 2 Modding Guidelines Compliance
-  - Downgrading to `Mod_Local` tag based on MPTypes
-  - API for developers to disable/enable their mods according to room parameters
 - API for mods to disable session progress
-- Escalation to `Mod_Session` Type by a Void Manager host
 - API for permission requests from the session host, so that a mod may enable special features in a `Mod_Session`
+- Mod whitelist/blacklisting
