@@ -172,6 +172,7 @@ namespace VoidManager.CustomGUI
                                 DrawModListModButton(vp);
                             }
                             Label("Overall MPType: " + GetColoredMPTypeText(MPModCheckManager.Instance.HighestLevelOfMPMods));
+                            Label("Session Status: " + (MPModCheckManager.IsMod_Session() ? $"<color={SessionMPTypeColorCode}>Mod_Session</color>" : $"<color={ClientMPTypeColorCode}>Mod_Local</color>"));
                         }
                         EndScrollView();
                     }

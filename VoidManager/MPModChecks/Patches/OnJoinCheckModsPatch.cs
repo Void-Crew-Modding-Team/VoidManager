@@ -13,11 +13,7 @@ namespace VoidManager.MPModChecks.Patches
 
             if(MatchmakingController.Instance.GetCachedRoomList().TryGetValue(MRoom.RoomId, out RoomInfo roomInfo))
             {
-                if (MRoom.ModdingType != ModdingType.mod_session)
-                {
-                    MenuScreenController.Instance.ShowMessagePopup("matchmaking_unable_join".GetLocalized("Terminals"), $"{MyPluginInfo.USERS_PLUGIN_NAME} blocked connection. Per new modding guidelines, {MyPluginInfo.USERS_PLUGIN_NAME} cannot join non-modded sessions. Future updates will enable this functionallity under certain conditions.");
-                    return false;
-                }
+                //Modding Guidelines Compliance
                 if (!MPModCheckManager.Instance.ModChecksClientside(roomInfo.CustomProperties, false))
                 {
                     MenuScreenController.Instance.ShowMessagePopup("matchmaking_unable_join".GetLocalized("Terminals"), $"{MyPluginInfo.USERS_PLUGIN_NAME} blocked connection, Modlists incompatable.\n" + MPModCheckManager.Instance.LastModCheckFailReason);
