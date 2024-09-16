@@ -1,6 +1,5 @@
 ﻿using CG.Cloud;
 using CG.Profile;
-using Gameplay.Chat;
 using HarmonyLib;
 using System.Reflection;
 
@@ -11,12 +10,12 @@ namespace VoidManager
         internal static bool ProgressionEnabled = true;
         public static void DisableProgression()
         {
-            VoidManager.Utilities.Messaging.Echo("Progression Disabled");
+            BepinPlugin.Log.LogInfo("Progression Disabled");
             ProgressionEnabled = false;
         }
-        public static void EnableProgression()
+        internal static void EnableProgression()
         {
-            VoidManager.Utilities.Messaging.Echo("Progression Enabled");
+            BepinPlugin.Log.LogInfo("Progression Enabled");
             Load();
         }
         private static PropertyInfo ProfileInfo = AccessTools.Property(typeof(PlayerProfile), "Profile");
@@ -31,8 +30,8 @@ namespace VoidManager
             VoidManager.Utilities.Messaging.Echo("Working . . . ");
             PlayerData playerData = await CloudProfileReader.GetProfile();
             // Doesnt equip on character the cosmetics
-            // Doesnt select cosmetics on terminal
             // Doesnt update gene tree on terminal
+            // Reccomended to wait until process completes before opening terminal
             ProfileInfo.SetValue(PlayerProfile.Instance, playerData.Profile);
             UnlockedItemsInfo.SetValue(PlayerProfile.Instance, playerData.UnlockedItems);
             PerksInfo.SetValue(PlayerProfile.Instance, playerData.Perks);
