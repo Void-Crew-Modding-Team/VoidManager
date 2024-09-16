@@ -52,6 +52,8 @@ namespace VoidManager
             MenuUnlockCursor = Config.Bind("Menu", "Unlock Cursor", true, "");
 
             MenuOpenKeybind = Config.Bind("Menu", "Open Keybind", OpenMenu, "");
+            DisplayPlayerModList = Config.Bind("Menu", "Player Mod List", false, "Display in the Player List GUI");
+            DisplayPlayerSettingsMenus = Config.Bind("Menu", "Player Settings Menus", true, "Display in the Player List GUI");
 
 
             PunLoggingSettingLevel = Config.Bind("Debug", "PunLogLevel", PunLogLevel.ErrorsOnly);
@@ -96,6 +98,9 @@ namespace VoidManager
 
             internal static ConfigEntry<KeyboardShortcut> MenuOpenKeybind;
             internal static KeyboardShortcut OpenMenu = new KeyboardShortcut(KeyCode.F5);
+
+            internal static ConfigEntry<bool> DisplayPlayerModList;
+            internal static ConfigEntry<bool> DisplayPlayerSettingsMenus;
 
             internal static ConfigEntry<string> UnspecifiedModListOverride;
             internal static Dictionary<string, MPModChecks.MultiplayerType> ModOverrideDictionary;

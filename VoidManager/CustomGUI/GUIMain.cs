@@ -76,8 +76,6 @@ namespace VoidManager.CustomGUI
 
             UpdateWindowSize();
             settings.Add(new VManSettings());
-            playerSettings.Add(new VPersonSettings());
-            playerSettings.Add(new VPersonSettings2());
 
             //Background image to block mouse clicks passing IMGUI
             Background = new GameObject("GUIMainBG", new Type[] { typeof(GraphicRaycaster) });
@@ -300,26 +298,30 @@ namespace VoidManager.CustomGUI
                         {
                             if (selectedPlayer != null)
                             {
+                                BeginHorizontal();
                                 Label($"Player: {selectedPlayer.NickName} {(selectedPlayer.IsMasterClient ? "(Host)" : string.Empty)}");
-
-                                DrawPlayerModList(selectedPlayer);
-                                if (playerSettings.Count > 0)
+                                FlexibleSpace();
+                                FlexibleSpace();
+                                BepinPlugin.Bindings.DisplayPlayerModList.Value = Toggle(BepinPlugin.Bindings.DisplayPlayerModList.Value, "Mod List");
+                                BepinPlugin.Bindings.DisplayPlayerSettingsMenus.Value = Toggle(BepinPlugin.Bindings.DisplayPlayerSettingsMenus.Value, "Mod Settings");
+                                EndHorizontal();
+                                if (BepinPlugin.Bindings.DisplayPlayerModList.Value) DrawPlayerModList(selectedPlayer);
+                                if (playerSettings.Count > 0 && BepinPlugin.Bindings.DisplayPlayerSettingsMenus.Value)
                                 {
-                                    GUILayout.Label("\nSettings menus:");
                                     foreach (PlayerSettingsMenu menu in playerSettings)
                                     {
                                         GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-                                        GUILayout.BeginHorizontal();
-                                        HorizontalSlider(0, 100, 100);
                                         if (menu.Name() != string.Empty)
-                                        {
-                                            GUILayout.Label(menu.Name());
-                                            HorizontalSlider(0, 100, 100);
+                                        { 
+                                            BeginHorizontal();
+                                            Label(menu.Name());/*, GUILayout.Width(_SelectedButtonStyle.CalcSize(new GUIContent(menu.Name())).x));*/
+                                            FlexibleSpace();
+                                            EndHorizontal();
                                         }
-                                        GUILayout.EndHorizontal();
-                                        GUILayout.BeginVertical(new GUIStyle(GUI.skin.box) { normal = { background = Texture2D.blackTexture } });
+                                        else Space(20);
+                                        BeginVertical();
                                         menu.Draw(selectedPlayer);
-                                        GUILayout.EndVertical();
+                                        EndVertical();
                                     }
                                 }
                             }
@@ -334,6 +336,7 @@ namespace VoidManager.CustomGUI
         }
 
         internal static GUISkin _cachedSkin;
+        internal static GUISkin _defaultSkin;
         internal static GUIStyle _SelectedButtonStyle;
         internal static Texture2D _buttonBackground;
         internal static Texture2D _hbuttonBackground;
