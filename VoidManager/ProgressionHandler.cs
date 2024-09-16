@@ -5,10 +5,18 @@ using System.Reflection;
 
 namespace VoidManager
 {
+    /// <summary>
+    /// API for enabling/disabling player progression.
+    /// </summary>
     public class ProgressionHandler
     {
         internal static bool ProgressionEnabled = true;
-        public static void DisableProgression()
+
+        /// <summary>
+        /// Disables progression for the whole session.
+        /// </summary>
+        /// <param name="ModGUID">GUID of mod which called for progression disable.</param>
+        public static void DisableProgression(string ModGUID)
         {
             BepinPlugin.Log.LogInfo("Progression Disabled");
             ProgressionEnabled = false;
