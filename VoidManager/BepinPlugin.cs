@@ -28,8 +28,8 @@ namespace VoidManager
             instance = this;
             Log = Logger;
 
-            //Compliance
-            ModdingUtils.SessionModdingType = ModdingType.mod_session;
+            //Modding Guidelines Compliance - Setup Mod_Local. Mod_Session set later.
+            ModdingUtils.SessionModdingType = ModdingType.mod_local;
 
             //Wrapped with try catch. If PatchAll fails, further code does not run.
             try { Harmony.PatchAll(); }

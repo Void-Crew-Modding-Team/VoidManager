@@ -31,7 +31,7 @@ namespace VoidManager.MPModChecks
         /// <summary>
         /// Highest level of mods MPType. Does as says
         /// </summary>
-        public MultiplayerType HighestLevelOfMPMods { get; private set; } = MultiplayerType.Session;
+        public MultiplayerType HighestLevelOfMPMods { get; private set; } = MultiplayerType.Client;
 
         internal static InRoomCallbacks RoomCallbacksClass;
         private MPModDataBlock[] MyModList = null;
@@ -78,6 +78,8 @@ namespace VoidManager.MPModChecks
                 case MultiplayerType.All:
                     if (MT > HighestLevelOfMPMods)
                     {
+                        //Modding Guidelines Compliance
+                        ModdingUtils.SessionModdingType = ModdingType.mod_session;
                         HighestLevelOfMPMods = MT;
                         BepinPlugin.Log.LogInfo("Incrementing HighestLevelOfMPMods to " + MT.ToString());
                     }
@@ -85,6 +87,8 @@ namespace VoidManager.MPModChecks
                 case MultiplayerType.Session:
                     if (MT > HighestLevelOfMPMods)
                     {
+                        //Modding Guidelines Compliance
+                        ModdingUtils.SessionModdingType = ModdingType.mod_session;
                         HighestLevelOfMPMods = MT;
                         BepinPlugin.Log.LogInfo("Incrementing HighestLevelOfMPMods to " + MT.ToString());
                     }

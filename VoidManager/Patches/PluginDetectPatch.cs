@@ -25,6 +25,7 @@ namespace VoidManager.Patches
             NetworkedPeerManager.Instance = new NetworkedPeerManager();
             MPModCheckManager.Instance = new MPModCheckManager();
 
+            //Load Photon Logging settings.
             ServerSettings serverSettings = PhotonNetwork.PhotonServerSettings;
             if (serverSettings != null)
             {
