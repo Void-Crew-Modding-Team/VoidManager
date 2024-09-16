@@ -1,6 +1,8 @@
 ## 1.2.0
 - Changes to Room Joining for Phase 2 Modding Compliance
 - Mod_Session escalation option.
+- Developer API for disabling progression
+- Developer API for Player List Settings GUI
 - Developer API for OnSessionChanged.
 - Developer API extension.
 - Extra logging configs.

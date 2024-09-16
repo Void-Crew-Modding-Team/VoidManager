@@ -18,9 +18,9 @@ Based on [Pulsar Mod Loader](https://github.com/PULSAR-Modders/pulsar-mod-loader
 
 ### 💡 Functions - **Various features to assist in mod management.**
 - Handling for mods requiring installation by all users
-- Manual configuration of mods not configured for Void Manager.
+- Manual configuration of mods not configured for Void Manager
 - Viewing of other players' mod lists
-- Viewing of room mod lists in MatchMaking Join Panels.
+- Viewing of room mod lists in MatchMaking Join Panels
 - '[Mods Required]' added to applicable sessions names. VoidManager clients view as green, yellow, and red '[M]' based on session modding compatability.
 - Mod settings GUI 'Void Manager F5 Menu'
 - Hides Chainloader object for developers
@@ -29,16 +29,19 @@ Based on [Pulsar Mod Loader](https://github.com/PULSAR-Modders/pulsar-mod-loader
 - Command Auto-complete via tab key-press
 - Disables Quick Join
 - Escalation to `Mod_Session` option for a Void Manager host
+- Configurable PUN Logging
 
 ## ⌨ API
 - Mod MPType Specification
-- OnSessionChanged callback with gamestate parameter inputs for enabling/disabling Mod_session features.
+- OnSessionChanged callback with gamestate parameter inputs for enabling/disabling Mod_session features
+- Progression disable call
 - local and public chat commands
 - Networked Mod to mod messages
 - Detection of mods installed on other clients
 - Networking events
 - Recipe and unlock modifications
 - Mod settings GUI
+- Player Settings GUI
 - User Notifications
 - Harmony Transpiler Patching Tools
 - Various Utilities
@@ -79,6 +82,5 @@ Drag and drop `[ModName].dll` into `Void Crew\BepInEx\plugins`
 
 ### Future Plans:
 
-- API for mods to disable session progress
 - API for permission requests from the session host, so that a mod may enable special features in a `Mod_Session`
 - Mod whitelist/blacklisting
