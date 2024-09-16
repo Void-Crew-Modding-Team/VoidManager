@@ -4,6 +4,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using UI.Chat;
+using VoidManager.MPModChecks;
 
 namespace VoidManager
 {
@@ -36,6 +37,8 @@ namespace VoidManager
 
         internal void OnPlayerEnteredRoom(Player joiningPlayer)
         {
+            MPModCheckManager.Instance.PlayerJoined(joiningPlayer);
+
             PlayerEnteredRoom?.Invoke(this, new PlayerEventArgs() { player = joiningPlayer });
         }
 
@@ -48,18 +51,22 @@ namespace VoidManager
         internal void OnPlayerLeftRoom(Player leavingPlayer)
         {
             PlayerLeftRoom?.Invoke(this, new PlayerEventArgs() { player = leavingPlayer });
+
+            NetworkedPeerManager.Instance.PlayerLeftRoom(leavingPlayer);
         }
 
 
         /// <summary>
-        /// Called by photon on room join.
+        /// Called by photon on room join. Occurs once in a single photon room.
         /// </summary>
         public event EventHandler JoinedRoom;
 
         internal void OnJoinedRoom()
         {
+            MPModCheckManager.Instance.JoinedRoom();
+
+            //Above controls whether a game is joined, so it is better to let it run first.
             JoinedRoom?.Invoke(this, EventArgs.Empty);
-            SessionChanged?.Invoke(this, new SessionChangedInput(false, CallType.Joining, PhotonNetwork.MasterClient.IsLocal, false, false));
         }
 
 
@@ -70,6 +77,8 @@ namespace VoidManager
 
         internal void OnLeftRoom()
         {
+            NetworkedPeerManager.Instance.LeftRoom();
+
             LeftRoom?.Invoke(this, EventArgs.Empty);
         }
 
@@ -81,8 +90,13 @@ namespace VoidManager
 
         internal void OnMasterClientSwitched(Player newMasterClient)
         {
+            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                MPModCheckManager.Instance.UpdateLobbyProperties();
+
+
+            bool IsMasterClient = newMasterClient.IsLocal;
             MasterClientSwitched?.Invoke(this, new PlayerEventArgs() { player = newMasterClient });
-            SessionChanged?.Invoke(this, new SessionChangedInput(newMasterClient.IsLocal, CallType.HostChange, false, false, false));
+            PluginHandler.InternalSessionChanged(CallType.HostChange, ((IsMasterClient && ModdingUtils.SessionModdingType == ModdingType.mod_session) || MPModCheckManager.IsMod_Session()), IsMasterClient, newMasterClient);
         }
 
 
@@ -109,39 +123,61 @@ namespace VoidManager
 
 
         /// <summary>
-        /// Called after after loading a game session (reccurs multiple times in the same PhotonRoom).
+        /// Called after after loading a hosted game session (reccurs multiple times in the same PhotonRoom).
         /// </summary>
         public event EventHandler HostStartSession;
 
         internal void OnHostStartSession()
         {
             HostStartSession?.Invoke(this, EventArgs.Empty);
-            SessionChanged?.Invoke(this, new SessionChangedInput(true, CallType.Hosting, true, false, false));
+            PluginHandler.InternalSessionChanged(CallType.HostStartSession, MPModCheckManager.IsMod_Session(), true);
         }
-
-
-        /// <summary>
-        ///  Called when: hosting a session, joining a session, on host change, on session escalation.
-        /// </summary>
-        public event EventHandler<SessionChangedInput> SessionChanged;
-
-        /// <summary>
-        /// Used to escalate sessions MPType
-        /// </summary>
-        internal void OnEscalateSession()
-        {
-            SessionChanged?.Invoke(this, new SessionChangedInput(PhotonNetwork.MasterClient.IsLocal, CallType.SessionEscalated, false, false, false));
-        }
-
 
         [HarmonyPatch(typeof(GameSessionManager), "HostGameSession")]
-        class HostStartSessionpatch
+        class HostStartSessionPatch
         {
             static void Postfix()
             {
                 Instance.OnHostStartSession();
             }
         }
+
+
+        /// <summary>
+        /// Called by host when creating a photon room. (Recurs once, may fail to execute if host drops)
+        /// </summary>
+        public event EventHandler HostCreateRoom;
+
+        internal void OnHostCreateRoom()
+        {
+            HostCreateRoom?.Invoke(this, EventArgs.Empty);
+            PluginHandler.SessionWasEscalated = true;
+            PluginHandler.InternalSessionChanged(CallType.HostCreateRoom, ModdingUtils.SessionModdingType == ModdingType.mod_session, true);
+        }
+
+
+        /// <summary>
+        /// Called after after loading a joined game session (reccurs multiple times in the same PhotonRoom).
+        /// </summary>
+        public event EventHandler JoinedSession;
+
+        internal void OnJoinedSession()
+        {
+            JoinedSession?.Invoke(this, EventArgs.Empty);
+            PluginHandler.CreatedRoomAsHost = false;
+            PluginHandler.SessionWasEscalated = false;
+            PluginHandler.InternalSessionChanged(CallType.Joining, MPModCheckManager.IsMod_Session(), false, PhotonNetwork.MasterClient);
+        }
+
+        [HarmonyPatch(typeof(GameSessionManager), "JoinGameSession")]
+        class JoinSessionPatch
+        {
+            static void Postfix()
+            {
+                Instance.OnJoinedSession();
+            }
+        }
+
 
         /// <summary>
         /// Called when the player opens the chat window ("Enter" by default)

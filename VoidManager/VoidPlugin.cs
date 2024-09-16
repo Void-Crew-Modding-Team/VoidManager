@@ -59,11 +59,7 @@ namespace VoidManager
         }
 
         /// <summary>
-        /// Mod's multiplayer requirements. Use MPModChecks.MultiplayerType.<br/>
-        /// Hidden: Hidden from mod lists<br/>
-        /// Client: No requirement<br/>
-        /// Unspecified: default. Hosts can toggle between trusting these mods or requiring installation on host.<br/>
-        /// All: All players must have the mod installed
+        /// Mod's multiplayer requirements. Use MPModChecks.MultiplayerType. Defaults as Session<br/>
         /// </summary>
         public virtual MultiplayerType MPType
         {
@@ -74,16 +70,13 @@ namespace VoidManager
         }
 
         /// <summary>
-        /// Called by VoidManager on host session, join session, host change, session escalation
+        /// Called by VoidManager on Host Create Room, Host Session, Join Session, Host Change, Session Escalation. May run multiple times if a mod escalates to Mod_Session.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
         public virtual SessionChangedReturn OnSessionChange(SessionChangedInput input)
         {
-            return new SessionChangedReturn()
-            {
-                SetMod_Session = false
-            };
+            return new SessionChangedReturn() { SetMod_Session = false };
         }
     }
 }
