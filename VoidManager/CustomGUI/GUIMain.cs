@@ -336,7 +336,6 @@ namespace VoidManager.CustomGUI
         }
 
         internal static GUISkin _cachedSkin;
-        internal static GUISkin _defaultSkin;
         internal static GUIStyle _SelectedButtonStyle;
         internal static Texture2D _buttonBackground;
         internal static Texture2D _hbuttonBackground;
