@@ -20,6 +20,14 @@ namespace VoidManager.MPModChecks
 
         internal Dictionary<Player, MPUserDataBlock> NetworkedPeersModLists = new();
 
+        /// <summary>
+        /// Checks if a mod list has been recieved from the host.
+        /// </summary>
+        /// <returns>True if host mod list found</returns>
+        public bool IsHostModded()
+        {
+            return GetNetworkedPeerModlistExists(PhotonNetwork.MasterClient);
+        }
 
         /// <summary>
         /// Provides the host MPUserDataBlock from room properties.
@@ -145,9 +153,6 @@ namespace VoidManager.MPModChecks
         {
             return NetworkedPeersModLists.ContainsKey(Player);
         }
-
-
-
 
         private static MPUserDataBlock GetHostModList(RoomInfo room)
         {

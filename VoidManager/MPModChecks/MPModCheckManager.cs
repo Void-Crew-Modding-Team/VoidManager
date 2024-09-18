@@ -11,6 +11,7 @@ using System.Linq;
 using ToolClasses;
 using UnityEngine;
 using VoidManager.Callbacks;
+using VoidManager.LobbyPlayerList;
 using VoidManager.MPModChecks.Patches;
 using VoidManager.Utilities;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -35,7 +36,7 @@ namespace VoidManager.MPModChecks
 
         internal static InRoomCallbacks RoomCallbacksClass;
         private MPModDataBlock[] MyModList = null;
-        internal byte[] RoomProperties { get; private set; }
+        internal byte[] MyModListData { get; private set; }
         //internal Dictionary<Player, MPUserDataBlock> NetworkedPeersModLists = new Dictionary<Player, MPUserDataBlock>();
         internal string LastModCheckFailReason;
 
@@ -46,29 +47,38 @@ namespace VoidManager.MPModChecks
 
         internal void BuildRoomProperties()
         {
-            RoomProperties = NetworkedPeerManager.SerializeHashlessMPUserData(MyModList);
+            MyModListData = NetworkedPeerManager.SerializeHashlessMPUserData(MyModList);
         }
 
         internal void UpdateLobbyProperties()
         {
-            if (!PhotonNetwork.IsMasterClient) //Only MC should update the lobby properties.
+            if (!PhotonNetwork.IsMasterClient) // Only MC should update the lobby properties.
             {
                 return;
             }
 
             Room CurrentRoom = PhotonNetwork.CurrentRoom;
-            if (CurrentRoom == null) //This would probably break stuff
+            if (CurrentRoom == null) // This would probably break stuff
             {
                 BepinPlugin.Log.LogWarning("Attempted to update lobby properties while room was null");
                 return;
             }
-            if (!CurrentRoom.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))//If the key doesn't already exist, there have been no limitations imposed on the room.
-            {
-                return;
-            }
 
-            //Sets VMan modded property.
-            CurrentRoom.SetCustomProperties(new Hashtable { { InRoomCallbacks.RoomModsPropertyKey, RoomProperties } });
+            // Set lobby Mods property
+            string[] publicProps = CurrentRoom.PropertiesListedInLobby;
+            if (!CurrentRoom.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))
+            {
+                publicProps = publicProps.Append(InRoomCallbacks.RoomModsPropertyKey).ToArray();
+                CurrentRoom.SetPropertiesListedInLobby(publicProps);
+            }
+            CurrentRoom.SetCustomProperties(new Hashtable { { InRoomCallbacks.RoomModsPropertyKey, MyModListData } });
+
+            // Set lobby player list property
+            if (!publicProps.Contains(InRoomCallbacks.RoomPlayerListPropertyKey))
+            {
+                CurrentRoom.SetPropertiesListedInLobby(publicProps.Append(InRoomCallbacks.RoomPlayerListPropertyKey).ToArray());
+            }
+            LobbyPlayerListManager.Instance.UpdateLobbyPlayers();
         }
 
         private void UpdateHighestLevelOfMPMods(MultiplayerType MT)

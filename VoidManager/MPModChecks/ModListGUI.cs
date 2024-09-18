@@ -10,6 +10,7 @@ using UI.Matchmaking;
 using UnityEngine;
 using VoidManager.Callbacks;
 using VoidManager.CustomGUI;
+using VoidManager.LobbyPlayerList;
 
 namespace VoidManager.MPModChecks
 {
@@ -21,6 +22,7 @@ namespace VoidManager.MPModChecks
         internal static ModListGUI Instance { get; private set; }
 
         List<MPModDataBlock> mods;
+        List<LobbyPlayer> LobbyPlayers;
         string LastCheckedRoom = string.Empty;
         internal RoomInfo CurrentRoom;
         internal TabsRibbon Tabs;
@@ -72,6 +74,11 @@ namespace VoidManager.MPModChecks
                     if (type != 0) return type;
                     return modA.ModName.CompareTo(modB.ModName);
                 });
+
+                if(CurrentRoom.CustomProperties.TryGetValue(InRoomCallbacks.RoomPlayerListPropertyKey, out object PlayerListData))
+                {
+                    LobbyPlayers = LobbyPlayerListManager.DeserializePlayerList((byte[])PlayerListData);
+                }
                 LastCheckedRoom = CurrentRoom.Name;
                 GUIOpen();
             }
@@ -100,12 +107,26 @@ namespace VoidManager.MPModChecks
             if (GUIActive)
             {
                 GUI.skin = GUIMain.ChangeSkin();
-                WindowPos = GUI.Window(918107, WindowPos, WindowFunction, "Mod List");
+                WindowPos = GUI.Window(918107, WindowPos, WindowFunction, "<b>Room Info</b>");
             }
         }
 
         private void WindowFunction(int windowID)
         {
+            if(LobbyPlayers.Count > 0)
+            {
+                GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+                GUILayout.Label("<b>Players:</b>");
+                GUI.skin.label.alignment = TextAnchor.MiddleLeft;
+                foreach(LobbyPlayer player in LobbyPlayers)
+                {
+                    GUILayout.Label("- " + player.Name);
+                }
+                GUILayout.Space(10);
+            }
+
+            GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+            GUILayout.Label("<b>Mod List:</b>");
             if (mods.Count == 0)
             {
                 GUILayout.Label("No Mods");
@@ -113,16 +134,19 @@ namespace VoidManager.MPModChecks
             }
             ListScroll = GUILayout.BeginScrollView(ListScroll);
             MultiplayerType lastType = mods[0].MPType;
-            GUILayout.Label(GetMPTypeHeader(lastType));
+            GUILayout.Label(GetMPTypeHeader(lastType) + " Mods:");
+            GUI.skin.label.alignment = TextAnchor.MiddleLeft;
             foreach (MPModDataBlock mod in mods)
             {
                 if (mod.MPType != lastType)
                 {
                     lastType = mod.MPType;
                     GUILayout.Label("");
-                    GUILayout.Label(GetMPTypeHeader(lastType));
+                    GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+                    GUILayout.Label(GetMPTypeHeader(lastType) + " Mods:");
+                    GUI.skin.label.alignment = TextAnchor.MiddleLeft;
                 }
-                GUILayout.Label(mod.ModName);
+                GUILayout.Label("- " + mod.ModName);
             }
             GUILayout.EndScrollView();
         }

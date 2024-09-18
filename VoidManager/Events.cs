@@ -4,6 +4,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using UI.Chat;
+using VoidManager.LobbyPlayerList;
 using VoidManager.MPModChecks;
 
 namespace VoidManager
@@ -38,6 +39,7 @@ namespace VoidManager
         internal void OnPlayerEnteredRoom(Player joiningPlayer)
         {
             MPModCheckManager.Instance.PlayerJoined(joiningPlayer);
+            LobbyPlayerListManager.Instance.UpdateLobbyPlayers();
 
             PlayerEnteredRoom?.Invoke(this, new PlayerEventArgs() { player = joiningPlayer });
         }
@@ -50,6 +52,8 @@ namespace VoidManager
 
         internal void OnPlayerLeftRoom(Player leavingPlayer)
         {
+            LobbyPlayerListManager.Instance.UpdateLobbyPlayers();
+
             PlayerLeftRoom?.Invoke(this, new PlayerEventArgs() { player = leavingPlayer });
 
             NetworkedPeerManager.Instance.PlayerLeftRoom(leavingPlayer);

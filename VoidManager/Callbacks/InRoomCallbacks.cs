@@ -25,6 +25,7 @@ namespace VoidManager.Callbacks
         internal const string RoomModsPropertyKey = "Mods";
         internal const string OfficalModdedPropertyKey = "R_Mod";
         internal const string OfficalRoomNamePropertyKey = "R_Na";
+        internal const string RoomPlayerListPropertyKey = "plyrs";
 
         public void OnEvent(EventData photonEvent)
         {

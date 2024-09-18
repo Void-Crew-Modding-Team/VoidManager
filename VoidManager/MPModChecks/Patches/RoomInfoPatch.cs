@@ -1,11 +1,13 @@
 ﻿using HarmonyLib;
 using Photon.Pun;
 using Photon.Realtime;
+using Steamworks;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using VoidManager.Callbacks;
+using VoidManager.LobbyPlayerList;
 
 namespace VoidManager.MPModChecks.Patches
 {
@@ -15,21 +17,19 @@ namespace VoidManager.MPModChecks.Patches
     {
         static RoomOptions PatchMethod(RoomOptions RoomOptions)
         {
-            RoomOptions.CustomRoomProperties[InRoomCallbacks.RoomModsPropertyKey] = MPModCheckManager.Instance.RoomProperties;
+            //Assign Host mod list to room.
+            RoomOptions.CustomRoomProperties[InRoomCallbacks.RoomModsPropertyKey] = MPModCheckManager.Instance.MyModListData;
 
-            //Rebuild CRPFL array with new value. Litterally adding an index to an array.
-            int CRPFLLength = RoomOptions.CustomRoomPropertiesForLobby.Length;
-            string[] NewCRPFL = new string[CRPFLLength + 1];
-            int i; //declair i outside of for loop.
-            for (i = 0; i < CRPFLLength; i++)
-            {
-                NewCRPFL[i] = RoomOptions.CustomRoomPropertiesForLobby[i];
-            }
-            NewCRPFL[i] = InRoomCallbacks.RoomModsPropertyKey; //i was incremented and is still usefull.
-            RoomOptions.CustomRoomPropertiesForLobby = NewCRPFL;
+            //Assign Host SteamID and Player name to room.
+            RoomOptions.CustomRoomProperties[InRoomCallbacks.RoomPlayerListPropertyKey] = LobbyPlayerListManager.SerializePlayerList(new List<LobbyPlayer>() { new LobbyPlayer(PhotonNetwork.LocalPlayer.NickName, SteamUser.GetSteamID()) });
+
+            //Add Property keys for public display.
+            RoomOptions.CustomRoomPropertiesForLobby = RoomOptions.CustomRoomPropertiesForLobby.Concat(new string[] { InRoomCallbacks.RoomModsPropertyKey, InRoomCallbacks.RoomPlayerListPropertyKey }).ToArray();
 
             return RoomOptions;
         }
+
+        //insert PatchMethod before PhotonNetwork.CreateRoom is called, catching and returning RoomOptions value.
         [HarmonyTranspiler]
         private static IEnumerable<CodeInstruction> RoomPropertiesPatch(IEnumerable<CodeInstruction> instructions)
         {

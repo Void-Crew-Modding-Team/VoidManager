@@ -3,6 +3,7 @@ using HarmonyLib;
 using Photon.Pun;
 using System.Reflection;
 using UnityEngine;
+using VoidManager.LobbyPlayerList;
 using VoidManager.MPModChecks;
 
 namespace VoidManager.Patches
@@ -24,6 +25,7 @@ namespace VoidManager.Patches
 
             NetworkedPeerManager.Instance = new NetworkedPeerManager();
             MPModCheckManager.Instance = new MPModCheckManager();
+            LobbyPlayerListManager.Instance = new LobbyPlayerListManager();
 
             //Load Photon Logging settings.
             ServerSettings serverSettings = PhotonNetwork.PhotonServerSettings;
