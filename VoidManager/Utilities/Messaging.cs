@@ -3,6 +3,7 @@ using Gameplay.Chat;
 using HarmonyLib;
 using Photon.Pun;
 using Photon.Realtime;
+using System;
 using System.Reflection;
 using UI.Chat;
 using UnityEngine.UIElements;
@@ -61,6 +62,23 @@ namespace VoidManager.Utilities
                 VoipService.Instance.SendTextMessage($"[{MyPluginInfo.USERS_PLUGIN_NAME}]: {message}");
             }
         }
+
+        /*
+        /// <summary>
+        /// Inserts a line to text chat.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="local"></param>
+        /// <param name="AddPrefix">Include [Void Manager]: prefix</param>
+        public static void Echo(string message, bool local = true, bool AddPrefix = true)
+        {
+            if (local) TextChat.Instance.AddLog(new Log($"", message));//fixme
+            else
+            {
+                VoipService.Instance.SendTextMessage($"{(AddPrefix ? $"[{MyPluginInfo.USERS_PLUGIN_NAME}]: " : string.Empty)}{message}");
+            }
+        }
+        */
 
         /// <summary>
         /// Sends a message to a given client before kicking. Message should pop up for player after they reappear in the main menu

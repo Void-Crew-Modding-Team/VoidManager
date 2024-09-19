@@ -28,7 +28,7 @@ namespace VoidManager.Progression
         {
             BepinPlugin.Log.LogInfo("Recieved progression disable call from " + ModGUID);
 
-            Messaging.Echo($"<size=30>[{ModGUID}]: Disabled Progression</size>", !PhotonNetwork.IsMasterClient);
+            Messaging.Echo($"{ModGUID} Disabled Progression", !PhotonNetwork.IsMasterClient);
             InternalDisableProgression();
             PhotonNetwork.RaiseEvent(InRoomCallbacks.BlockProgressionEventCode, null, default, SendOptions.SendReliable);
         }
@@ -43,7 +43,7 @@ namespace VoidManager.Progression
                 {
                     if (!player.CustomProperties.ContainsKey(InRoomCallbacks.PlayerModsPropertyKey))
                     {
-                        Messaging.Echo($"Kicking player {player.NickName} from session for using old Void Manager", false);
+                        Messaging.Echo($"Kicking player {player.NickName} from session for progression disable while not using Void Manager 1.2.0 or later.", false);
                         Messaging.KickMessage("Kicked: Session Progress Disabled", "Detected Void Manager 1.1.8 installed on client. Install latest Void Manager to rejoin session.", player);
                         PhotonNetwork.CloseConnection(player);
                         BepinPlugin.Log.LogMessage($"Kicked player {player.NickName} from session for Detected Void Manager 1.1.8 while session progress is disabled.");
