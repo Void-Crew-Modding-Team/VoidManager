@@ -79,6 +79,10 @@ namespace VoidManager.MPModChecks
                 {
                     LobbyPlayers = LobbyPlayerListManager.DeserializePlayerList((byte[])PlayerListData);
                 }
+                else
+                {
+                    LobbyPlayers = new();
+                }
                 LastCheckedRoom = CurrentRoom.Name;
                 GUIOpen();
             }
@@ -120,7 +124,8 @@ namespace VoidManager.MPModChecks
                 GUI.skin.label.alignment = TextAnchor.MiddleLeft;
                 foreach(LobbyPlayer player in LobbyPlayers)
                 {
-                    GUILayout.Label("- " + player.Name);
+                    string levelData = (player.FavorRank > 0)? $"<color=orange>{player.FavorRank}</color>" : player.Rank.ToString();
+                    GUILayout.Label($"- {player.Name} - {levelData}");
                 }
                 GUILayout.Space(10);
             }

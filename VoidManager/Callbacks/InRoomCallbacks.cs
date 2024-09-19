@@ -21,6 +21,7 @@ namespace VoidManager.Callbacks
         internal const byte ModMessageEventCode = 98;
         internal const byte KickMessageEventCode = 97;
         internal const byte SessionEscalationEventCode = 96;
+        internal const byte BlockProgressionEventCode = 95;
         internal const string RoomModsPropertyKey = "Mods";
         internal const string PlayerModsPropertyKey = "Mods";
         internal const string OfficalModdedPropertyKey = "R_Mod";
