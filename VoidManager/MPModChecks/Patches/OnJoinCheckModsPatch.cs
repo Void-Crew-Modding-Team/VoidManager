@@ -10,8 +10,12 @@ namespace VoidManager.MPModChecks.Patches
         static bool Prefix(MatchmakingList ___MatchList)
         {
             MatchmakingRoom MRoom = ___MatchList.GetSelectedRoom();
+            if(MRoom == null)
+            {
+                return true; // Joined non-existant room. 
+            }
 
-            if(MatchmakingController.Instance.GetCachedRoomList().TryGetValue(MRoom.RoomId, out RoomInfo roomInfo))
+            if (MatchmakingController.Instance.GetCachedRoomList().TryGetValue(MRoom.RoomId, out RoomInfo roomInfo))
             {
                 //Modding Guidelines Compliance
                 if (!MPModCheckManager.Instance.ModChecksClientside(roomInfo.CustomProperties, false))
