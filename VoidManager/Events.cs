@@ -196,6 +196,7 @@ namespace VoidManager
         internal void OnHostCreateRoom()
         {
             HostCreateRoom?.Invoke(this, EventArgs.Empty);
+            PluginHandler.CreatedRoomAsHost = true;
             PluginHandler.InternalSessionChanged(CallType.HostCreateRoom, ModdingUtils.SessionModdingType == ModdingType.mod_session, true);
         }
 
