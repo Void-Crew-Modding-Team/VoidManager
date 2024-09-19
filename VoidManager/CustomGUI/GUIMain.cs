@@ -111,7 +111,11 @@ namespace VoidManager.CustomGUI
         void GUIOpen()
         {
             selectedSettings?.OnOpen(); //Menu Opening and MM selected
-
+            if (Tab == 2 && selectedPlayer != null)
+            {
+                SelectPlayer(selectedPlayer);
+            }
+            
             GUIToggleCursor(true);
             Background.SetActive(true);
         }
@@ -288,13 +292,7 @@ namespace VoidManager.CustomGUI
                                 /*if (player.IsLocal)
                                     continue;*/
                                 if (GUITools.DrawButtonSelected(player.NickName, selectedPlayer == player))
-                                {
-                                    selectedPlayer = player;
-                                    foreach (PlayerSettingsMenu menu in playerSettings)
-                                    {
-                                        menu.Refresh(selectedPlayer);
-                                    }
-                                }
+                                    SelectPlayer(player);
                             }
                         }
                         EndScrollView();
@@ -571,8 +569,11 @@ namespace VoidManager.CustomGUI
 
         public void SelectPlayer(Player player)
         {
-            ChangeTab(2);
             selectedPlayer = player;
+            foreach (PlayerSettingsMenu menu in playerSettings)
+            {
+                menu.Refresh(selectedPlayer);
+            }
         }
 
         public void ChangeTab(byte tab)
