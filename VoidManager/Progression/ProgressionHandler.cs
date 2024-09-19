@@ -6,6 +6,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Reflection;
 using VoidManager.Callbacks;
+using VoidManager.MPModChecks;
 using VoidManager.Utilities;
 
 namespace VoidManager.Progression
@@ -35,6 +36,13 @@ namespace VoidManager.Progression
 
         internal static void InternalDisableProgression()
         {
+            // Provides [Mods Required] tag for vanilla players, so they know why they're getting kicked.
+            MPModCheckManager.Instance.UpdateHighestLevelOfMPMods(MultiplayerType.All);
+            if (PhotonNetwork.IsMasterClient)
+            {
+                PhotonService.Instance.SetCurrentRoomName(PhotonService.Instance.GetCurrentRoomName());
+            }
+
             ProgressionEnabled = false;
             BepinPlugin.Log.LogInfo("Progression Disabled");
             if (PhotonNetwork.IsMasterClient)
