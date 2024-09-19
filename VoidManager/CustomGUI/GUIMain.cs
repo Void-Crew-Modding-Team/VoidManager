@@ -76,6 +76,7 @@ namespace VoidManager.CustomGUI
 
             UpdateWindowSize();
             settings.Add(new VManSettings());
+            playerSettings.Add(new VManPlayerSettings());
 
             //Background image to block mouse clicks passing IMGUI
             Background = new GameObject("GUIMainBG", new Type[] { typeof(GraphicRaycaster) });
