@@ -30,21 +30,19 @@ namespace VoidManager.MPModChecks
         }
 
         /// <summary>
-        /// Provides the host MPUserDataBlock from room properties.
+        /// Provides the host MPUserDataBlock from host or Room Properties
         /// </summary>
         /// <returns>Host's MPUserDataBlock</returns>
         public MPUserDataBlock GetHostModList()
         {
-            if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))
+            if (PhotonNetwork.MasterClient.CustomProperties.TryGetValue(InRoomCallbacks.PlayerModsPropertyKey, out object PlayerModData))
             {
-                try
-                {
-                    return DeserializeHashlessMPUserData((byte[])PhotonNetwork.CurrentRoom.CustomProperties[InRoomCallbacks.RoomModsPropertyKey]);
-                }
-                catch
-                {
-                    BepinPlugin.Log.LogError("Failed to Deserialize host mod list.");
-                }
+                return DeserializeHashlessMPUserData((byte[])PlayerModData);
+            }
+
+            if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(InRoomCallbacks.RoomModsPropertyKey, out object RoomModsData))
+            {
+                return DeserializeHashlessMPUserData((byte[])RoomModsData);
             }
             return null;
         }
@@ -60,10 +58,7 @@ namespace VoidManager.MPModChecks
             {
                 return value;
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         /// <summary>
@@ -114,26 +109,28 @@ namespace VoidManager.MPModChecks
         /// </summary>
         /// <param name="Player"></param>
         /// <param name="modList"></param>
-        public void AddNetworkedPeerMods(Player Player, MPUserDataBlock modList)
+        internal void SetNetworkedPeerMods(Player Player, MPUserDataBlock modList)
         {
             BepinPlugin.Log.LogMessage($"recieved modlist from user '{Player.NickName}' with the following info:\nVoidManager Version: {modList.VMVersion}\nModList:\n{GetModListAsString(modList.ModData)}\n");
-            if (NetworkedPeersModLists.ContainsKey(Player))
-            {
-                NetworkedPeersModLists[Player] = modList;
-                return;
-            }
-            NetworkedPeersModLists.Add(Player, modList);
+            NetworkedPeersModLists[Player] = modList;
 
             Events.Instance.OnClientModlistRecieved(Player);
         }
 
         /// <summary>
-        /// Clears player from NetworkedPeersModLists
+        /// Adds a player's mod list to the local NetworkedPeersModLists
         /// </summary>
         /// <param name="Player"></param>
-        public void RemoveNetworkedPeerMods(Player Player)
+        internal bool SetNetworkedPeerMods(Player Player)
         {
-            NetworkedPeersModLists.Remove(Player);
+            if (Player.CustomProperties.TryGetValue(InRoomCallbacks.PlayerModsPropertyKey, out object data))
+            {
+                NetworkedPeersModLists[Player] = DeserializeHashlessMPUserData((byte[])data);
+
+                Events.Instance.OnClientModlistRecieved(Player);
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -154,23 +151,19 @@ namespace VoidManager.MPModChecks
             return NetworkedPeersModLists.ContainsKey(Player);
         }
 
-        private static MPUserDataBlock GetHostModList(RoomInfo room)
-        {
-            if (room.CustomProperties.ContainsKey("modList"))
-            {
-                try { return DeserializeHashlessMPUserData((byte[])room.CustomProperties["modList"]); }
-                catch { BepinPlugin.Log.LogError("Failed to Deserialize host mod list. Could be an older version of VoidManager"); }
-            }
-            return new MPUserDataBlock();
-        }
-
+        // Legacy remove when 1.1.8 is no longer relevant.
         internal static void SendModlistToClient(MPModDataBlock[] Data, Player Player)
         {
+            // Don't send mod list if host is handling data through custom properties.
+            if (PhotonNetwork.MasterClient.CustomProperties.ContainsKey(InRoomCallbacks.PlayerModsPropertyKey)) { return; }
+
+            // Don't send mod list to self.
             if (Player.IsLocal) { return; }
 
             PhotonNetwork.RaiseEvent(InRoomCallbacks.PlayerMPUserDataEventCode, new object[] { false, SerializeHashlessMPUserData(Data) }, new RaiseEventOptions { TargetActors = new int[1] { Player.ActorNumber } }, SendOptions.SendReliable);
         }
 
+        // Sends mod data with hashes to host on join. Needed for mod checks.
         internal static void SendModlistToHost(MPModDataBlock[] Data)
         {
             if (PhotonNetwork.IsMasterClient) { return; }
@@ -178,8 +171,13 @@ namespace VoidManager.MPModChecks
             PhotonNetwork.RaiseEvent(InRoomCallbacks.PlayerMPUserDataEventCode, new object[] { true, SerializeHashfullMPUserData(Data) }, new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient }, SendOptions.SendReliable);
         }
 
+        // Legacy remove when 1.1.8 is no longer relevant.
         internal static void SendModListToOthers(MPModDataBlock[] Data)
         {
+            // Don't send mod list if host is handling data through custom properties.
+            if (PhotonNetwork.MasterClient.CustomProperties.ContainsKey(InRoomCallbacks.PlayerModsPropertyKey)) { return; }
+
+
             BepinPlugin.Log.LogMessage("sending others");
             PhotonNetwork.RaiseEvent(InRoomCallbacks.PlayerMPUserDataEventCode, new object[] { false, SerializeHashlessMPUserData(Data) }, null, SendOptions.SendReliable);
         }
@@ -191,9 +189,48 @@ namespace VoidManager.MPModChecks
 
         internal void PlayerLeftRoom(Player leavingPlayer)
         {
-            Instance.RemoveNetworkedPeerMods(leavingPlayer);
+            NetworkedPeersModLists.Remove(leavingPlayer);
         }
 
+
+        /// <summary>
+        /// Converts a ModDataBlock array to a string list, usually for logging purposes. Starts with a new line.
+        /// </summary>
+        /// <param name="ModDatas"></param>
+        /// <returns>Converts ModDataBLocks to a string list.</returns>
+        public static string GetModListAsString(MPModDataBlock[] ModDatas)
+        {
+            string ModList = string.Empty;
+            foreach (MPModDataBlock DataBlock in ModDatas)
+            {
+                ModList += $"\n - {DataBlock.ModName} {DataBlock.Version}";
+            }
+            return ModList;
+        }
+
+        /// <summary>
+        /// Converts a ModDataBlock array to a string list for echo chat purposes.
+        /// </summary>
+        /// <param name="ModDatas"></param>
+        /// <returns>Converts ModDataBLocks to a string list.</returns>
+        public static string GetModListAsStringForChat(MPModDataBlock[] ModDatas)
+        {
+            string ModList = string.Empty;
+            bool first = true;
+            foreach (MPModDataBlock DataBlock in ModDatas)
+            {
+                if (first)
+                {
+                    first = false;
+                    ModList += $" - {DataBlock.ModName} {DataBlock.Version}";
+                }
+                else
+                {
+                    ModList += $"\n - {DataBlock.ModName} {DataBlock.Version}";
+                }
+            }
+            return ModList;
+        }
 
         /// <summary>
         /// Serilizes user data into a byte array for network transfer. Does not contain a hash
@@ -324,45 +361,6 @@ namespace VoidManager.MPModChecks
                 memoryStream.Dispose();
                 return null;
             }
-        }
-
-        /// <summary>
-        /// Converts a ModDataBlock array to a string list, usually for logging purposes. Starts with a new line.
-        /// </summary>
-        /// <param name="ModDatas"></param>
-        /// <returns>Converts ModDataBLocks to a string list.</returns>
-        public static string GetModListAsString(MPModDataBlock[] ModDatas)
-        {
-            string ModList = string.Empty;
-            foreach (MPModDataBlock DataBlock in ModDatas)
-            {
-                ModList += $"\n - {DataBlock.ModName} {DataBlock.Version}";
-            }
-            return ModList;
-        }
-
-        /// <summary>
-        /// Converts a ModDataBlock array to a string list for echo chat purposes.
-        /// </summary>
-        /// <param name="ModDatas"></param>
-        /// <returns>Converts ModDataBLocks to a string list.</returns>
-        public static string GetModListAsStringForChat(MPModDataBlock[] ModDatas)
-        {
-            string ModList = string.Empty;
-            bool first = true;
-            foreach (MPModDataBlock DataBlock in ModDatas)
-            {
-                if (first)
-                {
-                    first = false;
-                    ModList += $" - {DataBlock.ModName} {DataBlock.Version}";
-                }
-                else
-                {
-                    ModList += $"\n - {DataBlock.ModName} {DataBlock.Version}";
-                }
-            }
-            return ModList;
         }
     }
 }

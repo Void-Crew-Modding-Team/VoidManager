@@ -81,7 +81,7 @@ namespace VoidManager.MPModChecks
             LobbyPlayerListManager.Instance.UpdateLobbyPlayers();
         }
 
-        private void UpdateHighestLevelOfMPMods(MultiplayerType MT)
+        internal void UpdateHighestLevelOfMPMods(MultiplayerType MT)
         {
             switch (MT)
             {
@@ -162,6 +162,9 @@ namespace VoidManager.MPModChecks
 
         internal void JoinedRoom()
         {
+            // No point continuing if master.
+            if (PhotonNetwork.IsMasterClient) return;
+
             if (!MPModCheckManager.Instance.ModChecksClientside(PhotonNetwork.CurrentRoom.CustomProperties))
             {
                 BepinPlugin.Log.LogInfo("Disconnecting from Room");
@@ -169,31 +172,60 @@ namespace VoidManager.MPModChecks
                 return;
             }
 
-            //Sends to host twice. The first sends hashfull data to the host, the latter sends hashless data to other clients (including host).
-            NetworkedPeerManager.SendModlistToHost(MyModList);
-            NetworkedPeerManager.SendModListToOthers(MyModList);
-
-            //Add host mod list to local cache.
-            if (!PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(InRoomCallbacks.RoomModsPropertyKey))
+            //Collect player mod lists, send mod list if player doesn't have mod list in properties.
+            foreach(Player player in PhotonNetwork.PlayerList)
             {
-                NetworkedPeerManager.Instance.AddNetworkedPeerMods(PhotonNetwork.MasterClient, NetworkedPeerManager.Instance.GetHostModList());
+                if (player.CustomProperties.TryGetValue(InRoomCallbacks.PlayerModsPropertyKey, out object value))
+                {
+                    BepinPlugin.Log.LogInfo($"Found mod info in player custom props {player.NickName}");
+                    BepinPlugin.Log.LogInfo(NetworkedPeerManager.GetModListAsString(NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])value).ModData));
+                }
+                else
+                {
+                    BepinPlugin.Log.LogInfo($"Didn't Found mod info in player custom props {player.NickName}");
+                }
+
+                if (player.IsMasterClient)
+                {
+                    NetworkedPeerManager.Instance.SetNetworkedPeerMods(player);
+                    NetworkedPeerManager.SendModlistToHost(MyModList);
+                }
+                else if (!NetworkedPeerManager.Instance.SetNetworkedPeerMods(player)) // Keep SetNetworkedPeerMods when removing latter.
+                {
+                    // Remove when 1.1.8 is no longer relevant. Still set networked peer mods.
+                    NetworkedPeerManager.SendModlistToClient(MyModList, player);
+                }
             }
         }
 
         internal void PlayerJoined(Player JoiningPlayer)
         {
-            if (PhotonNetwork.IsMasterClient)
+            if (PhotonNetwork.IsMasterClient) //MasterClient must recieve mod data.
             {
                 PunSingleton<PhotonService>.Instance.StartCoroutine(MPModCheckManager.PlayerJoinedChecks(JoiningPlayer)); //Plugin is not a valid monobehaviour.
             }
-            else
+            else 
             {
-                NetworkedPeerManager.SendModlistToClient(MyModList, JoiningPlayer);
+                if (!NetworkedPeerManager.Instance.SetNetworkedPeerMods(JoiningPlayer))
+                {
+                    // Legacy remove when 1.1.8 is no longer relevant.
+                    NetworkedPeerManager.SendModlistToClient(MyModList, JoiningPlayer);
+                }
             }
         }
 
         internal static IEnumerator PlayerJoinedChecks(Player JoiningPlayer)
         {
+            /* UnComment when 1.1.8 is no longer relevant. //Kicks player imediately if no mods and MPType all mods exist.
+            if (Instance.HighestLevelOfMPMods == MultiplayerType.All && !JoiningPlayer.CustomProperties.ContainsKey(InRoomCallbacks.PlayerModsPropertyKey))
+            {
+                BepinPlugin.Log.LogMessage($"Kicked player {JoiningPlayer.NickName} for not having mods.");
+                Messaging.Echo($"Kicked player {JoiningPlayer.NickName} for not having mods.\n{NetworkedPeerManager.GetModListAsStringForChat(Instance.MyModList.Where(MDB => MDB.MPType == MultiplayerType.All).ToArray())}", false);
+                PhotonNetwork.CloseConnection(JoiningPlayer);
+                yield break;
+            }
+            */
+
             for (int i = 0; i < 50; i++)
             {
                 yield return new WaitForSeconds(.2f);

@@ -45,7 +45,7 @@ namespace VoidManager.Callbacks
                         object[] data = (object[])photonEvent.CustomData;
                         if ((bool)data[0])//Hashfull vs Hashless marker
                         {
-                            NetworkedPeerManager.Instance.AddNetworkedPeerMods(Sender, NetworkedPeerManager.DeserializeHashfullMPUserData((byte[])data[1]));
+                            NetworkedPeerManager.Instance.SetNetworkedPeerMods(Sender, NetworkedPeerManager.DeserializeHashfullMPUserData((byte[])data[1]));
                         }
                         else if (PhotonNetwork.IsMasterClient) //Data is hashless but recieving player is host. Data recieved should be hashfull when sent to host. Also no point turning down hashfull data from other clients when local is client.
                         {
@@ -54,7 +54,7 @@ namespace VoidManager.Callbacks
                         }
                         else
                         {
-                            NetworkedPeerManager.Instance.AddNetworkedPeerMods(Sender, NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])data[1]));
+                            NetworkedPeerManager.Instance.SetNetworkedPeerMods(Sender, NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])data[1]));
                         }
                         return;
                     }

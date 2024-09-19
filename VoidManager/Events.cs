@@ -8,6 +8,7 @@ using UI.Chat;
 using VoidManager.Callbacks;
 using VoidManager.LobbyPlayerList;
 using VoidManager.MPModChecks;
+using VoidManager.Progression;
 
 namespace VoidManager
 {
@@ -67,6 +68,16 @@ namespace VoidManager
 
         internal void OnPlayerEnteredRoom(Player joiningPlayer)
         {
+            if (joiningPlayer.CustomProperties.TryGetValue(InRoomCallbacks.PlayerModsPropertyKey, out object value))
+            {
+                BepinPlugin.Log.LogInfo($"Found mod info in player custom props {joiningPlayer.NickName}");
+                BepinPlugin.Log.LogInfo(NetworkedPeerManager.GetModListAsString(NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])value).ModData));
+            }
+            else
+            {
+                BepinPlugin.Log.LogInfo($"Didn't Found mod info in player custom props {joiningPlayer.NickName}");
+            }
+            ProgressionHandler.OnPlayerJoin(joiningPlayer);
             MPModCheckManager.Instance.PlayerJoined(joiningPlayer);
             LobbyPlayerListManager.Instance.UpdateLobbyPlayers();
 
