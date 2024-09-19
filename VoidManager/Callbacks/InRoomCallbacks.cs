@@ -1,5 +1,4 @@
 ﻿using ExitGames.Client.Photon;
-using Gameplay.NPC.AI;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
@@ -23,6 +22,7 @@ namespace VoidManager.Callbacks
         internal const byte KickMessageEventCode = 97;
         internal const byte SessionEscalationEventCode = 96;
         internal const string RoomModsPropertyKey = "Mods";
+        internal const string PlayerModsPropertyKey = "Mods";
         internal const string OfficalModdedPropertyKey = "R_Mod";
         internal const string OfficalRoomNamePropertyKey = "R_Na";
         internal const string RoomPlayerListPropertyKey = "plyrs";
@@ -148,16 +148,18 @@ namespace VoidManager.Callbacks
             Events.Instance.OnHostCreateRoom();
         }
 
-
-        //Not Utillized.
         public void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
         {
+            Events.Instance.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
         }
 
         public void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
         {
+            Events.Instance.OnRoomPropertiesUpdate(propertiesThatChanged);
         }
 
+
+        //Not Utillized.
         public void OnJoinRandomFailed(short returnCode, string message)
         {
         }

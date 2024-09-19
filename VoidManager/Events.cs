@@ -1,9 +1,11 @@
 ﻿using CG.Game;
+using ExitGames.Client.Photon;
 using HarmonyLib;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
 using UI.Chat;
+using VoidManager.Callbacks;
 using VoidManager.LobbyPlayerList;
 using VoidManager.MPModChecks;
 
@@ -28,6 +30,33 @@ namespace VoidManager
             /// player argument
             /// </summary>
             public Player player;
+        }
+
+        /// <summary>
+        /// Used by VoidManager.Events to pass the Photon Player and changed properties as an argument
+        /// </summary>
+        public class PlayerPropertiesEventArgs : EventArgs
+        {
+            /// <summary>
+            /// player argument
+            /// </summary>
+            public Player player;
+
+            /// <summary>
+            /// Changed Properties
+            /// </summary>
+            public Hashtable changedProperties;
+        }
+
+        /// <summary>
+        /// Used by VoidManager.Events to pass the changed properties as an argument
+        /// </summary>
+        public class RoomPropertiesEventArgs : EventArgs
+        {
+            /// <summary>
+            /// Changed Properties
+            /// </summary>
+            public Hashtable changedProperties;
         }
 
 
@@ -179,6 +208,34 @@ namespace VoidManager
             {
                 Instance.OnJoinedSession();
             }
+        }
+
+
+        /// <summary>
+        /// Called on player properties update.
+        /// </summary>
+        public event EventHandler<PlayerPropertiesEventArgs> PlayerPropertiesUpdate;
+
+        internal void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+        {
+            // Run on properties update to keep up with player level ups. May not be updated when local player levels up.
+            if (changedProps.ContainsKey("RP_PR") || changedProps.ContainsKey("RP_FR"))
+            {
+                LobbyPlayerListManager.Instance.UpdateLobbyPlayers();
+            }
+
+            PlayerPropertiesUpdate?.Invoke(this, new PlayerPropertiesEventArgs() { player = targetPlayer, changedProperties = changedProps });
+        }
+
+
+        /// <summary>
+        /// Called on room properties update.
+        /// </summary>
+        public event EventHandler<RoomPropertiesEventArgs> RoomPropertiesUpdate;
+
+        internal void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+        {
+            RoomPropertiesUpdate?.Invoke(this, new RoomPropertiesEventArgs() { changedProperties = propertiesThatChanged });
         }
 
 
