@@ -20,7 +20,8 @@ Based on [Pulsar Mod Loader](https://github.com/PULSAR-Modders/pulsar-mod-loader
 - Handling for mods requiring installation by all users
 - Manual configuration of mods not configured for Void Manager
 - Viewing of other players' mod lists
-- Viewing of room mod lists in MatchMaking Join Panels
+- Viewing of room mod lists from MatchMaking Join Panels
+- Player list from MatchMaking Join Panels.
 - '[Mods Required]' added to applicable sessions names. VoidManager clients view as green, yellow, and red '[M]' based on session modding compatability.
 - Mod settings GUI 'Void Manager F5 Menu'
 - Hides Chainloader object for developers
