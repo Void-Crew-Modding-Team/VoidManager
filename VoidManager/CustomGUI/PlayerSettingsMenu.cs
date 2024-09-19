@@ -14,10 +14,14 @@ namespace VoidManager.CustomGUI
         public virtual string Name() => string.Empty;
 
         /// <summary>
-        /// GUI Frame update call. Use UnityEngine.GUILayout, referencing UnityEngine.IMGUIModule.
+        /// GUI Frame update call. Use UnityEngine.GUILayout, referencing UnityEngine.IMGUIModule and use Photon.Realtime.Player for the Player call instead of CG.Game.Player.
         /// </summary>
         public abstract void Draw(Player selectedPlayer);
 
+        /// <summary>
+        /// Changed selected player call.
+        /// </summary>
+        public virtual void Refresh() { }
 
         internal VoidPlugin MyVoidPlugin;
     }
