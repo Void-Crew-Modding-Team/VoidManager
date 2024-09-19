@@ -292,7 +292,7 @@ namespace VoidManager.CustomGUI
                                     selectedPlayer = player;
                                     foreach (PlayerSettingsMenu menu in playerSettings)
                                     {
-                                        menu.Refresh();
+                                        menu.Refresh(selectedPlayer);
                                     }
                                 }
                             }
