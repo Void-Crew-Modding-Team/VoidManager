@@ -6,6 +6,7 @@ using Photon.Realtime;
 using System;
 using UI.Chat;
 using VoidManager.Callbacks;
+using VoidManager.CustomGUI;
 using VoidManager.LobbyPlayerList;
 using VoidManager.MPModChecks;
 using VoidManager.Progression;
@@ -92,6 +93,11 @@ namespace VoidManager
 
         internal void OnPlayerLeftRoom(Player leavingPlayer)
         {
+            if (GUIMain.Instance.selectedPlayer == leavingPlayer)
+            {
+                GUIMain.Instance.SelectPlayer(null);
+            }
+
             LobbyPlayerListManager.Instance.UpdateLobbyPlayers();
 
             PlayerLeftRoom?.Invoke(this, new PlayerEventArgs() { player = leavingPlayer });

@@ -37,7 +37,7 @@ namespace VoidManager.CustomGUI
 
         Rect PlayerListArea;
         Vector2 PlayerListScroll = Vector2.zero;
-        Player selectedPlayer;
+        public Player selectedPlayer { get; private set; }
 
         Rect PlayerModInfoArea;
         Vector2 PlayerModInfoScroll = Vector2.zero;
@@ -276,7 +276,7 @@ namespace VoidManager.CustomGUI
                     {
                         PlayerListScroll = BeginScrollView(PlayerListScroll);
                         {
-                            if (PhotonNetwork.PlayerList.Count() == 0)
+                            if (!PhotonNetwork.InRoom || PhotonNetwork.PlayerList.Count() == 0)
                             {
                                 GUILayout.Label("No room found.");
                                 EndScrollView();
@@ -561,6 +561,12 @@ namespace VoidManager.CustomGUI
         {
             selectedSettings?.OnClose();
             GUITools.keybindToChange = null;
+        }
+
+        public void SelectPlayer(Player player)
+        {
+            ChangeTab(2);
+            selectedPlayer = player;
         }
 
         public void ChangeTab(byte tab)
