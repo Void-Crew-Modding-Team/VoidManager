@@ -1,5 +1,6 @@
 ﻿using CG.Cloud;
 using CG.Profile;
+using ExitGames.Client.Photon;
 using HarmonyLib;
 using Photon.Pun;
 using Photon.Realtime;
@@ -17,7 +18,7 @@ namespace VoidManager.Progression
         /// <summary>
         /// Gets progression enabled state.
         /// </summary>
-        public static bool ProgressionEnabled { get; private set; } = false;
+        public static bool ProgressionEnabled { get; private set; } = true;
 
         /// <summary>
         /// Disables progression for the whole session.
@@ -29,6 +30,7 @@ namespace VoidManager.Progression
 
             Messaging.Echo($"<size=30>[{ModGUID}]: Disabled Progression</size>", !PhotonNetwork.IsMasterClient);
             InternalDisableProgression();
+            PhotonNetwork.RaiseEvent(InRoomCallbacks.BlockProgressionEventCode, null, default, SendOptions.SendReliable);
         }
 
         internal static void InternalDisableProgression()
@@ -83,16 +85,19 @@ namespace VoidManager.Progression
         internal static void OnPlayerJoin(Player joiningPlayer)
         {
             // If Player doesn't have mods in custom props, their Void Manager version must be lower than 1.2.0
-            if (PhotonNetwork.IsMasterClient)
+            if (PhotonNetwork.IsMasterClient && !ProgressionEnabled)
             {
-                if (!ProgressionEnabled && !joiningPlayer.CustomProperties.ContainsKey(InRoomCallbacks.PlayerModsPropertyKey))
+                if (!joiningPlayer.CustomProperties.ContainsKey(InRoomCallbacks.PlayerModsPropertyKey))
                 {
                     Messaging.Echo($"Kicking player {joiningPlayer.NickName} from session for using old Void Manager", false);
                     Messaging.KickMessage("Kicked: Session Progress Disabled", "Detected Void Manager 1.1.8 installed on client. Install latest Void Manager to rejoin session.", joiningPlayer);
                     PhotonNetwork.CloseConnection(joiningPlayer);
                     BepinPlugin.Log.LogMessage($"Kicked player {joiningPlayer.NickName} from session for Detected Void Manager 1.1.8 while session progress is disabled.");
                 }
-
+                else
+                {
+                    PhotonNetwork.RaiseEvent(InRoomCallbacks.BlockProgressionEventCode, null, new RaiseEventOptions() { TargetActors = new int[] { joiningPlayer.ActorNumber } }, SendOptions.SendReliable);
+                }
             }
         }
     }

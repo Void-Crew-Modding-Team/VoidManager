@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using CG.Profile;
+using HarmonyLib;
 using Photon.Pun;
 using Photon.Realtime;
 using Steamworks;
