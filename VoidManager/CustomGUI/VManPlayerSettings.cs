@@ -1,4 +1,4 @@
-﻿using CG.Game;
+using CG.Game;
 using Photon.Pun;
 using Photon.Realtime;
 using static UnityEngine.GUILayout;
@@ -16,9 +16,16 @@ namespace VoidManager.CustomGUI
                     ClientGame.Current.KickPlayer(selectedPlayer);
             }
 
+            string CloudID = VoipService.PlayerToCloudID(selectedPlayer);
+            if (!VoipService.Instance.IsPlayerRegistered(CloudID))
+            {
+                EndHorizontal();
+                return;
+            }
+
             string muteButtonLabel = selectedPlayer.IsLocal 
                 ? (VoipService.Instance.IsMutedSelf ? "Unmute" : "Mute") 
-                : (VoipService.Instance.IsVoiceMuted(VoipService.PlayerToCloudID(selectedPlayer)) ? "Unmute" : "Mute");
+                : (VoipService.Instance.IsVoiceMuted(CloudID) ? "Unmute" : "Mute");
 
             if (Button(muteButtonLabel))
             {
@@ -26,7 +33,6 @@ namespace VoidManager.CustomGUI
                     VoipService.Instance.MuteSelf(!VoipService.Instance.IsMutedSelf);
                 else
                 {
-                    string CloudID = VoipService.PlayerToCloudID(selectedPlayer);
                     VoipService.Instance.MuteVoice(CloudID, !VoipService.Instance.IsVoiceMuted(CloudID));
                 }
             }
