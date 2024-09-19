@@ -115,6 +115,17 @@ namespace VoidManager.Callbacks
                         PluginHandler.InternalEscalateSession();
                         return;
                     }
+                case BlockProgressionEventCode:
+                    {
+                        Player Sender = PhotonNetwork.CurrentRoom.GetPlayer(photonEvent.Sender);
+                        if (!Sender.IsMasterClient)
+                        {
+                            BepinPlugin.Log.LogInfo("Recieved Block Progression event from non-host. Sender: " + Sender.NickName);
+                            return;
+                        }
+                        VoidManager.Progression.ProgressionHandler.InternalDisableProgression();
+                        return;
+                    }
             }
         }
 

@@ -1,14 +1,14 @@
 ﻿using CG.Cloud;
 using CG.Profile;
 using HarmonyLib;
-using static VoidManager.ProgressionHandler;
+using static VoidManager.Progression.ProgressionHandler;
 
 namespace VoidManager.Patches
 {
     /// <summary>
     /// Enables/Disables progression handlers save methods.
     /// </summary>
-    
+
     [HarmonyPatch(typeof(CloudLocalProfile), "OnQuit")]
     internal class CloudLocalProfilePatch
     {

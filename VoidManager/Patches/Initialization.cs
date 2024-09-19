@@ -3,13 +3,15 @@ using HarmonyLib;
 using Photon.Pun;
 using System.Reflection;
 using UnityEngine;
+using VoidManager.CustomGUI;
 using VoidManager.LobbyPlayerList;
 using VoidManager.MPModChecks;
+using VoidManager.Progression;
 
 namespace VoidManager.Patches
 {
     [HarmonyPatch(typeof(PlayerProfileLoader), "Awake")]
-    internal class PluginDetectPatch
+    internal class Initialization
     {
         static MethodInfo PhotonSetupLogging = AccessTools.Method(typeof(PhotonNetwork), "SetupLogging");
 
@@ -18,8 +20,9 @@ namespace VoidManager.Patches
         {
             BepinPlugin.Log.LogInfo($"- - - Void Manager Initialization - - -");
 
-            new GameObject("ModManager", typeof(CustomGUI.GUIMain)) { hideFlags = HideFlags.HideAndDontSave };
+            new GameObject("ModManager", typeof(GUIMain)) { hideFlags = HideFlags.HideAndDontSave };
             new GameObject("ModList", typeof(ModListGUI)) { hideFlags = HideFlags.HideAndDontSave };
+            new GameObject("ProgressDisabled", typeof(ProgressionDisabledGUI)) { hideFlags = HideFlags.HideAndDontSave };
 
             PluginHandler.DiscoverPlugins();
 
