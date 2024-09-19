@@ -58,6 +58,12 @@ namespace VoidManager.MPModChecks
             {
                 return value;
             }
+            else if(Player.CustomProperties.TryGetValue(InRoomCallbacks.PlayerModsPropertyKey, out object moddata))
+            {
+                MPUserDataBlock playermoddata = NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])moddata);
+                NetworkedPeersModLists[Player] = playermoddata;
+                return value;
+            }
             return null;
         }
 
