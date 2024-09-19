@@ -41,6 +41,8 @@ namespace VoidManager.LobbyPlayerList
                     LobbyPlayer player = lobbyPlayers[i];      //--PlayerData--
                     writer.Write(player.Name);                 //string Player name
                     writer.Write((ulong)player.SteamID);       //ulong Player Steam ID
+                    writer.Write(player.Rank);                 //int Player Rank
+                    writer.Write(player.FavorRank);            //int Player Favor Rank
                 }
             }
 
@@ -70,7 +72,9 @@ namespace VoidManager.LobbyPlayerList
                     {                                                 //--PlayerData--
                         string name = reader.ReadString();            //string Player name
                         ulong SteamID = reader.ReadUInt64();          //ulong Player Steam ID
-                        players.Add(new LobbyPlayer(name, SteamID));
+                        int rank = reader.ReadInt32();                //int Player Rank
+                        int favorRank = reader.ReadInt32();           //int Player Favor Rank
+                        players.Add(new LobbyPlayer(name, SteamID, rank, favorRank));
                     }
                 }
                 return players;
@@ -127,6 +131,44 @@ namespace VoidManager.LobbyPlayerList
 
             //Set room properties to contain player list.
             return SerializePlayerList(LobbyPlayers);
+        }
+
+        /// <summary>
+        /// Attempts to get the player rank
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns>Player Rank</returns>
+        public static int GetPlayerRank(Player player)
+        {
+            try
+            {
+                if (player.CustomProperties.TryGetValue("RP_PR", out object obj))
+                    return (int)obj;
+            }
+            catch (Exception e)
+            {
+                BepinPlugin.Log.LogWarning($"Failed to parse player rank\n{e}");
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// Attempts to get the player favor rank
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns>Player Favor Level</returns>
+        public static int GetPlayerFavorRank(Player player)
+        {
+            try
+            {
+                if (player.CustomProperties.TryGetValue("RP_FR", out object obj))
+                    return (int)obj;
+            }
+            catch (Exception e)
+            {
+                BepinPlugin.Log.LogWarning($"Failed to parse player favor rank\n{e}");
+            }
+            return 0;
         }
     }
 }
