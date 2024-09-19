@@ -288,7 +288,13 @@ namespace VoidManager.CustomGUI
                                 /*if (player.IsLocal)
                                     continue;*/
                                 if (GUITools.DrawButtonSelected(player.NickName, selectedPlayer == player))
+                                {
                                     selectedPlayer = player;
+                                    foreach (PlayerSettingsMenu menu in playerSettings)
+                                    {
+                                        menu.Refresh(selectedPlayer);
+                                    }
+                                }
                             }
                         }
                         EndScrollView();
