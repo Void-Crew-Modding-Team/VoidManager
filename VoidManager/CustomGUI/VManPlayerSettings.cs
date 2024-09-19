@@ -10,7 +10,7 @@ namespace VoidManager.CustomGUI
         public override void Draw(Player selectedPlayer)
         {
             BeginHorizontal();
-            if (PhotonNetwork.MasterClient.IsLocal && !selectedPlayer.IsLocal)
+            if (PhotonNetwork.IsMasterClient && !selectedPlayer.IsLocal)
             { // Funny but a bit strange to be able to kick yourself
                 if (Button("Kick"))
                     ClientGame.Current.KickPlayer(selectedPlayer);
