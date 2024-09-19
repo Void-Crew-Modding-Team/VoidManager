@@ -123,8 +123,13 @@ namespace VoidManager
             inputData.IsHost = isMasterClient;
             inputData.HostHasMod = isMasterClient;
             inputData.CreatedRoomAsHost = CreatedRoomAsHost;
-            inputData.StartedSessionAsHost = GameSessionManager.Instance.StartedSessionAsHost;
+            inputData.StartedSessionAsHost = CreatedRoomAsHost || GameSessionManager.Instance.StartedSessionAsHost;
             inputData.IsMod_Session = isMod_Session;
+
+            if (VoidManager.BepinPlugin.Bindings.DebugMode.Value)
+            {
+                BepinPlugin.Log.LogInfo($"OnSessionChanged callback\ncallType: {inputData.CallType}, isHost: {inputData.IsHost}, IsModSession: {inputData.IsMod_Session}, CreatedRoomAsHost: {inputData.CreatedRoomAsHost}, StartedSessionAshost: {inputData.StartedSessionAsHost}");
+            }
 
             foreach (KeyValuePair<string, VoidPlugin> KVP in ActiveVoidPlugins)
             {
@@ -156,6 +161,10 @@ namespace VoidManager
             //Call previous OnSessionChanged values if ModSession changed.
             if (IncrimentedToMod_Session && isMasterClient)
             {
+                if(VoidManager.BepinPlugin.Bindings.DebugMode.Value)
+                {
+                    BepinPlugin.Log.LogInfo("Mod requested Incriment to Mod_Session");
+                }
                 ModdingUtils.RegisterSessionMod();
                 foreach (KeyValuePair<VoidPlugin, SessionChangedInput> KVP in CalledAsNonModSession)
                 {
