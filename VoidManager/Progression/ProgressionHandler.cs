@@ -31,9 +31,12 @@ namespace VoidManager.Progression
 
             Messaging.Echo($"{ModGUID} Disabled Progression", !PhotonNetwork.IsMasterClient);
             InternalDisableProgression();
-            PhotonNetwork.RaiseEvent(InRoomCallbacks.BlockProgressionEventCode, null, default, SendOptions.SendReliable);
+            SendBlockProgression();
         }
 
+        /// <summary>
+        /// Runs on all clients disabling progression. Called by Progression Disable Callback and local DisableProgression(GUID) call.
+        /// </summary>
         internal static void InternalDisableProgression()
         {
             // Provides [Mods Required] tag for vanilla players, so they know why they're getting kicked.
@@ -45,6 +48,16 @@ namespace VoidManager.Progression
 
             ProgressionEnabled = false;
             BepinPlugin.Log.LogInfo("Progression Disabled");
+            KickPlayersWithoutDisableProgression();
+        }
+
+        internal static void SendBlockProgression()
+        {
+            PhotonNetwork.RaiseEvent(InRoomCallbacks.BlockProgressionEventCode, null, default, SendOptions.SendReliable);
+        }
+
+        internal static void KickPlayersWithoutDisableProgression()
+        {
             if (PhotonNetwork.IsMasterClient)
             {
                 foreach (Player player in PhotonNetwork.PlayerList)
@@ -59,6 +72,7 @@ namespace VoidManager.Progression
                 }
             }
         }
+
 
         internal static void EnableProgression()
         {
@@ -106,6 +120,16 @@ namespace VoidManager.Progression
                 {
                     PhotonNetwork.RaiseEvent(InRoomCallbacks.BlockProgressionEventCode, null, new RaiseEventOptions() { TargetActors = new int[] { joiningPlayer.ActorNumber } }, SendOptions.SendReliable);
                 }
+            }
+        }
+
+        internal static void OnHostChange(Player newHost)
+        {
+            if(newHost.IsLocal && !ProgressionEnabled)
+            {
+                Messaging.Echo("New host has progression disabled, disabling progression for others.", false);
+                KickPlayersWithoutDisableProgression();
+                SendBlockProgression();
             }
         }
     }
