@@ -64,6 +64,12 @@ namespace VoidManager
                         ModMessageHandler.DiscoverModMessages(assembly, CurrentBepinPlugin);
                         GUIMain.Instance.DiscoverGUIMenus(assembly, voidPlugin);
                         ActiveVoidPlugins.Add(CurrentBepinPlugin.Metadata.GUID, voidPlugin);
+
+                        if (voidPlugin.BepinPlugin.Metadata.GUID == "NoUnrepairableDamage")
+                        {
+                            BepinPlugin.Log.LogInfo("NoUnrepairableDamage mod detected, Registering Session Mod.");
+                            ModdingUtils.SessionModdingType = ModdingType.mod_session;
+                        }
                     }
                     else
                     {

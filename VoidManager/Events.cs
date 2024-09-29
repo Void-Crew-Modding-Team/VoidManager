@@ -144,7 +144,7 @@ namespace VoidManager
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
                 MPModCheckManager.Instance.UpdateLobbyProperties();
 
-
+            ProgressionHandler.OnHostChange(newMasterClient);
             bool IsMasterClient = newMasterClient.IsLocal;
             MasterClientSwitched?.Invoke(this, new PlayerEventArgs() { player = newMasterClient });
             PluginHandler.InternalSessionChanged(CallType.HostChange, ((IsMasterClient && ModdingUtils.SessionModdingType == ModdingType.mod_session) || MPModCheckManager.IsMod_Session()), IsMasterClient, newMasterClient);
