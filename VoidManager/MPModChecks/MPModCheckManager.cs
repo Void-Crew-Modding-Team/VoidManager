@@ -175,22 +175,21 @@ namespace VoidManager.MPModChecks
             //Collect player mod lists, send mod list if player doesn't have mod list in properties.
             foreach(Player player in PhotonNetwork.PlayerList)
             {
-                if (player.CustomProperties.TryGetValue(InRoomCallbacks.PlayerModsPropertyKey, out object value))
+                // debug print mod list of all players on join.
+                if (BepinPlugin.Bindings.DebugMode.Value)
                 {
-                    BepinPlugin.Log.LogInfo($"Found mod info in player custom props {player.NickName}");
-                    BepinPlugin.Log.LogInfo(NetworkedPeerManager.GetModListAsString(NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])value).ModData));
-                }
-                else
-                {
-                    BepinPlugin.Log.LogInfo($"Didn't Found mod info in player custom props {player.NickName}");
+                    if (player.CustomProperties.TryGetValue(InRoomCallbacks.PlayerModsPropertyKey, out object value))
+                    {
+                        BepinPlugin.Log.LogInfo($"Found mod info in player custom props {player.NickName}");
+                        BepinPlugin.Log.LogInfo(NetworkedPeerManager.GetModListAsString(NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])value).ModData));
+                    }
+                    else
+                    {
+                        BepinPlugin.Log.LogInfo($"Didn't Found mod info in player custom props {player.NickName}");
+                    }
                 }
 
-                if (player.IsMasterClient)
-                {
-                    NetworkedPeerManager.Instance.SetNetworkedPeerMods(player);
-                    NetworkedPeerManager.SendModlistToHost(MyModList);
-                }
-                else if (!NetworkedPeerManager.Instance.SetNetworkedPeerMods(player)) // Keep SetNetworkedPeerMods when removing latter.
+                if (!NetworkedPeerManager.Instance.SetNetworkedPeerMods(player)) // Keep SetNetworkedPeerMods when removing latter.
                 {
                     // Remove when 1.1.8 is no longer relevant. Still set networked peer mods.
                     NetworkedPeerManager.SendModlistToClient(MyModList, player);

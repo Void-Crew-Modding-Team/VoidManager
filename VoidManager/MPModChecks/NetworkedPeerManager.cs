@@ -129,7 +129,8 @@ namespace VoidManager.MPModChecks
         /// <param name="Player"></param>
         internal bool SetNetworkedPeerMods(Player Player)
         {
-            if (Player.CustomProperties.TryGetValue(InRoomCallbacks.PlayerModsPropertyKey, out object data))
+            //Check not masterclient - MasterClient must not accept hashless/customProp modlists.
+            if (!PhotonNetwork.IsMasterClient && Player.CustomProperties.TryGetValue(InRoomCallbacks.PlayerModsPropertyKey, out object data))
             {
                 NetworkedPeersModLists[Player] = DeserializeHashlessMPUserData((byte[])data);
 
