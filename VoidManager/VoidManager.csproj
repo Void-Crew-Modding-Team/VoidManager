@@ -3,7 +3,7 @@
     <TargetFramework>net472</TargetFramework>
     <AssemblyName>VoidManager</AssemblyName>
     <Description>Manages mods for multiplayer, gives users Mod controls via GUI (when provided by the mod, default keybind F5), provides API for developers, and minor Chat improvements.</Description>
-    <Version>1.2.0</Version>
+    <Version>1.2.1</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <RestoreAdditionalProjectSources>
@@ -23,6 +23,7 @@
     <PackageProjectUrl>https://github.com/Void-Crew-Modding-Team/VoidManager</PackageProjectUrl>
     <PackageTags>Void Crew;Void Manager</PackageTags>
     <Company>Void Crew Modding Team</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>True</Optimize>
