@@ -1,0 +1,12 @@
+﻿<Project>
+  <!--Disable auto copy on build. Stolen from BepInEx.Core-->
+  <Target Name="SkipCopyVCRefs" AfterTargets="ResolveReferences">
+    <ItemGroup>
+      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)' == 'VCMT.VoidManager'" />
+	  <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)' == 'VoidCrew.GameLibs'" />
+		<!--Not really neaded, but here just in case.-->>
+	  <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)' == 'BepInEx.Core'" />
+    </ItemGroup>
+  </Target>
+
+</Project>

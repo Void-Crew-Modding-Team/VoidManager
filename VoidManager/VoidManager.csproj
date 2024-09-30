@@ -14,6 +14,15 @@
     <RootNamespace>VoidManager</RootNamespace>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <AssemblyTitle>Manages mods for multiplayer, gives users Mod controls via GUI (when provided by the mod, default keybind F5), provides API for developers, and minor Chat improvements.</AssemblyTitle>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>VCMT.VoidManager</PackageId>
+    <Authors>Nagord,Mest,18107</Authors>
+    <Product>$(AssemblyName)</Product>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/Void-Crew-Modding-Team/VoidManager</PackageProjectUrl>
+    <PackageTags>Void Crew;Void Manager</PackageTags>
+    <Company>Void Crew Modding Team</Company>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>True</Optimize>
@@ -27,19 +36,27 @@
     <Compile Remove="Utilities\Logger.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
-    <PackageReference Include="BepInEx.Core" Version="5.*" />
-    <PackageReference Include="VCMT.Thunderstore.DocBuilder" Version="0.1.3" />
-    <PackageReference Include="VoidCrew.GameLibs" Version="0.27.0.2" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="ReleaseFiles\VCMT.VoidManager.props">
+      <Pack>True</Pack>
+      <PackagePath>build</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="D:\ProgramData\Microsoft\VisualStudio\Projects\Void-Crew-Modding-Team\VoidManager\VoidManager\ReleaseFiles\icon.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.Core" Version="5.*" />
+    <PackageReference Include="VCMT.Thunderstore.DocBuilder" Version="0.1.3" PrivateAssets="all" />
+    <PackageReference Include="VoidCrew.GameLibs" Version="0.27.0.2" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <Reference Update="System.Xml.Linq">
