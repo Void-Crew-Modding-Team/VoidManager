@@ -1,3 +1,6 @@
+## 1.2.2
+- Patched bug with MPType all mod lists not getting sent to host correctly.
+
 ## 1.2.1
 - Patched exploit related to Progression Disabling.
 - Auto-Registering Session Mods if NoUnrepairableDamage is detected.
