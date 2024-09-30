@@ -172,8 +172,11 @@ namespace VoidManager.MPModChecks
                 return;
             }
 
+            //Send hashfull mod list to host.
+            NetworkedPeerManager.SendModlistToHost(MyModList);
+
             //Collect player mod lists, send mod list if player doesn't have mod list in properties.
-            foreach(Player player in PhotonNetwork.PlayerList)
+            foreach (Player player in PhotonNetwork.PlayerList)
             {
                 // debug print mod list of all players on join.
                 if (BepinPlugin.Bindings.DebugMode.Value)
@@ -189,7 +192,8 @@ namespace VoidManager.MPModChecks
                     }
                 }
 
-                if (!NetworkedPeerManager.Instance.SetNetworkedPeerMods(player)) // Keep SetNetworkedPeerMods when removing latter.
+                // Keep SetNetworkedPeerMods when removing later. Don't send mod list to master, as a hashfull list was already sent.
+                if (!NetworkedPeerManager.Instance.SetNetworkedPeerMods(player) && !player.IsMasterClient) 
                 {
                     // Remove when 1.1.8 is no longer relevant. Still set networked peer mods.
                     NetworkedPeerManager.SendModlistToClient(MyModList, player);
