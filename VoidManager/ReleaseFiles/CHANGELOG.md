@@ -1,3 +1,8 @@
+## 1.2.1
+- Patched exploit related to Progression Disabling.
+- Auto-Registering Session Mods if NoUnrepairableDamage is detected.
+- Created NuGet package for mod developers.
+
 ## 1.2.0
 - Changes to Room Joining for Phase 2 Modding Compliance.
 - Mod_Session escalation option.

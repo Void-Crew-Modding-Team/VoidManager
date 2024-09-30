@@ -31,6 +31,7 @@ namespace VoidManager.Progression
 
             Messaging.Echo($"{ModGUID} Disabled Progression", !PhotonNetwork.IsMasterClient);
             InternalDisableProgression();
+            KickPlayersWithoutDisableProgression();
             SendBlockProgression();
         }
 
@@ -48,7 +49,6 @@ namespace VoidManager.Progression
 
             ProgressionEnabled = false;
             BepinPlugin.Log.LogInfo("Progression Disabled");
-            KickPlayersWithoutDisableProgression();
         }
 
         internal static void SendBlockProgression()
