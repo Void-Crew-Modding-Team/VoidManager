@@ -1,5 +1,6 @@
 ﻿using CG.Game;
 using CG.Game.SpaceObjects.Controllers;
+using CG.Ship.Modules;
 using Gameplay.Quests;
 using ResourceAssets;
 using System;
@@ -120,7 +121,7 @@ namespace VoidManager.Utilities
         {
             get
             {
-                TakeoverChair pilotsSeat = ClientGame.Current?.PlayerShip?.gameObject?.GetComponentInChildren<CG.Ship.Modules.Helm>()?.Chair as TakeoverChair;
+                TakeoverChair pilotsSeat = ClientGame.Current?.PlayerShip?.GetModule<Helm>()?.Chair as TakeoverChair;
                 if (pilotsSeat == null || pilotsSeat.IsAvailable) return null;
 
                 return ClientGame.Current.GetPlayerCharacterByActorNumber(pilotsSeat.photonView.Owner.ActorNumber);
