@@ -1,6 +1,7 @@
 ﻿using CG.Cloud;
 using CG.Profile;
 using ExitGames.Client.Photon;
+using Gameplay.Utilities;
 using HarmonyLib;
 using Photon.Pun;
 using Photon.Realtime;
@@ -29,6 +30,7 @@ namespace VoidManager.Progression
         {
             BepinPlugin.Log.LogInfo("Recieved progression disable call from " + ModGUID);
 
+            if (!ProgressionEnabled) { return; }
             Messaging.Echo($"{ModGUID} Disabled Progression", !PhotonNetwork.IsMasterClient);
             InternalDisableProgression();
             KickPlayersWithoutDisableProgression();
