@@ -14,7 +14,8 @@ using static VoidManager.Utilities.GUITools;
 
 namespace VoidManager.CustomGUI
 {
-    class GUIMain : MonoBehaviour, IShowCursorSource, IInputActionMapRequest
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+    public class GUIMain : MonoBehaviour, IShowCursorSource, IInputActionMapRequest
     {
         public static GUIMain Instance { get; internal set; }
         GameObject Background;
@@ -441,6 +442,7 @@ namespace VoidManager.CustomGUI
 
 
         public const string AllMPTypeColorCode = "#FF3333";
+
         public const string SessionMPTypeColorCode = "#FFFF99";
         public const string HostMPTypeColorCode = "#00CC00";
         public const string ClientMPTypeColorCode = "#00CC00";
@@ -647,3 +649,4 @@ namespace VoidManager.CustomGUI
         }
     }
 }
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
