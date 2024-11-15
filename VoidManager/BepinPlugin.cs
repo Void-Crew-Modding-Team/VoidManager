@@ -84,6 +84,17 @@ namespace VoidManager
             public static ConfigEntry<UnityEngine.TextAnchor> ModInfoTextAnchor;
             public static ConfigEntry<bool> DebugMode;
 
+            /// <summary>
+            /// Safe way to retrieve current DebugMode status.
+            /// </summary>
+            public static bool IsDebugMode
+            {
+                get
+                {
+                    return DebugMode.Value;
+                }
+            }
+
             public static void SetDefault()
             {
                 ModInfoTextAnchor.Value = TextAnchor.UpperLeft;
