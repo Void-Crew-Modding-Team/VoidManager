@@ -1,3 +1,7 @@
+## 1.2.3
+- Rebuild for 1.0.0
+- Adjustments to Progression Handler for 1.0.0
+
 ## 1.2.2
 - Patched bug with MPType all mod lists not getting sent to host correctly.
 
