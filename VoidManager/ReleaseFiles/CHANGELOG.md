@@ -1,3 +1,6 @@
+## 1.2.4
+- Fixed Steam Achievements still being achieved while progress disabled.
+
 ## 1.2.3
 - Rebuild for 1.0.0
 - Adjustments to Progression Handler for 1.0.0
