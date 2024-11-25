@@ -130,7 +130,7 @@ namespace VoidManager.Content
         {
             if (QuestAsset != null)
             {
-                CraftableDataList CDL = QuestAsset.CraftableDataList;
+                CraftableDataList CDL = QuestAsset;
                 if (CDL != null)
                 {
                     CraftableDataList = (List<CraftableItem>)CDLCraftablesListFI.GetValue(CDL);
