@@ -46,4 +46,10 @@ namespace VoidManager.Progression
     {
         static bool Prefix() => ProgressionEnabled;
     }
+
+    [HarmonyPatch(typeof(SteamUserStats), "SetAchievement")]
+    internal class SteamUserSetAchievementPatch
+    {
+        static bool Prefix() => ProgressionEnabled;
+    }
 }
