@@ -58,19 +58,40 @@ namespace VoidManager.Progression
             PhotonNetwork.RaiseEvent(InRoomCallbacks.BlockProgressionEventCode, null, default, SendOptions.SendReliable);
         }
 
+        internal static bool CheckKickPlayer(Player player)
+        {
+            if (!player.CustomProperties.TryGetValue(InRoomCallbacks.PlayerModsPropertyKey, out object HashlessData))
+            {
+                KickPlayer(player, "1.1.8");
+                return true;
+            }
+            else
+            {
+                MPUserDataBlock DeserializedData = NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])HashlessData);
+                if (DeserializedData.VMVersion != MyPluginInfo.PLUGIN_VERSION)
+                {
+                    KickPlayer(player, DeserializedData.VMVersion);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        internal static void KickPlayer(Player player, string DetectedVMVersion)
+        {
+            Messaging.Echo($"Kicking player {player.NickName} from session for using old Void Manager ({DetectedVMVersion} vs host's {MyPluginInfo.PLUGIN_VERSION})", false);
+            Messaging.KickMessage("Kicked: Session Progress Disabled", $"Detected Void Manager {DetectedVMVersion} installed on client. Install latest Void Manager {MyPluginInfo.PLUGIN_VERSION} to rejoin session.", player);
+            PhotonNetwork.CloseConnection(player);
+            BepinPlugin.Log.LogMessage($"Kicked player {player.NickName} from session for Detected Void Manager {DetectedVMVersion} while session progress is disabled.");
+        }
+
         internal static void KickPlayersWithoutDisableProgression()
         {
             if (PhotonNetwork.IsMasterClient)
             {
                 foreach (Player player in PhotonNetwork.PlayerList)
                 {
-                    if (!player.CustomProperties.ContainsKey(InRoomCallbacks.PlayerModsPropertyKey))
-                    {
-                        Messaging.Echo($"Kicking player {player.NickName} from session for progression disable while not using Void Manager 1.2.0 or later.", false);
-                        Messaging.KickMessage("Kicked: Session Progress Disabled", "Detected Void Manager 1.1.8 installed on client. Install latest Void Manager to rejoin session.", player);
-                        PhotonNetwork.CloseConnection(player);
-                        BepinPlugin.Log.LogMessage($"Kicked player {player.NickName} from session for Detected Void Manager 1.1.8 while session progress is disabled.");
-                    }
+                    CheckKickPlayer(player);
                 }
             }
         }
@@ -111,14 +132,7 @@ namespace VoidManager.Progression
             // If Player doesn't have mods in custom props, their Void Manager version must be lower than 1.2.0
             if (PhotonNetwork.IsMasterClient && !ProgressionEnabled)
             {
-                if (!joiningPlayer.CustomProperties.ContainsKey(InRoomCallbacks.PlayerModsPropertyKey))
-                {
-                    Messaging.Echo($"Kicking player {joiningPlayer.NickName} from session for using old Void Manager", false);
-                    Messaging.KickMessage("Kicked: Session Progress Disabled", "Detected Void Manager 1.1.8 installed on client. Install latest Void Manager to rejoin session.", joiningPlayer);
-                    PhotonNetwork.CloseConnection(joiningPlayer);
-                    BepinPlugin.Log.LogMessage($"Kicked player {joiningPlayer.NickName} from session for Detected Void Manager 1.1.8 while session progress is disabled.");
-                }
-                else
+                if (!CheckKickPlayer(joiningPlayer))
                 {
                     PhotonNetwork.RaiseEvent(InRoomCallbacks.BlockProgressionEventCode, null, new RaiseEventOptions() { TargetActors = new int[] { joiningPlayer.ActorNumber } }, SendOptions.SendReliable);
                 }
