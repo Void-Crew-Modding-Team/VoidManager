@@ -184,7 +184,9 @@ namespace VoidManager.MPModChecks
                     if (player.CustomProperties.TryGetValue(InRoomCallbacks.PlayerModsPropertyKey, out object value))
                     {
                         BepinPlugin.Log.LogInfo($"Found mod info in player custom props {player.NickName}");
-                        BepinPlugin.Log.LogInfo(NetworkedPeerManager.GetModListAsString(NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])value).ModData));
+                        MPUserDataBlock userdata = NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])value);
+                        BepinPlugin.Log.LogInfo($"VoidManager Version {userdata.VMVersion}");
+                        BepinPlugin.Log.LogInfo(NetworkedPeerManager.GetModListAsString(userdata.ModData));
                     }
                     else
                     {
