@@ -560,12 +560,28 @@ namespace VoidManager.CustomGUI
             else LeaveSettingsMenu();
 
             selectedSettings = menu;
-            menu.OnOpen();
+
+            
+            try
+            {
+                menu?.OnOpen();
+            }
+            catch (Exception e)
+            {
+                BepinPlugin.Log.LogError(e);
+            }
         }
 
         public void LeaveSettingsMenu()
         {
-            selectedSettings?.OnClose();
+            try
+            {
+                selectedSettings?.OnClose();
+            }
+            catch (Exception e)
+            {
+                BepinPlugin.Log.LogError(e);
+            }
             GUITools.keybindToChange = null;
         }
 
