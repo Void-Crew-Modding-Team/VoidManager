@@ -149,6 +149,25 @@ namespace VoidManager.MPModChecks
         }
 
         /// <summary>
+        /// Checks and logs player mods from properties
+        /// </summary>
+        /// <param name="player"></param>
+        internal static void CheckPlayerModsFromProperties(Player player)
+        {
+            if (player.CustomProperties.TryGetValue(InRoomCallbacks.PlayerModsPropertyKey, out object value))
+            {
+                BepinPlugin.Log.LogInfo($"Found mod info in player custom props {player.NickName}");
+                MPUserDataBlock userdata = NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])value);
+                BepinPlugin.Log.LogInfo($"VoidManager Version {userdata.VMVersion}");
+                BepinPlugin.Log.LogInfo(NetworkedPeerManager.GetModListAsString(userdata.ModData));
+            }
+            else
+            {
+                BepinPlugin.Log.LogInfo($"Didn't Found mod info in player custom props {player.NickName}");
+            }
+        }
+
+        /// <summary>
         /// Checks if player has a mod list in NetworkedPeersModLists 
         /// </summary>
         /// <param name="Player"></param>
@@ -175,6 +194,7 @@ namespace VoidManager.MPModChecks
         {
             if (PhotonNetwork.IsMasterClient) { return; }
 
+            BepinPlugin.Log.LogInfo("Sending modlist to host.");
             PhotonNetwork.RaiseEvent(InRoomCallbacks.PlayerMPUserDataEventCode, new object[] { true, SerializeHashfullMPUserData(Data) }, new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient }, SendOptions.SendReliable);
         }
 

@@ -69,17 +69,7 @@ namespace VoidManager
 
         internal void OnPlayerEnteredRoom(Player joiningPlayer)
         {
-            if (joiningPlayer.CustomProperties.TryGetValue(InRoomCallbacks.PlayerModsPropertyKey, out object value))
-            {
-                BepinPlugin.Log.LogInfo($"Found mod info in player custom props {joiningPlayer.NickName}");
-                MPUserDataBlock userdata = NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])value);
-                BepinPlugin.Log.LogInfo($"VoidManager Version {userdata.VMVersion}");
-                BepinPlugin.Log.LogInfo(NetworkedPeerManager.GetModListAsString(userdata.ModData));
-            }
-            else
-            {
-                BepinPlugin.Log.LogInfo($"Didn't Found mod info in player custom props {joiningPlayer.NickName}");
-            }
+            NetworkedPeerManager.CheckPlayerModsFromProperties(joiningPlayer);
             ProgressionHandler.OnPlayerJoin(joiningPlayer);
             MPModCheckManager.Instance.PlayerJoined(joiningPlayer);
             LobbyPlayerListManager.Instance.UpdateLobbyPlayers();

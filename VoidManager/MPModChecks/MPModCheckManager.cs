@@ -181,17 +181,7 @@ namespace VoidManager.MPModChecks
                 // debug print mod list of all players on join.
                 if (BepinPlugin.Bindings.DebugMode.Value)
                 {
-                    if (player.CustomProperties.TryGetValue(InRoomCallbacks.PlayerModsPropertyKey, out object value))
-                    {
-                        BepinPlugin.Log.LogInfo($"Found mod info in player custom props {player.NickName}");
-                        MPUserDataBlock userdata = NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])value);
-                        BepinPlugin.Log.LogInfo($"VoidManager Version {userdata.VMVersion}");
-                        BepinPlugin.Log.LogInfo(NetworkedPeerManager.GetModListAsString(userdata.ModData));
-                    }
-                    else
-                    {
-                        BepinPlugin.Log.LogInfo($"Didn't Found mod info in player custom props {player.NickName}");
-                    }
+                    NetworkedPeerManager.CheckPlayerModsFromProperties(player);
                 }
 
                 // Keep SetNetworkedPeerMods when removing later. Don't send mod list to master, as a hashfull list was already sent.
