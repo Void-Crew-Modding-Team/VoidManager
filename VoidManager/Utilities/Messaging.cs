@@ -1,9 +1,7 @@
 ﻿using ExitGames.Client.Photon;
 using Gameplay.Chat;
-using HarmonyLib;
 using Photon.Pun;
 using Photon.Realtime;
-using System;
 using System.Reflection;
 using UI.Chat;
 using UnityEngine.UIElements;
@@ -16,9 +14,6 @@ namespace VoidManager.Utilities
     /// </summary>
     public class Messaging
     {
-        private static readonly FieldInfo chatUIField = AccessTools.Field(typeof(TextChat), "_chatUI");
-        private static readonly FieldInfo logViewField = AccessTools.Field(typeof(TextChatVE), "logView");
-
         /// <summary>
         /// Inserts a line to text chat with reference to the executing assembly.<br/>
         /// Removes it after timeoutMs milliseconds
@@ -29,8 +24,8 @@ namespace VoidManager.Utilities
         public static void Notification(string message, long timeoutMs, bool noPrefix = false)
         {
             if (TextChat.Instance == null) return;
-            TextChatVE chatUI = (TextChatVE)chatUIField.GetValue(TextChat.Instance);
-            ScrollView logView = (ScrollView)logViewField.GetValue(chatUI);
+            TextChatVE chatUI = TextChat.Instance._chatUI;
+            ScrollView logView = chatUI.logView;
 
             Notification(message, noPrefix);
 
@@ -56,6 +51,7 @@ namespace VoidManager.Utilities
         /// <param name="local"></param>
         public static void Echo(string message, bool local = true)
         {
+            if (TextChat.Instance == null) return;
             if (local) TextChat.Instance.AddLog(new Log($"", message));//fixme
             else
             {
