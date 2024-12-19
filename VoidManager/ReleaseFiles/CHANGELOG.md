@@ -1,3 +1,10 @@
+## 1.2.5
+- Fixed for Void Crew 1.0.3
+- Removed 1.1.8 Compatibility
+- Added safety checks to messaging API methods
+- Added safety checks to menu open/close
+- Added safety checks to Events API.
+
 ## 1.2.4
 - Fixed Steam Achievements still being achieved while progress disabled.
 

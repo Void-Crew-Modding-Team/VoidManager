@@ -85,3 +85,4 @@ Drag and drop `[ModName].dll` into `Void Crew\BepInEx\plugins`
 
 - API for permission requests from the session host, so that a mod may enable special features in a `Mod_Session`
 - Mod whitelist/blacklisting
+- Better detection of local od_Session mods.
