@@ -177,18 +177,6 @@ namespace VoidManager.MPModChecks
             return NetworkedPeersModLists.ContainsKey(Player);
         }
 
-        // Legacy remove when 1.1.8 is no longer relevant.
-        internal static void SendModlistToClient(MPModDataBlock[] Data, Player Player)
-        {
-            // Don't send mod list if host is handling data through custom properties.
-            if (PhotonNetwork.MasterClient.CustomProperties.ContainsKey(InRoomCallbacks.PlayerModsPropertyKey)) { return; }
-
-            // Don't send mod list to self.
-            if (Player.IsLocal) { return; }
-
-            PhotonNetwork.RaiseEvent(InRoomCallbacks.PlayerMPUserDataEventCode, new object[] { false, SerializeHashlessMPUserData(Data) }, new RaiseEventOptions { TargetActors = new int[1] { Player.ActorNumber } }, SendOptions.SendReliable);
-        }
-
         // Sends mod data with hashes to host on join. Needed for mod checks.
         internal static void SendModlistToHost(MPModDataBlock[] Data)
         {
@@ -196,17 +184,6 @@ namespace VoidManager.MPModChecks
 
             BepinPlugin.Log.LogInfo("Sending modlist to host.");
             PhotonNetwork.RaiseEvent(InRoomCallbacks.PlayerMPUserDataEventCode, new object[] { true, SerializeHashfullMPUserData(Data) }, new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient }, SendOptions.SendReliable);
-        }
-
-        // Legacy remove when 1.1.8 is no longer relevant.
-        internal static void SendModListToOthers(MPModDataBlock[] Data)
-        {
-            // Don't send mod list if host is handling data through custom properties.
-            if (PhotonNetwork.MasterClient.CustomProperties.ContainsKey(InRoomCallbacks.PlayerModsPropertyKey)) { return; }
-
-
-            BepinPlugin.Log.LogMessage("sending others");
-            PhotonNetwork.RaiseEvent(InRoomCallbacks.PlayerMPUserDataEventCode, new object[] { false, SerializeHashlessMPUserData(Data) }, null, SendOptions.SendReliable);
         }
 
         internal void LeftRoom()

@@ -185,10 +185,9 @@ namespace VoidManager.MPModChecks
                 }
 
                 // Keep SetNetworkedPeerMods when removing later. Don't send mod list to master, as a hashfull list was already sent.
-                if (!NetworkedPeerManager.Instance.SetNetworkedPeerMods(player) && !player.IsMasterClient) 
+                if (!NetworkedPeerManager.Instance.SetNetworkedPeerMods(player)) 
                 {
-                    // Remove when 1.1.8 is no longer relevant. Still set networked peer mods.
-                    NetworkedPeerManager.SendModlistToClient(MyModList, player);
+                    BepinPlugin.Log.LogInfo($"No mod data detected for {player.NickName}.");
                 }
             }
         }
@@ -203,15 +202,14 @@ namespace VoidManager.MPModChecks
             {
                 if (!NetworkedPeerManager.Instance.SetNetworkedPeerMods(JoiningPlayer))
                 {
-                    // Legacy remove when 1.1.8 is no longer relevant.
-                    NetworkedPeerManager.SendModlistToClient(MyModList, JoiningPlayer);
+                    BepinPlugin.Log.LogInfo($"No mod data detected for {JoiningPlayer.NickName}.");
                 }
             }
         }
 
         internal static IEnumerator PlayerJoinedChecks(Player JoiningPlayer)
         {
-            /* UnComment when 1.1.8 is no longer relevant. //Kicks player imediately if no mods and MPType all mods exist.
+            //Kicks player imediately if no mods and MPType all mods exist.
             if (Instance.HighestLevelOfMPMods == MultiplayerType.All && !JoiningPlayer.CustomProperties.ContainsKey(InRoomCallbacks.PlayerModsPropertyKey))
             {
                 BepinPlugin.Log.LogMessage($"Kicked player {JoiningPlayer.NickName} for not having mods.");
@@ -219,7 +217,6 @@ namespace VoidManager.MPModChecks
                 PhotonNetwork.CloseConnection(JoiningPlayer);
                 yield break;
             }
-            */
 
             for (int i = 0; i < 50; i++)
             {
@@ -230,6 +227,8 @@ namespace VoidManager.MPModChecks
                     yield break;
                 }
             }
+
+            //Host Must recieve hashfull mod list from client, but did not.
             if (Instance.HighestLevelOfMPMods == MultiplayerType.All)
             {
                 //Kick player if mod no mod list recieved and there are local MPType.All Mods.
