@@ -5,7 +5,6 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 using UI.Chat;
-using VoidManager.Callbacks;
 using VoidManager.CustomGUI;
 using VoidManager.LobbyPlayerList;
 using VoidManager.MPModChecks;
@@ -74,7 +73,14 @@ namespace VoidManager
             MPModCheckManager.Instance.PlayerJoined(joiningPlayer);
             LobbyPlayerListManager.Instance.UpdateLobbyPlayers();
 
-            PlayerEnteredRoom?.Invoke(this, new PlayerEventArgs() { player = joiningPlayer });
+            try
+            {
+                PlayerEnteredRoom?.Invoke(this, new PlayerEventArgs() { player = joiningPlayer });
+            }
+            catch (Exception e)
+            {
+                BepinPlugin.Log.LogError(e);
+            }
         }
 
 
@@ -92,7 +98,14 @@ namespace VoidManager
 
             LobbyPlayerListManager.Instance.UpdateLobbyPlayers();
 
-            PlayerLeftRoom?.Invoke(this, new PlayerEventArgs() { player = leavingPlayer });
+            try
+            {
+                PlayerLeftRoom?.Invoke(this, new PlayerEventArgs() { player = leavingPlayer });
+            }
+            catch (Exception e)
+            {
+                BepinPlugin.Log.LogError(e);
+            }
 
             NetworkedPeerManager.Instance.PlayerLeftRoom(leavingPlayer);
         }
@@ -109,7 +122,14 @@ namespace VoidManager
             PluginHandler.SessionWasEscalated = false;
 
             //Above controls whether a game is joined, so it is better to let it run first.
-            JoinedRoom?.Invoke(this, EventArgs.Empty);
+            try
+            {
+                JoinedRoom?.Invoke(this, EventArgs.Empty);
+            }
+            catch (Exception e)
+            {
+                BepinPlugin.Log.LogError(e);
+            }
         }
 
 
@@ -122,7 +142,14 @@ namespace VoidManager
         {
             NetworkedPeerManager.Instance.LeftRoom();
 
-            LeftRoom?.Invoke(this, EventArgs.Empty);
+            try
+            {
+                LeftRoom?.Invoke(this, EventArgs.Empty);
+            }
+            catch (Exception e)
+            {
+                BepinPlugin.Log.LogError(e);
+            }
         }
 
 
@@ -138,7 +165,14 @@ namespace VoidManager
 
             ProgressionHandler.OnHostChange(newMasterClient);
             bool IsMasterClient = newMasterClient.IsLocal;
-            MasterClientSwitched?.Invoke(this, new PlayerEventArgs() { player = newMasterClient });
+            try
+            {
+                MasterClientSwitched?.Invoke(this, new PlayerEventArgs() { player = newMasterClient });
+            }
+            catch (Exception e)
+            {
+                BepinPlugin.Log.LogError(e);
+            }
             PluginHandler.InternalSessionChanged(CallType.HostChange, ((IsMasterClient && ModdingUtils.SessionModdingType == ModdingType.mod_session) || MPModCheckManager.IsMod_Session()), IsMasterClient, newMasterClient);
         }
 
@@ -150,7 +184,14 @@ namespace VoidManager
 
         internal void OnHostVerifiedClient(Player verifiedPlayer) //Called by ModChecksHostOnClientJoin and PlayerJoinedChecks
         {
-            HostVerifiedClient?.Invoke(this, new PlayerEventArgs() { player = verifiedPlayer });
+            try
+            {
+                HostVerifiedClient?.Invoke(this, new PlayerEventArgs() { player = verifiedPlayer });
+            }
+            catch (Exception e)
+            {
+                BepinPlugin.Log.LogError(e);
+            }
         }
 
 
@@ -161,7 +202,14 @@ namespace VoidManager
 
         internal void OnClientModlistRecieved(Player DataSender)
         {
-            ClientModlistRecieved?.Invoke(this, new PlayerEventArgs() { player = DataSender });
+            try
+            {
+                ClientModlistRecieved?.Invoke(this, new PlayerEventArgs() { player = DataSender });
+            }
+            catch (Exception e)
+            {
+                BepinPlugin.Log.LogError(e);
+            }
         }
 
 
@@ -172,7 +220,14 @@ namespace VoidManager
 
         internal void OnHostStartSession()
         {
-            HostStartSession?.Invoke(this, EventArgs.Empty);
+            try
+            {
+                HostStartSession?.Invoke(this, EventArgs.Empty);
+            }
+            catch (Exception e)
+            {
+                BepinPlugin.Log.LogError(e);
+            }
             PluginHandler.InternalSessionChanged(CallType.HostStartSession, MPModCheckManager.IsMod_Session(), true);
         }
 
@@ -234,7 +289,14 @@ namespace VoidManager
                 LobbyPlayerListManager.Instance.UpdateLobbyPlayers();
             }
 
-            PlayerPropertiesUpdate?.Invoke(this, new PlayerPropertiesEventArgs() { player = targetPlayer, changedProperties = changedProps });
+            try
+            {
+                PlayerPropertiesUpdate?.Invoke(this, new PlayerPropertiesEventArgs() { player = targetPlayer, changedProperties = changedProps });
+            }
+            catch (Exception e)
+            {
+                BepinPlugin.Log.LogError(e);
+            }
         }
 
 
@@ -245,7 +307,14 @@ namespace VoidManager
 
         internal void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
         {
-            RoomPropertiesUpdate?.Invoke(this, new RoomPropertiesEventArgs() { changedProperties = propertiesThatChanged });
+            try
+            {
+                RoomPropertiesUpdate?.Invoke(this, new RoomPropertiesEventArgs() { changedProperties = propertiesThatChanged });
+            }
+            catch (Exception e)
+            {
+                BepinPlugin.Log.LogError(e);
+            }
         }
 
 
@@ -287,7 +356,14 @@ namespace VoidManager
         {
             static void Postfix()
             {
-                Instance.LateUpdate.Invoke(Instance, EventArgs.Empty);
+                try
+                {
+                    Instance.LateUpdate?.Invoke(Instance, EventArgs.Empty);
+                }
+                catch (Exception e)
+                {
+                    BepinPlugin.Log.LogError(e);
+                }
             }
         }
     }
