@@ -1,11 +1,11 @@
 ﻿using HarmonyLib;
-using UI.Matchmaking;
+using System.Collections.Generic;
 using UnityEngine.UIElements;
 
 namespace VoidManager.MPModChecks.Patches
 {
     //Basically the latest point to find room name and photonRoomInfo in the same method.
-    [HarmonyPatch(typeof(MatchmakingList), "BindItem")]
+    [HarmonyPatch(typeof(MatchmakingRoom), "BindToVE")]
     class ModdedRoomTagPatch
     {
         public const string ModSessionString = "<b><color=#ff8000>[mod_session] </color></b>";
@@ -20,9 +20,9 @@ namespace VoidManager.MPModChecks.Patches
         const string GreenM = $"<b><color={CustomGUI.GUIMain.ClientMPTypeColorCode}>[M]</color></b> ";
 
         [HarmonyPostfix]
-        static void ModdedRoomPatch(VisualElement item, MatchmakingRoom room)
+        static void ModdedRoomPatch(VisualElement item, Dictionary<string, TextElement> labels)
         {
-            TextElement textElement = item.Q<TextElement>("RoomName", default, default);
+            TextElement textElement = labels["RoomName"];
             if (textElement.text.StartsWith(ModsRequiredLobbyListString, System.StringComparison.CurrentCultureIgnoreCase))
             {
                 textElement.text = textElement.text.Replace(ModsRequiredLobbyListString, RedM);
