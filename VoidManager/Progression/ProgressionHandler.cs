@@ -60,12 +60,7 @@ namespace VoidManager.Progression
 
         internal static bool CheckKickPlayer(Player player)
         {
-            if (!player.CustomProperties.TryGetValue(InRoomCallbacks.PlayerModsPropertyKey, out object HashlessData))
-            {
-                KickPlayer(player, "1.1.8");
-                return true;
-            }
-            else
+            if (player.CustomProperties.TryGetValue(InRoomCallbacks.PlayerModsPropertyKey, out object HashlessData))
             {
                 MPUserDataBlock DeserializedData = NetworkedPeerManager.DeserializeHashlessMPUserData((byte[])HashlessData);
                 if (DeserializedData.VMVersion != MyPluginInfo.PLUGIN_VERSION)
@@ -73,6 +68,14 @@ namespace VoidManager.Progression
                     KickPlayer(player, DeserializedData.VMVersion);
                     return true;
                 }
+            }
+            else
+            {
+                //Player not using any known working version of Void Manager.
+                Messaging.Echo($"Kicking player {player.NickName} from session for not using {MyPluginInfo.USERS_PLUGIN_NAME} while session progress is disabled.", false);
+                PhotonNetwork.CloseConnection(player);
+                BepinPlugin.Log.LogMessage($"Kicked player {player.NickName} from session for not using {MyPluginInfo.USERS_PLUGIN_NAME} {MyPluginInfo.USERS_PLUGIN_NAME} while session progress is disabled.");
+                return true;
             }
             return false;
         }
@@ -129,7 +132,6 @@ namespace VoidManager.Progression
 
         internal static void OnPlayerJoin(Player joiningPlayer)
         {
-            // If Player doesn't have mods in custom props, their Void Manager version must be lower than 1.2.0
             if (PhotonNetwork.IsMasterClient && !ProgressionEnabled)
             {
                 if (!CheckKickPlayer(joiningPlayer))
