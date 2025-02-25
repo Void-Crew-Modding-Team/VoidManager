@@ -24,11 +24,11 @@ namespace VoidManager.Utilities
         public static void Notification(string message, long timeoutMs, bool noPrefix = false)
         {
             if (TextChat.Instance == null) return;
-            TextChatVE chatUI = TextChat.Instance._chatUI;
-            ScrollView logView = chatUI.logView;
 
             Notification(message, noPrefix);
 
+            TextChatVE chatUI = TextChat.Instance._chatUI;
+            ScrollView logView = chatUI.logView;
             VisualElement log = logView.ElementAt(logView.childCount - 1);
             chatUI.schedule.Execute(() => { if (logView.Contains(log)) { logView.Remove(log); } }).ExecuteLater(timeoutMs);
         }
@@ -56,6 +56,22 @@ namespace VoidManager.Utilities
             else
             {
                 VoipService.Instance.SendTextMessage($"[{MyPluginInfo.USERS_PLUGIN_NAME}]: {message}");
+            }
+        }
+
+        /// <summary>
+        /// Inserts a line to text chat.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="messagePrefix">Appears in [] before the message.<br/>E.g. [Void Manager]: message text</param>
+        /// <param name="local"></param>
+        public static void Echo(string message, string messagePrefix, bool local = true)
+        {
+            if (TextChat.Instance == null) return;
+            if (local) TextChat.Instance.AddLog(new Log($"", message));//fixme
+            else
+            {
+                VoipService.Instance.SendTextMessage($"[{messagePrefix}]: {message}");
             }
         }
 
