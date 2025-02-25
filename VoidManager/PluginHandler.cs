@@ -159,7 +159,14 @@ namespace VoidManager
                 }
                 else
                 {
-                    KVP.Value.OnSessionChange(inputData);
+                    try
+                    {
+                        KVP.Value.OnSessionChange(inputData);
+                    }
+                    catch(Exception e)
+                    {
+                        BepinPlugin.Log.LogError($"Caught error on session changed for {KVP.Key}\n{e}");
+                    }
                 }
             }
 
