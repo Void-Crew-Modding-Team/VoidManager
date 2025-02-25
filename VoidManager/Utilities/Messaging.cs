@@ -30,7 +30,7 @@ namespace VoidManager.Utilities
             Notification(message, noPrefix);
 
             VisualElement log = logView.ElementAt(logView.childCount - 1);
-            chatUI.schedule.Execute(() => logView.Remove(log)).ExecuteLater(timeoutMs);
+            chatUI.schedule.Execute(() => { if (logView.Contains(log)) { logView.Remove(log); } }).ExecuteLater(timeoutMs);
         }
 
         /// <summary>
