@@ -248,7 +248,15 @@ namespace VoidManager
 
         internal void OnHostCreateRoom()
         {
-            HostCreateRoom?.Invoke(this, EventArgs.Empty);
+            try
+            {
+                HostCreateRoom?.Invoke(this, EventArgs.Empty);
+            }
+            catch (Exception e)
+            {
+                BepinPlugin.Log.LogError(e);
+            }
+
             PluginHandler.CreatedRoomAsHost = true;
             PluginHandler.InternalSessionChanged(CallType.HostCreateRoom, ModdingUtils.SessionModdingType == ModdingType.mod_session, true);
         }
@@ -261,7 +269,15 @@ namespace VoidManager
 
         internal void OnJoinedSession()
         {
-            JoinedSession?.Invoke(this, EventArgs.Empty);
+            try
+            {
+                JoinedSession?.Invoke(this, EventArgs.Empty);
+            }
+            catch (Exception e)
+            {
+                BepinPlugin.Log.LogError(e);
+            }
+
             PluginHandler.CreatedRoomAsHost = false;
             PluginHandler.InternalSessionChanged(CallType.Joining, MPModCheckManager.IsMod_Session(), false, PhotonNetwork.MasterClient);
         }
