@@ -91,6 +91,7 @@ namespace VoidManager.Utilities
         /// <param name="durationMs">The number of milliseconds before the task stops repeating</param>
         public static void RepeatForUnique(object uniqueObject, Action action, double durationMs)
         {
+            CancelRepeatFor(uniqueObject);
             object unique = new();
             repeatMap.Add(uniqueObject, unique);
             void h(object o_, EventArgs e_) => action();
