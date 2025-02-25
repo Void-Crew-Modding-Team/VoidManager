@@ -42,6 +42,16 @@ namespace VoidManager.Utilities
         }
 
         /// <summary>
+        /// Checks if a request has been made to DelayDoUnique with uniqueObject that has not yet been run
+        /// </summary>
+        /// <param name="uniqueObject"></param>
+        /// <returns></returns>
+        public static bool IsDelayRunning(object uniqueObject)
+        {
+            return uniqueTasks.ContainsKey(uniqueObject);
+        }
+
+        /// <summary>
         /// Removes an action without invoking it
         /// </summary>
         /// <param name="uniqueObject"></param>
@@ -66,6 +76,61 @@ namespace VoidManager.Utilities
             if (uniqueTasks.Count == 0)
             {
                 Events.Instance.LateUpdate -= DoUniqueTasks;
+            }
+        }
+
+        //Used to separate RepeatForUnique keys from DelayDoUnique keys
+        private static readonly Dictionary<object, object> repeatMap = new();
+
+        /// <summary>
+        /// Perform an action every frame for the specified duration.<br/>
+        /// Identical to "Events.Instance.LateUpdate += (_, _) => action();" for sufficiently large values of durationMs
+        /// </summary>
+        /// <param name="uniqueObject">Used in DelayDoUnique for the end time</param>
+        /// <param name="action"></param>
+        /// <param name="durationMs">The number of milliseconds before the task stops repeating</param>
+        public static void RepeatForUnique(object uniqueObject, Action action, double durationMs)
+        {
+            object unique = new();
+            repeatMap.Add(uniqueObject, unique);
+            void h(object o_, EventArgs e_) => action();
+            Events.Instance.LateUpdate += h;
+            DelayDoUnique(unique, () => Events.Instance.LateUpdate -= h, durationMs);
+        }
+
+        /// <summary>
+        /// Perform an action every frame for the specified duration.<br/>
+        /// Identical to "Events.Instance.LateUpdate += (_, _) => action();" for sufficiently large values of durationMs
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="durationMs">The number of milliseconds before the task stops repeating</param>
+        public static void RepeatFor(Action action, double durationMs)
+        {
+            RepeatForUnique(new object(), action, durationMs);
+        }
+
+        /// <summary>
+        /// Is the action still scheduled to run each frame
+        /// </summary>
+        /// <param name="uniqueObject">The unique object provided to RepeatForUnique</param>
+        /// <returns></returns>
+        public static bool IsRepeatRunning(object uniqueObject)
+        {
+            return repeatMap.ContainsKey(uniqueObject);
+        }
+
+        /// <summary>
+        /// Stops the action from running on future frames
+        /// </summary>
+        /// <param name="uniqueObject">The unique object provided to RepeatForUnique</param>
+        public static void CancelRepeatFor(object uniqueObject)
+        {
+            if (repeatMap.ContainsKey(uniqueObject))
+            {
+                object key = repeatMap[uniqueObject];
+                repeatMap.Remove(uniqueObject);
+                uniqueTasks[key].Item1.Invoke();
+                uniqueTasks.Remove(key);
             }
         }
     }
