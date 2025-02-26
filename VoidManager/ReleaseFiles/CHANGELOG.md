@@ -1,3 +1,8 @@
+## 1.2.6
+- Fixed bug which caused enemy damage markers to stay.
+- Added safety to several events.
+- Added to Tools and Messaging APIs.
+
 ## 1.2.5
 - Fixed for Void Crew 1.0.3
 - Removed 1.1.8 Compatibility
